@@ -93,18 +93,14 @@ function speak(syllable: string, tone: number) {
 }
 
 const TONE_INFO = [
-  { tone: 1, mark: 'ā', name: '1st Tone', desc: 'High & flat', symbol: '—', color: 'bg-blue-500', light: 'bg-blue-50 border-blue-300 text-blue-700' },
-  { tone: 2, mark: 'á', name: '2nd Tone', desc: 'Rising', symbol: '↗', color: 'bg-green-500', light: 'bg-green-50 border-green-300 text-green-700' },
-  { tone: 3, mark: 'ǎ', name: '3rd Tone', desc: 'Dip & rise', symbol: '↘↗', color: 'bg-yellow-500', light: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
-  { tone: 4, mark: 'à', name: '4th Tone', desc: 'Sharp fall', symbol: '↘', color: 'bg-red-500', light: 'bg-red-50 border-red-300 text-red-700' },
-  { tone: 0, mark: 'a', name: 'Neutral', desc: 'Short & light', symbol: '·', color: 'bg-gray-400', light: 'bg-gray-50 border-gray-300 text-gray-600' },
+  { tone: 1, mark: 'ā', name: '1st Tone', desc: 'High & flat', symbol: '—', light: 'bg-blue-50 border-blue-300 text-blue-700' },
+  { tone: 2, mark: 'á', name: '2nd Tone', desc: 'Rising', symbol: '↗', light: 'bg-green-50 border-green-300 text-green-700' },
+  { tone: 3, mark: 'ǎ', name: '3rd Tone', desc: 'Dip & rise', symbol: '↘↗', light: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
+  { tone: 4, mark: 'à', name: '4th Tone', desc: 'Sharp fall', symbol: '↘', light: 'bg-red-50 border-red-300 text-red-700' },
+  { tone: 0, mark: 'a', name: 'Neutral', desc: 'Short & light', symbol: '·', light: 'bg-gray-50 border-gray-300 text-gray-600' },
 ]
 
-interface PopupState {
-  syllable: string
-  finalIdx: number
-  initialIdx: number
-}
+interface PopupState { syllable: string }
 
 export default function PinyinLabPage() {
   const [selectedTone, setSelectedTone] = useState(1)
@@ -117,16 +113,14 @@ export default function PinyinLabPage() {
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
-        setPopup(null)
-      }
+      if (popupRef.current && !popupRef.current.contains(e.target as Node)) setPopup(null)
     }
     if (popup) document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [popup])
 
-  function handleCellClick(syllable: string, finalIdx: number, initialIdx: number) {
-    setPopup({ syllable, finalIdx, initialIdx })
+  function handleCellClick(syllable: string) {
+    setPopup({ syllable })
     speak(syllable, selectedTone)
     setPlayingTone(selectedTone)
   }
@@ -138,21 +132,18 @@ export default function PinyinLabPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero */}
       <div className="bg-lingo-navy text-white py-14 px-4 text-center">
         <div className="inline-flex items-center gap-2 bg-lingo-red/20 border border-lingo-red/30 text-lingo-red text-xs font-semibold px-3 py-1 rounded-full mb-4">
           🎵 Interactive Audio Chart
         </div>
         <h1 className="text-4xl font-bold mb-3">Pinyin Chart</h1>
         <p className="text-gray-300 max-w-xl mx-auto text-sm leading-relaxed">
-          Hover any cell to highlight its initial and final. Click to hear all 4 tones in a popup.
-          Built on your browser&apos;s Chinese voice — no plugins needed.
+          Hover any cell to highlight its row and column. Click to hear all 4 tones.
         </p>
       </div>
 
       <div className="max-w-[1400px] mx-auto px-4 py-8">
-
-        {/* Controls bar */}
+        {/* Controls */}
         <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-lingo-surface rounded-xl border border-lingo-border">
           <div className="flex items-center gap-2 flex-1 min-w-[200px]">
             <svg className="w-4 h-4 text-lingo-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +177,6 @@ export default function PinyinLabPage() {
           </div>
         </div>
 
-        {/* Table wrapper — relative so popup can position inside */}
         <div className="relative">
           <div className="overflow-x-auto rounded-xl border border-lingo-border shadow-sm">
             <table className="border-collapse text-sm" style={{ minWidth: '980px' }}>
@@ -196,12 +186,12 @@ export default function PinyinLabPage() {
                     <span className="block text-gray-400 text-[10px]">final ↓</span>
                     <span className="block text-gray-400 text-[10px]">initial →</span>
                   </th>
-                  {INITIALS.map((initial, ci) => (
+                  {INITIALS.map(initial => (
                     <th
                       key={initial || 'zero'}
-                      className={`px-2 py-3 text-center font-bold min-w-[54px] text-sm transition-colors ${
+                      className={`px-2 py-3 text-center font-bold min-w-[54px] text-sm transition-colors duration-75 ${
                         hoverInitial === initial
-                          ? 'bg-lingo-red text-white'
+                          ? 'bg-lingo-red/20 text-white'
                           : 'bg-lingo-navy text-white'
                       }`}
                     >
@@ -218,64 +208,55 @@ export default function PinyinLabPage() {
                         {group.label}
                       </td>
                     </tr>
-                    {group.finals.map((final, fi) => {
-                      const finalIdx = ALL_FINALS.indexOf(final)
-                      return (
-                        <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
-                          <td
-                            className={`sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px] transition-colors ${
-                              hoverFinal === final
-                                ? 'bg-lingo-red text-white'
-                                : 'bg-lingo-navy text-white'
-                            }`}
-                          >
-                            {final}
-                          </td>
-                          {INITIALS.map((initial, ci) => {
-                            const syllable = getSyllable(initial, final)
-                            const isRowHighlight = hoverFinal === final
-                            const isColHighlight = hoverInitial === initial
-                            const isActive = popup?.syllable === syllable && syllable !== null
-                            const isMatch = search.length > 0 && syllable !== null && syllable.toLowerCase().startsWith(search.toLowerCase())
-                            return (
-                              <td
-                                key={initial || 'zero'}
-                                className={`px-0.5 py-0.5 text-center transition-colors ${
-                                  (isRowHighlight || isColHighlight) && syllable ? 'bg-lingo-navy/5' : ''
-                                }`}
-                              >
-                                {syllable ? (
-                                  <button
-                                    onMouseEnter={() => { setHoverFinal(final); setHoverInitial(initial) }}
-                                    onMouseLeave={() => { setHoverFinal(null); setHoverInitial(null) }}
-                                    onClick={() => handleCellClick(syllable, finalIdx, ci)}
-                                    className={`w-full px-1 py-2 rounded-lg text-xs font-semibold transition-all duration-100 hover:scale-105 active:scale-95 ${
-                                      isActive
-                                        ? 'bg-lingo-red text-white shadow-lg ring-2 ring-lingo-red/40'
-                                        : isMatch
-                                        ? 'bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400'
-                                        : (isRowHighlight || isColHighlight)
-                                        ? 'bg-lingo-navy text-white'
-                                        : 'bg-lingo-surface text-lingo-text hover:bg-lingo-red hover:text-white'
-                                    }`}
-                                  >
-                                    {addTone(syllable, selectedTone)}
-                                  </button>
-                                ) : (
-                                  <span
-                                    className={`block py-2 text-xs ${
-                                      (isRowHighlight || isColHighlight) ? 'text-lingo-navy/20' : 'text-gray-200'
-                                    }`}
-                                  >
-                                    —
-                                  </span>
-                                )}
-                              </td>
-                            )
-                          })}
-                        </tr>
-                      )
-                    })}
+                    {group.finals.map((final, fi) => (
+                      <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
+                        <td
+                          className={`sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px] transition-colors duration-75 ${
+                            hoverFinal === final
+                              ? 'bg-lingo-red/20 text-white'
+                              : 'bg-lingo-navy text-white'
+                          }`}
+                        >
+                          {final}
+                        </td>
+                        {INITIALS.map(initial => {
+                          const syllable = getSyllable(initial, final)
+                          const isRowHighlight = hoverFinal === final
+                          const isColHighlight = hoverInitial === initial
+                          const isCrossed = isRowHighlight || isColHighlight
+                          const isActive = popup?.syllable === syllable && syllable !== null
+                          const isMatch = search.length > 0 && syllable !== null && syllable.toLowerCase().startsWith(search.toLowerCase())
+                          return (
+                            <td
+                              key={initial || 'zero'}
+                              className={`px-0.5 py-0.5 text-center transition-colors duration-75 ${
+                                isCrossed ? 'bg-lingo-red/8' : ''
+                              }`}
+                              style={isCrossed ? { backgroundColor: 'rgba(233,69,96,0.07)' } : undefined}
+                            >
+                              {syllable ? (
+                                <button
+                                  onMouseEnter={() => { setHoverFinal(final); setHoverInitial(initial) }}
+                                  onMouseLeave={() => { setHoverFinal(null); setHoverInitial(null) }}
+                                  onClick={() => handleCellClick(syllable)}
+                                  className={`w-full px-1 py-2 rounded-lg text-xs font-semibold transition-all duration-100 hover:scale-105 active:scale-95 ${
+                                    isActive
+                                      ? 'bg-lingo-red text-white shadow-lg ring-2 ring-lingo-red/40'
+                                      : isMatch
+                                      ? 'bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400'
+                                      : 'bg-lingo-surface text-lingo-text hover:bg-lingo-red hover:text-white'
+                                  }`}
+                                >
+                                  {addTone(syllable, selectedTone)}
+                                </button>
+                              ) : (
+                                <span className="block py-2 text-xs text-gray-200">—</span>
+                              )}
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))}
                   </>
                 ))}
               </tbody>
@@ -294,14 +275,8 @@ export default function PinyinLabPage() {
                   <div className="text-3xl font-bold text-lingo-text">{popup.syllable}</div>
                   <div className="text-xs text-lingo-muted mt-0.5">Click a tone to hear it</div>
                 </div>
-                <button
-                  onClick={() => setPopup(null)}
-                  className="text-lingo-muted hover:text-lingo-text text-lg leading-none p-1"
-                >
-                  ✕
-                </button>
+                <button onClick={() => setPopup(null)} className="text-lingo-muted hover:text-lingo-text text-lg leading-none p-1">✕</button>
               </div>
-
               <div className="space-y-2">
                 {TONE_INFO.map(({ tone, name, desc, symbol, light }) => {
                   const withTone = addTone(popup.syllable, tone)
@@ -320,12 +295,11 @@ export default function PinyinLabPage() {
                         <div className="text-xs font-semibold text-lingo-text">{name}</div>
                         <div className="text-[10px] text-lingo-muted">{desc}</div>
                       </div>
-                      <span className="text-lingo-muted">{isPlaying ? '🔊' : '▶️'}</span>
+                      <span>{isPlaying ? '🔊' : '▶️'}</span>
                     </button>
                   )
                 })}
               </div>
-
               <div className="mt-4 pt-4 border-t border-lingo-border text-[11px] text-lingo-muted text-center">
                 Audio via browser Chinese TTS (zh-CN)
               </div>
@@ -335,8 +309,8 @@ export default function PinyinLabPage() {
 
         {/* Legend */}
         <div className="mt-4 flex flex-wrap gap-6 text-xs text-lingo-muted">
-          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-lingo-surface border border-lingo-border"></span>Valid — click for tones</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-lingo-navy"></span>Cross-highlight on hover</span>
+          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-lingo-surface border border-lingo-border"></span>Valid — click for all tones</span>
+          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{backgroundColor:'rgba(233,69,96,0.07)',border:'1px solid rgba(233,69,96,0.3)'}}></span>Cross-highlight on hover</span>
           <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-lingo-red"></span>Selected</span>
           <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-yellow-100 border-2 border-yellow-400"></span>Search match</span>
         </div>
@@ -358,7 +332,6 @@ export default function PinyinLabPage() {
           ))}
         </div>
 
-        {/* FAQ */}
         <div className="mt-16 max-w-3xl">
           <h2 className="text-2xl font-bold text-lingo-text mb-2">What is Pinyin?</h2>
           <p className="text-lingo-muted leading-relaxed mb-4">
