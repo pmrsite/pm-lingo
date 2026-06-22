@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #0f0f23;
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mission-tab-active {
+  @apply border-b-2 border-lingo-red text-lingo-red font-semibold;
+}
+
+.mission-tab {
+  @apply border-b-2 border-transparent text-gray-500 hover:text-gray-900 font-medium transition-colors;
+}
