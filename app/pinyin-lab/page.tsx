@@ -143,7 +143,6 @@ export default function PinyinLabPage() {
       </div>
 
       <div className="max-w-[1400px] mx-auto px-4 py-8">
-        {/* Controls */}
         <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-lingo-surface rounded-xl border border-lingo-border">
           <div className="flex items-center gap-2 flex-1 min-w-[200px]">
             <svg className="w-4 h-4 text-lingo-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,9 +189,7 @@ export default function PinyinLabPage() {
                     <th
                       key={initial || 'zero'}
                       className={`px-2 py-3 text-center font-bold min-w-[54px] text-sm transition-colors duration-75 ${
-                        hoverInitial === initial
-                          ? 'bg-lingo-red/20 text-white'
-                          : 'bg-lingo-navy text-white'
+                        hoverInitial === initial ? 'bg-lingo-red/20 text-white' : 'bg-lingo-navy text-white'
                       }`}
                     >
                       {initial || '∅'}
@@ -212,26 +209,20 @@ export default function PinyinLabPage() {
                       <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
                         <td
                           className={`sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px] transition-colors duration-75 ${
-                            hoverFinal === final
-                              ? 'bg-lingo-red/20 text-white'
-                              : 'bg-lingo-navy text-white'
+                            hoverFinal === final ? 'bg-lingo-red/20 text-white' : 'bg-lingo-navy text-white'
                           }`}
                         >
                           {final}
                         </td>
                         {INITIALS.map(initial => {
                           const syllable = getSyllable(initial, final)
-                          const isRowHighlight = hoverFinal === final
-                          const isColHighlight = hoverInitial === initial
-                          const isCrossed = isRowHighlight || isColHighlight
+                          const isCrossed = hoverFinal === final || hoverInitial === initial
                           const isActive = popup?.syllable === syllable && syllable !== null
                           const isMatch = search.length > 0 && syllable !== null && syllable.toLowerCase().startsWith(search.toLowerCase())
                           return (
                             <td
                               key={initial || 'zero'}
-                              className={`px-0.5 py-0.5 text-center transition-colors duration-75 ${
-                                isCrossed ? 'bg-lingo-red/8' : ''
-                              }`}
+                              className="px-0.5 py-0.5 text-center transition-colors duration-75"
                               style={isCrossed ? { backgroundColor: 'rgba(233,69,96,0.07)' } : undefined}
                             >
                               {syllable ? (
@@ -247,7 +238,7 @@ export default function PinyinLabPage() {
                                       : 'bg-lingo-surface text-lingo-text hover:bg-lingo-red hover:text-white'
                                   }`}
                                 >
-                                  {addTone(syllable, selectedTone)}
+                                  {syllable}
                                 </button>
                               ) : (
                                 <span className="block py-2 text-xs text-gray-200">—</span>
@@ -263,7 +254,6 @@ export default function PinyinLabPage() {
             </table>
           </div>
 
-          {/* Popup */}
           {popup && (
             <div
               ref={popupRef}
@@ -307,7 +297,6 @@ export default function PinyinLabPage() {
           )}
         </div>
 
-        {/* Legend */}
         <div className="mt-4 flex flex-wrap gap-6 text-xs text-lingo-muted">
           <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-lingo-surface border border-lingo-border"></span>Valid — click for all tones</span>
           <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{backgroundColor:'rgba(233,69,96,0.07)',border:'1px solid rgba(233,69,96,0.3)'}}></span>Cross-highlight on hover</span>
@@ -315,7 +304,6 @@ export default function PinyinLabPage() {
           <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-yellow-100 border-2 border-yellow-400"></span>Search match</span>
         </div>
 
-        {/* Tone guide */}
         <div className="mt-12 grid grid-cols-2 sm:grid-cols-5 gap-4">
           {TONE_INFO.map(({ tone, mark, name, desc, light }) => (
             <button
