@@ -12,11 +12,11 @@ export default function Button({ variant = 'primary', size = 'md', className, ch
       className={cn(
         'inline-flex items-center justify-center font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]',
         {
-          'bg-lingo-magenta hover:bg-lingo-magenta-dark text-white': variant === 'primary',
+          'bg-lingo-red hover:bg-lingo-red-dark text-white': variant === 'primary',
           'bg-lingo-navy hover:bg-lingo-navy-dark text-white': variant === 'secondary',
-          'border-2 border-lingo-navy text-lingo-navy hover:bg-lingo-aqua-soft': variant === 'outline',
+          'border-2 border-lingo-navy text-lingo-navy hover:bg-lingo-teal-soft': variant === 'outline',
           'text-lingo-muted hover:text-lingo-navy hover:bg-lingo-surface': variant === 'ghost',
-          'bg-white text-lingo-magenta hover:bg-lingo-magenta-soft': variant === 'light',
+          'bg-white text-lingo-red hover:bg-orange-50': variant === 'light',
         },
         {
           'text-sm px-4 py-2': size === 'sm',

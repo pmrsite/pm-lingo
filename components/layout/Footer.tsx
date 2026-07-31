@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="mt-auto relative overflow-hidden" style={{ backgroundColor: '#A91470' }}>
+    <footer className="mt-auto relative overflow-hidden" style={{ backgroundColor: '#145E57' }}>
       {/* Decorative oversized Chinese character */}
       <div
         className="absolute right-8 top-1/2 -translate-y-1/2 select-none pointer-events-none font-bold leading-none"
@@ -19,16 +19,16 @@ export default function Footer() {
           <div className="md:col-span-2">
             <div className="flex items-center gap-1.5 mb-4">
               <span className="text-xl font-bold text-white">PM-Lingo</span>
-              <span className="w-2 h-2 rounded-full" style={{ background: '#FFD24A' }} />
+              <span className="w-2 h-2 rounded-full bg-lingo-secondary" />
             </div>
-            <p className="text-sm leading-relaxed max-w-xs mb-6" style={{ color: '#F7EAF2' }}>
+            <p className="text-sm leading-relaxed max-w-xs mb-6" style={{ color: '#E5E7EB' }}>
               Master real-world Chinese through mission-based learning,
               AI tutors, and human coaches.
             </p>
             {/* Newsletter */}
             <div>
               <label htmlFor="footer-email" className="sr-only">Email address for updates</label>
-              <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.60)' }}>Get learning tips</p>
+              <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.55)' }}>Get learning tips</p>
               <div className="flex gap-2">
                 <input
                   id="footer-email"
@@ -39,8 +39,7 @@ export default function Footer() {
                 />
                 <button
                   type="button"
-                  className="text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
-                  style={{ background: '#FFD24A', color: '#5C3200' }}
+                  className="text-sm font-semibold px-4 py-2 rounded-lg transition-colors bg-lingo-red hover:bg-lingo-red-dark text-white"
                 >
                   Join
                 </button>
@@ -88,8 +87,8 @@ export default function Footer() {
         <div
           className="mt-12 pt-6 text-center text-sm"
           style={{
-            borderTop: '1px solid rgba(255,255,255,0.18)',
-            color: '#F7EAF2',
+            borderTop: '1px solid rgba(255,255,255,0.15)',
+            color: '#E5E7EB',
           }}
         >
           © {new Date().getFullYear()} PM-Lingo · Built by PM Resources

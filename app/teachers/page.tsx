@@ -6,10 +6,10 @@ import SectionLabel from '@/components/ui/SectionLabel'
 export const metadata = { title: 'Teachers — PM-Lingo' }
 
 const teacherAccents: Record<string, { bg: string; accent: string; textColor: string; emoji: string }> = {
-  mei: { bg: '#F1ECFA', accent: '#DDD4F4', textColor: '#6B4FB5', emoji: '🧘' },
-  lin: { bg: '#FFF5C7', accent: '#FFD24A', textColor: '#8A6415', emoji: '✨' },
-  jun: { bg: '#E8FAF7', accent: '#18C7B5', textColor: '#0B625C', emoji: '📚' },
-  kai: { bg: '#FBE8F4', accent: '#C21883', textColor: '#A91470', emoji: '🎯' },
+  mei: { bg: '#F0FDFA', accent: '#64C4B9', textColor: '#0F766E', emoji: '🧘' },
+  lin: { bg: '#FFF8E1', accent: '#F6C453', textColor: '#B7791F', emoji: '✨' },
+  jun: { bg: '#ECFDF5', accent: '#0F766E', textColor: '#145E57', emoji: '📚' },
+  kai: { bg: '#FFF3E0', accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯' },
 }
 
 export default function TeachersPage() {
@@ -30,10 +30,10 @@ export default function TeachersPage() {
         </div>
       </section>
 
-      <Wave from="#FFFFFF" to="#FCFBF8" />
+      <Wave from="#FFFFFF" to="#FAFAF8" />
 
       {/* AI Teachers Grid */}
-      <section className="py-20 px-4" style={{ background: '#FCFBF8' }}>
+      <section className="py-20 px-4" style={{ background: '#FAFAF8' }}>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {aiTeachers.map((t) => {
@@ -95,10 +95,10 @@ export default function TeachersPage() {
         </div>
       </section>
 
-      <Wave from="#FCFBF8" to="#F1ECFA" />
+      <Wave from="#FAFAF8" to="#E8FAF8" />
 
       {/* Human Teachers Coming Soon */}
-      <section className="py-20 px-4" style={{ background: '#F1ECFA' }}>
+      <section className="py-20 px-4" style={{ background: '#E8FAF8' }}>
         <div className="max-w-2xl mx-auto text-center">
           <SectionLabel center>Human Coaches</SectionLabel>
           <h2 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(24px, 3.5vw, 38px)', lineHeight: 1.2 }}>
@@ -109,24 +109,24 @@ export default function TeachersPage() {
             pronunciation coaching, and accountability.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <div className="rounded-2xl px-5 py-3 text-sm font-medium" style={{ background: '#DDD4F4', color: '#6B4FB5' }}>📅 Live scheduling</div>
-            <div className="rounded-2xl px-5 py-3 text-sm font-medium" style={{ background: '#FFF5C7', color: '#8A6415' }}>🎤 Pronunciation coaching</div>
-            <div className="rounded-2xl px-5 py-3 text-sm font-medium" style={{ background: '#E8FAF7', color: '#0B625C' }}>✅ Progress tracking</div>
+            <div className="rounded-2xl px-5 py-3 text-sm font-medium bg-white text-lingo-navy border border-lingo-border">📅 Live scheduling</div>
+            <div className="rounded-2xl px-5 py-3 text-sm font-medium bg-white text-lingo-navy border border-lingo-border">🎤 Pronunciation coaching</div>
+            <div className="rounded-2xl px-5 py-3 text-sm font-medium bg-white text-lingo-navy border border-lingo-border">✅ Progress tracking</div>
           </div>
         </div>
       </section>
 
-      <Wave from="#F1ECFA" to="#C21883" />
+      <Wave from="#E8FAF8" to="#FF6B00" />
 
       {/* CTA */}
-      <section className="py-20 px-4" style={{ background: '#C21883' }}>
+      <section className="py-20 px-4" style={{ background: '#FF6B00' }}>
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-3">Start learning with your AI teacher today</h2>
           <p className="text-white/80 mb-8">14-day free trial. No credit card required.</p>
           <Link
             href="/auth/signup"
-            className="inline-block bg-white font-bold px-8 py-3.5 rounded-xl text-base hover:bg-lingo-magenta-soft transition-colors"
-            style={{ color: '#C21883', boxShadow: '0 6px 24px rgba(0,0,0,0.12)' }}
+            className="inline-block bg-white text-lingo-red font-bold px-8 py-3.5 rounded-xl text-base hover:bg-gray-50 transition-colors"
+            style={{ boxShadow: '0 6px 24px rgba(0,0,0,0.12)' }}
           >
             Join the waitlist
           </Link>

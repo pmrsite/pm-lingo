@@ -21,7 +21,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1.5">
             <span className="text-xl font-bold text-lingo-navy">PM-Lingo</span>
-            <span className="w-2 h-2 rounded-full bg-lingo-yellow" />
+            <span className="w-2 h-2 rounded-full bg-lingo-secondary" />
           </Link>
 
           {/* Desktop nav */}
@@ -47,7 +47,7 @@ export default function Navbar() {
             </Link>
             <Link
               href="/auth/signup"
-              className="bg-lingo-magenta hover:bg-lingo-magenta-dark text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors min-h-[36px] inline-flex items-center"
+              className="bg-lingo-red hover:bg-lingo-red-dark text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors min-h-[36px] inline-flex items-center"
             >
               Start Free Trial
             </Link>
@@ -87,7 +87,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="block bg-lingo-magenta hover:bg-lingo-magenta-dark text-white text-sm font-semibold px-4 py-2 rounded-lg text-center transition-colors"
+                className="block bg-lingo-red hover:bg-lingo-red-dark text-white text-sm font-semibold px-4 py-2 rounded-lg text-center transition-colors"
               >
                 Start Free Trial
               </Link>
