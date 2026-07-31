@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import { ButtonHTMLAttributes } from 'react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'light'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'light' | 'pink'
   size?: 'sm' | 'md' | 'lg'
 }
 
@@ -14,9 +14,10 @@ export default function Button({ variant = 'primary', size = 'md', className, ch
         {
           'bg-lingo-red hover:bg-lingo-red-dark text-white': variant === 'primary',
           'bg-lingo-navy hover:bg-lingo-navy-dark text-white': variant === 'secondary',
-          'border-2 border-lingo-navy text-lingo-navy hover:bg-lingo-teal-soft': variant === 'outline',
+          'border-2 border-lingo-navy text-lingo-navy hover:bg-blue-50': variant === 'outline',
           'text-lingo-muted hover:text-lingo-navy hover:bg-lingo-surface': variant === 'ghost',
           'bg-white text-lingo-red hover:bg-orange-50': variant === 'light',
+          'bg-lingo-pink hover:bg-lingo-pink-dark text-white': variant === 'pink',
         },
         {
           'text-sm px-4 py-2': size === 'sm',

@@ -4,16 +4,16 @@ import { pricingPlans } from '@/data/pricing'
 import { aiTeachers } from '@/data/aiTeachers'
 import SectionLabel from '@/components/ui/SectionLabel'
 
-type BubbleVariant = 'teal' | 'aqua' | 'gold' | 'white'
+type BubbleVariant = 'navy' | 'pink' | 'gold' | 'white'
 const bubbleStyles: Record<BubbleVariant, { bg: string; text: string; sub: string; border?: string }> = {
-  teal:  { bg: '#0F766E', text: '#fff',    sub: 'rgba(255,255,255,0.65)' },
-  aqua:  { bg: '#64C4B9', text: '#fff',    sub: 'rgba(255,255,255,0.75)' },
+  navy:  { bg: '#2B2E63', text: '#fff',    sub: 'rgba(255,255,255,0.65)' },
+  pink:  { bg: '#E0006A', text: '#fff',    sub: 'rgba(255,255,255,0.75)' },
   gold:  { bg: '#FFF8E1', text: '#B7791F', sub: '#B7791F', border: '#F6C453' },
   white: { bg: '#fff',    text: '#111827', sub: '#6B7280', border: '#E5E7EB' },
 }
 
 function ChineseBubble({
-  hanzi, pinyin, english, variant = 'teal', style,
+  hanzi, pinyin, english, variant = 'navy', style,
 }: {
   hanzi: string; pinyin: string; english: string;
   variant?: BubbleVariant; style?: React.CSSProperties
@@ -30,11 +30,11 @@ function ChineseBubble({
   )
 }
 
-const teacherAccents: Record<string, { bg: string; accent: string; textColor: string; emoji: string }> = {
-  mei: { bg: '#F0FDFA', accent: '#64C4B9', textColor: '#0F766E', emoji: '🧘' },
-  lin: { bg: '#FFF8E1', accent: '#F6C453', textColor: '#B7791F', emoji: '✨' },
-  jun: { bg: '#ECFDF5', accent: '#0F766E', textColor: '#145E57', emoji: '📚' },
-  kai: { bg: '#FFF3E0', accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯' },
+const teacherAccents: Record<string, { accent: string; textColor: string; emoji: string }> = {
+  mei: { accent: '#64C4B9', textColor: '#2B2E63', emoji: '🧘' },
+  lin: { accent: '#E0006A', textColor: '#C2005C', emoji: '✨' },
+  jun: { accent: '#2B2E63', textColor: '#1E2147', emoji: '📚' },
+  kai: { accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯' },
 }
 
 export default function HomePage() {
@@ -54,7 +54,7 @@ export default function HomePage() {
 
             <h1 className="font-bold text-lingo-text mb-5" style={{ fontSize: 'clamp(38px, 5vw, 62px)', lineHeight: 1.05 }}>
               Speak <span style={{ color: '#FF6B00' }}>Mandarin</span><br />
-              <span style={{ color: '#0F766E' }}>with Confidence.</span>
+              <span style={{ color: '#2B2E63' }}>with Confidence.</span>
             </h1>
 
             <p className="text-lingo-muted text-xl mb-8 leading-relaxed" style={{ maxWidth: 460 }}>
@@ -83,11 +83,11 @@ export default function HomePage() {
           <div className="relative flex items-center justify-center" style={{ minHeight: 380 }}>
             <div className="rounded-full bg-gray-100" style={{ width: 260, height: 260 }} />
             <div className="absolute flex flex-col items-center text-center">
-              <span className="font-bold" style={{ fontSize: 72, lineHeight: 1, color: '#0F766E' }}>普</span>
+              <span className="font-bold" style={{ fontSize: 72, lineHeight: 1, color: '#2B2E63' }}>普</span>
               <span className="text-xs text-lingo-muted mt-2 font-medium tracking-wider uppercase">Mandarin Chinese</span>
             </div>
-            <ChineseBubble hanzi="你好！" pinyin="Nǐ hǎo" english="Hello" variant="teal" style={{ top: 24, left: 0 }} />
-            <ChineseBubble hanzi="谢谢" pinyin="Xièxie" english="Thank you" variant="aqua" style={{ top: 48, right: -8 }} />
+            <ChineseBubble hanzi="你好！" pinyin="Nǐ hǎo" english="Hello" variant="navy" style={{ top: 24, left: 0 }} />
+            <ChineseBubble hanzi="谢谢" pinyin="Xièxie" english="Thank you" variant="pink" style={{ top: 48, right: -8 }} />
             <ChineseBubble hanzi="再见" pinyin="Zàijiàn" english="Goodbye" variant="white" style={{ bottom: 56, left: -8 }} />
             <ChineseBubble hanzi="对不起" pinyin="Duìbu qǐ" english="Sorry" variant="gold" style={{ bottom: 24, right: 0 }} />
           </div>
@@ -133,12 +133,13 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: '🎯', title: 'Mission-Based Learning', description: 'Every mission is a real-world scenario — greetings, ordering food, taking a taxi. No filler, no fluff.' },
-              { icon: '🤖', title: 'AI Tutor Practice',      description: 'Practise with four distinct AI teachers, each with a unique personality. Get instant feedback, 24/7.' },
-              { icon: '👩‍🏫', title: 'Human Teacher Sessions', description: 'Book live sessions with certified coaches to fix pronunciation and build the confidence AI alone cannot give.' },
+              { icon: '🎯', title: 'Mission-Based Learning', description: 'Every mission is a real-world scenario — greetings, ordering food, taking a taxi. No filler, no fluff.', accent: '#FF6B00' },
+              { icon: '🤖', title: 'AI Tutor Practice',      description: 'Practise with four distinct AI teachers, each with a unique personality. Get instant feedback, 24/7.',     accent: '#E0006A' },
+              { icon: '👩‍🏫', title: 'Human Teacher Sessions', description: 'Book live sessions with certified coaches to fix pronunciation and build the confidence AI alone cannot give.', accent: '#2B2E63' },
             ].map((p) => (
-              <div key={p.title} className="border border-gray-200 rounded-2xl p-8">
-                <div className="text-3xl mb-5">{p.icon}</div>
+              <div key={p.title} className="border border-gray-200 rounded-2xl p-8 relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1" style={{ background: p.accent }} />
+                <div className="text-3xl mb-5 mt-2">{p.icon}</div>
                 <h3 className="text-xl font-bold text-lingo-text mb-3">{p.title}</h3>
                 <p className="text-lingo-body text-base leading-relaxed">{p.description}</p>
               </div>
@@ -160,14 +161,14 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { step: '1', title: 'Choose a mission',  description: 'Pick a real-world scenario that matches your goal — from greetings to business meetings.' },
-              { step: '2', title: 'Learn and practise', description: 'Study vocabulary, practise with AI tutors, and get instant feedback on every response.' },
-              { step: '3', title: 'Build confidence',  description: 'Book a live session with a certified teacher to speak real Mandarin with confidence.' },
+              { step: '1', title: 'Choose a mission',  description: 'Pick a real-world scenario that matches your goal — from greetings to business meetings.', color: '#FF6B00' },
+              { step: '2', title: 'Learn and practise', description: 'Study vocabulary, practise with AI tutors, and get instant feedback on every response.',   color: '#E0006A' },
+              { step: '3', title: 'Build confidence',  description: 'Book a live session with a certified teacher to speak real Mandarin with confidence.',       color: '#2B2E63' },
             ].map((s) => (
               <div key={s.step} className="flex flex-col items-center text-center">
                 <div
                   className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold mb-6 shrink-0 text-lg"
-                  style={{ background: '#0F766E' }}
+                  style={{ background: s.color }}
                 >
                   {s.step}
                 </div>
@@ -215,7 +216,7 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-10">
-            <Link href="/teachers" className="text-sm font-semibold text-lingo-navy hover:text-lingo-secondary transition-colors">
+            <Link href="/teachers" className="text-sm font-semibold text-lingo-navy hover:text-lingo-pink transition-colors">
               Meet all teachers →
             </Link>
           </div>
@@ -282,13 +283,13 @@ export default function HomePage() {
                 className="rounded-2xl p-7 border relative"
                 style={
                   plan.highlighted
-                    ? { background: '#0F766E', borderColor: '#0F766E', color: '#fff' }
+                    ? { background: '#2B2E63', borderColor: '#2B2E63', color: '#fff' }
                     : { background: '#fff', borderColor: '#E5E7EB' }
                 }
               >
                 {plan.highlighted && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap" style={{ background: '#F6C453', color: '#5C4300' }}>BEST VALUE</span>
+                    <span className="text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap" style={{ background: '#E0006A', color: '#fff' }}>BEST VALUE</span>
                   </div>
                 )}
                 <h3 className={`text-lg font-bold mb-1 ${plan.highlighted ? 'text-white' : 'text-lingo-text'}`}>{plan.name}</h3>
@@ -310,7 +311,7 @@ export default function HomePage() {
                   className={`block text-center font-semibold px-4 py-2.5 rounded-xl transition-colors text-sm min-h-[44px] flex items-center justify-center ${
                     plan.highlighted
                       ? 'bg-lingo-red hover:bg-lingo-red-dark text-white'
-                      : 'border border-lingo-navy text-lingo-navy hover:bg-gray-50'
+                      : 'border border-lingo-navy text-lingo-navy hover:bg-blue-50'
                   }`}
                 >
                   {plan.ctaText}
@@ -320,7 +321,7 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-8">
-            <Link href="/pricing" className="text-lingo-navy hover:text-lingo-secondary text-sm font-medium transition-colors">See full pricing details →</Link>
+            <Link href="/pricing" className="text-lingo-navy hover:text-lingo-pink text-sm font-medium transition-colors">See full pricing details →</Link>
           </div>
         </div>
       </section>

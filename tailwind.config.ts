@@ -18,62 +18,53 @@ const config: Config = {
         'lingo-caption': ['14px', { lineHeight: '1.5',  fontWeight: '400' }],
       },
       colors: {
-        // ── Primary Brand: PM Teal ────────────────────────────────────
-        'lingo-navy':          '#0F766E',
-        'lingo-navy-dark':     '#0B625C',
-        'lingo-navy-light':    '#157A73',
+        // ── Primary Brand: Corporate Blue ─────────────────────────────
+        'lingo-navy':          '#2B2E63',
+        'lingo-navy-dark':     '#1E2147',
+        'lingo-navy-light':    '#3B3F8C',
 
-        // ── Secondary: Aqua ──────────────────────────────────────────
+        // ── Corporate Pink ────────────────────────────────────────────
+        'lingo-pink':          '#E0006A',
+        'lingo-pink-dark':     '#C2005C',
+        'lingo-pink-soft':     '#FFE5F0',
+
+        // ── CTA: Orange ───────────────────────────────────────────────
+        'lingo-red':           '#FF6B00',
+        'lingo-red-dark':      '#E85D04',
+        'lingo-red-light':     '#FF8C38',
+
+        // ── Supporting: Teal ──────────────────────────────────────────
         'lingo-secondary':       '#64C4B9',
         'lingo-secondary-hover': '#F0FDFA',
+        'lingo-teal':            '#0F766E',
+        'lingo-teal-soft':       '#F0FDFA',
 
-        // ── CTA: Magenta ─────────────────────────────────────────────
-        'lingo-magenta':        '#C21883',
-        'lingo-magenta-dark':   '#A91470',
-        'lingo-magenta-soft':   '#FBE8F4',
-
-        // ── Legacy orange (alias — minimise use) ─────────────────────
-        'lingo-red':       '#FF6B00',
-        'lingo-red-dark':  '#E85D04',
-        'lingo-red-light': '#FF8C38',
-
-        // ── Energy: Yellow ───────────────────────────────────────────
+        // ── Energy: Yellow / Gold ─────────────────────────────────────
         'lingo-yellow':      '#FFD24A',
         'lingo-yellow-soft': '#FFF5C7',
+        'lingo-gold':        '#F6C453',
+        'lingo-gold-bg':     '#FFF8E1',
+        'lingo-gold-text':   '#8A6415',
 
-        // ── Calm: Lavender ───────────────────────────────────────────
-        'lingo-lavender':       '#DDD4F4',
-        'lingo-lavender-light': '#F1ECFA',
-
-        // ── AI/Interaction: Aqua ─────────────────────────────────────
-        'lingo-aqua':      '#18C7B5',
-        'lingo-aqua-soft': '#E8FAF7',
-
-        // ── Achievement: Gold ────────────────────────────────────────
-        'lingo-gold':      '#F6C453',
-        'lingo-gold-bg':   '#FFF8E1',
-        'lingo-gold-text': '#8A6415',
-
-        // ── Status ───────────────────────────────────────────────────
+        // ── Status ────────────────────────────────────────────────────
         'lingo-success':      '#22C55E',
         'lingo-success-soft': '#ECFDF5',
         'lingo-warning':      '#F59E0B',
         'lingo-error':        '#EF4444',
 
-        // ── Backgrounds ──────────────────────────────────────────────
+        // ── Backgrounds ───────────────────────────────────────────────
         'lingo-surface':   '#FCFBF8',
         'lingo-card':      '#FFFFFF',
         'lingo-bg-alt':    '#F5F7F8',
-        'lingo-teal-soft': '#F0FDFA',
 
-        // ── Typography ───────────────────────────────────────────────
+        // ── Typography ────────────────────────────────────────────────
         'lingo-text':      '#171717',
         'lingo-heading-2': '#252525',
         'lingo-body':      '#596273',
         'lingo-muted':     '#70798A',
         'lingo-disabled':  '#9AA1AE',
 
-        // ── Borders ──────────────────────────────────────────────────
+        // ── Borders ───────────────────────────────────────────────────
         'lingo-border':       '#E7E5EA',
         'lingo-border-hover': '#D1CDD8',
       },
@@ -81,8 +72,8 @@ const config: Config = {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        'lingo-hero':     'linear-gradient(160deg, #0F766E 0%, #0d6b64 55%, #0B625C 100%)',
-        'lingo-progress': 'linear-gradient(90deg, #0F766E 0%, #18C7B5 100%)',
+        'lingo-hero':     'linear-gradient(160deg, #2B2E63 0%, #1E2147 55%, #1A1D40 100%)',
+        'lingo-progress': 'linear-gradient(90deg, #2B2E63 0%, #64C4B9 100%)',
       },
       borderRadius: {
         'lingo-sm': '8px',

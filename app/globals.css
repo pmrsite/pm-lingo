@@ -25,7 +25,7 @@ p  { font-size: 18px; line-height: 1.7; color: #4B5563; }
 small, .caption { font-size: 14px; line-height: 1.5; color: #6B7280; }
 
 :focus-visible {
-  outline: 2px solid #0F766E;
+  outline: 2px solid #2B2E63;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -41,10 +41,10 @@ small, .caption { font-size: 14px; line-height: 1.5; color: #6B7280; }
   @apply bg-lingo-red text-white font-semibold hover:bg-lingo-red-dark transition-colors rounded-xl px-6 py-3 inline-flex items-center justify-center min-h-[44px];
 }
 .btn-secondary {
-  @apply bg-transparent border border-lingo-navy text-lingo-navy hover:bg-lingo-teal-soft transition-colors rounded-xl px-6 py-3 inline-flex items-center justify-center min-h-[44px];
+  @apply bg-transparent border border-lingo-navy text-lingo-navy hover:bg-blue-50 transition-colors rounded-xl px-6 py-3 inline-flex items-center justify-center min-h-[44px];
 }
 .btn-ghost {
-  @apply text-lingo-navy hover:text-lingo-secondary transition-colors;
+  @apply text-lingo-navy hover:text-lingo-pink transition-colors;
 }
 
 .xp-badge {
@@ -52,7 +52,7 @@ small, .caption { font-size: 14px; line-height: 1.5; color: #6B7280; }
 }
 
 .progress-track     { @apply bg-lingo-border rounded-full overflow-hidden; }
-.progress-fill      { background: linear-gradient(90deg, #0F766E 0%, #64C4B9 100%); @apply h-full rounded-full transition-all; }
+.progress-fill      { background: linear-gradient(90deg, #2B2E63 0%, #64C4B9 100%); @apply h-full rounded-full transition-all; }
 .progress-fill-gold { @apply bg-lingo-gold h-full rounded-full transition-all; }
 
 .footer-link       { color: #E5E7EB; transition: color 0.15s; }

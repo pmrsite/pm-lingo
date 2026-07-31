@@ -21,7 +21,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1.5">
             <span className="text-xl font-bold text-lingo-navy">PM-Lingo</span>
-            <span className="w-2 h-2 rounded-full bg-lingo-secondary" />
+            <span className="w-2 h-2 rounded-full bg-lingo-pink" />
           </Link>
 
           {/* Desktop nav */}

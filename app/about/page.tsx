@@ -13,9 +13,9 @@ const stats = [
 ]
 
 const values = [
-  { icon: '🎯', title: 'Situation first', body: 'We start with the real scenario — ordering food, taking a taxi, meeting a client. Language is the tool, not the lesson.' },
-  { icon: '🤝', title: 'Cultural fluency', body: 'Every mission includes regional notes covering Mainland China, Taiwan, Malaysia, and international contexts — because context changes meaning.' },
-  { icon: '🤖', title: 'AI as your coach', body: 'Our AI tutor adapts to your pace, corrects your tones, and gives personalised feedback — available 24/7, without judgment.' },
+  { icon: '🎯', title: 'Situation first', body: 'We start with the real scenario — ordering food, taking a taxi, meeting a client. Language is the tool, not the lesson.', accent: '#FF6B00' },
+  { icon: '🤝', title: 'Cultural fluency', body: 'Every mission includes regional notes covering Mainland China, Taiwan, Malaysia, and international contexts — because context changes meaning.', accent: '#E0006A' },
+  { icon: '🤖', title: 'AI as your coach', body: 'Our AI tutor adapts to your pace, corrects your tones, and gives personalised feedback — available 24/7, without judgment.', accent: '#2B2E63' },
 ]
 
 export default function AboutPage() {
@@ -77,8 +77,9 @@ export default function AboutPage() {
           <h2 className="font-bold text-lingo-text text-center mb-12" style={{ fontSize: 'clamp(24px, 3vw, 38px)', lineHeight: 1.2 }}>Built on three principles</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {values.map((v) => (
-              <div key={v.title} className="border border-gray-200 rounded-2xl p-8">
-                <div className="text-3xl mb-4">{v.icon}</div>
+              <div key={v.title} className="border border-gray-200 rounded-2xl p-8 relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1" style={{ background: v.accent }} />
+                <div className="text-3xl mb-4 mt-2">{v.icon}</div>
                 <h3 className="font-bold text-lingo-navy text-xl mb-3">{v.title}</h3>
                 <p className="text-lingo-body text-base leading-relaxed">{v.body}</p>
               </div>

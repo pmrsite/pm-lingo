@@ -41,12 +41,12 @@ export default function PricingPage() {
                 }`}
                 style={
                   plan.highlighted
-                    ? { background: '#0F766E', borderColor: '#0F766E' }
+                    ? { background: '#2B2E63', borderColor: '#2B2E63' }
                     : { background: '#fff', borderColor: '#E5E7EB' }
                 }
               >
                 {plan.highlighted && (
-                  <div className="text-xs font-bold px-3 py-1 rounded-full inline-block mb-4 self-start" style={{ background: '#F6C453', color: '#5C4300' }}>
+                  <div className="text-xs font-bold px-3 py-1 rounded-full inline-block mb-4 self-start" style={{ background: '#E0006A', color: '#fff' }}>
                     MOST POPULAR
                   </div>
                 )}
@@ -73,7 +73,7 @@ export default function PricingPage() {
                   className={`block text-center font-bold px-6 py-3 rounded-xl transition-colors min-h-[44px] flex items-center justify-center ${
                     plan.highlighted
                       ? 'bg-lingo-red hover:bg-lingo-red-dark text-white'
-                      : 'border-2 border-lingo-navy text-lingo-navy hover:bg-gray-50'
+                      : 'border-2 border-lingo-navy text-lingo-navy hover:bg-blue-50'
                   }`}
                 >
                   {plan.ctaText}

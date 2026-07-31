@@ -5,9 +5,9 @@ import SectionLabel from '@/components/ui/SectionLabel'
 export const metadata = { title: 'Teachers — PM-Lingo' }
 
 const teacherAccents: Record<string, { accent: string; textColor: string; emoji: string }> = {
-  mei: { accent: '#64C4B9', textColor: '#0F766E', emoji: '🧘' },
-  lin: { accent: '#F6C453', textColor: '#B7791F', emoji: '✨' },
-  jun: { accent: '#0F766E', textColor: '#145E57', emoji: '📚' },
+  mei: { accent: '#64C4B9', textColor: '#2B2E63', emoji: '🧘' },
+  lin: { accent: '#E0006A', textColor: '#C2005C', emoji: '✨' },
+  jun: { accent: '#2B2E63', textColor: '#1E2147', emoji: '📚' },
   kai: { accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯' },
 }
 

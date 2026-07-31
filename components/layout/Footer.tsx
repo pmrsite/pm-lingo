@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="mt-auto relative overflow-hidden" style={{ backgroundColor: '#145E57' }}>
+    <footer className="mt-auto relative overflow-hidden" style={{ backgroundColor: '#1E2147' }}>
       {/* Decorative oversized Chinese character */}
       <div
         className="absolute right-8 top-1/2 -translate-y-1/2 select-none pointer-events-none font-bold leading-none"
@@ -19,7 +19,7 @@ export default function Footer() {
           <div className="md:col-span-2">
             <div className="flex items-center gap-1.5 mb-4">
               <span className="text-xl font-bold text-white">PM-Lingo</span>
-              <span className="w-2 h-2 rounded-full bg-lingo-secondary" />
+              <span className="w-2 h-2 rounded-full bg-lingo-pink" />
             </div>
             <p className="text-sm leading-relaxed max-w-xs mb-6" style={{ color: '#E5E7EB' }}>
               Master real-world Chinese through mission-based learning,
