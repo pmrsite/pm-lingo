@@ -7,54 +7,68 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // ─── Brand Typography Scale ────────────────────────────────────────
+      fontSize: {
+        'lingo-h1':      ['56px', { lineHeight: '1.1', fontWeight: '700' }],
+        'lingo-h2':      ['42px', { lineHeight: '1.2', fontWeight: '700' }],
+        'lingo-h3':      ['30px', { lineHeight: '1.3', fontWeight: '600' }],
+        'lingo-body':    ['18px', { lineHeight: '1.7', fontWeight: '400' }],
+        'lingo-caption': ['15px', { lineHeight: '1.5', fontWeight: '400' }],
+      },
       colors: {
         // ─── Primary Brand: PM Teal ───────────────────────────────
-        'lingo-navy':          '#0F766E', // primary brand, nav, hero, footer base
+        // Responsibility: Brand, identity, trust
+        // Never use for: CTA buttons
+        'lingo-navy':          '#0F766E',
         'lingo-navy-dark':     '#145E57', // footer background
         'lingo-navy-light':    '#157A73', // hero gradient end
 
         // ─── Secondary Brand: Aqua Teal ──────────────────────────
-        'lingo-secondary':     '#64C4B9', // hover, icons, AI, progress, highlights
-        'lingo-secondary-hover': '#F0FDFA', // secondary button hover bg
+        // Responsibility: AI, learning, progress, highlights
+        // Never use for: Main headings
+        'lingo-secondary':       '#64C4B9',
+        'lingo-secondary-hover': '#F0FDFA',
 
         // ─── CTA: PM Orange ──────────────────────────────────────
-        'lingo-red':           '#FF6B00', // primary CTA buttons (kept as lingo-red for compat)
-        'lingo-red-dark':      '#E85D04', // CTA hover
-        'lingo-red-light':     '#FF8C38', // CTA light variant
+        // Responsibility: User actions (CTA only)
+        // Never use for: Body text, badges, links
+        'lingo-red':       '#FF6B00',
+        'lingo-red-dark':  '#E85D04',
+        'lingo-red-light': '#FF8C38',
 
         // ─── Achievement: PM Gold ────────────────────────────────
-        'lingo-gold':          '#F6C453', // XP, badges, achievements, leaderboard
-        'lingo-gold-bg':       '#FFF8E1', // XP badge background
-        'lingo-gold-text':     '#B7791F', // XP badge text
+        // Responsibility: Achievement, XP, certificates
+        // Never use for: Buttons
+        'lingo-gold':      '#F6C453',
+        'lingo-gold-bg':   '#FFF8E1',
+        'lingo-gold-text': '#B7791F',
 
         // ─── Status ──────────────────────────────────────────────
-        'lingo-success':       '#22C55E', // correct answer, completed
-        'lingo-warning':       '#F59E0B', // reminder, trial ending
-        'lingo-error':         '#EF4444', // incorrect, error, failed
+        'lingo-success': '#22C55E', // never use for navigation
+        'lingo-warning': '#F59E0B', // never use for branding
+        'lingo-error':   '#EF4444', // never use for decorative UI
 
         // ─── Backgrounds ─────────────────────────────────────────
-        'lingo-surface':       '#FAFAF8', // main warm-white background
-        'lingo-card':          '#FFFFFF', // card background
-        'lingo-bg-alt':        '#F5F7F8', // alternate sections, FAQ, stats
+        'lingo-surface': '#FAFAF8', // main warm-white bg — never use for cards
+        'lingo-card':    '#FFFFFF', // cards & content surfaces — never use for hero
+        'lingo-bg-alt':  '#F5F7F8', // alternate sections, FAQ, stats
 
         // ─── Typography ──────────────────────────────────────────
-        'lingo-text':          '#111827', // H1 H2 H3, primary headings
-        'lingo-heading-2':     '#1F2937', // small titles, card headings
-        'lingo-body':          '#4B5563', // paragraph body text
-        'lingo-muted':         '#6B7280', // descriptions, labels, captions
-        'lingo-disabled':      '#9CA3AF', // disabled text
+        'lingo-text':      '#111827', // H1 H2 H3 — never use for buttons
+        'lingo-heading-2': '#1F2937', // small titles, card headings
+        'lingo-body':      '#4B5563', // body text — never use for hero titles
+        'lingo-muted':     '#6B7280', // descriptions, labels, captions
+        'lingo-disabled':  '#9CA3AF', // disabled text
 
         // ─── Borders ─────────────────────────────────────────────
-        'lingo-border':        '#E5E7EB', // default border
-        'lingo-border-hover':  '#CBD5E1', // hover border
+        'lingo-border':       '#E5E7EB',
+        'lingo-border-hover': '#CBD5E1',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        // Hero gradient: PM Teal top → slightly lighter bottom
-        'lingo-hero': 'linear-gradient(180deg, #0F766E 0%, #157A73 100%)',
-        // Progress fill gradient
+        'lingo-hero':     'linear-gradient(180deg, #0F766E 0%, #157A73 100%)',
         'lingo-progress': 'linear-gradient(90deg, #0F766E 0%, #64C4B9 100%)',
       },
     },

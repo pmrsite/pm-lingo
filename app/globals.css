@@ -10,13 +10,44 @@
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
+  font-size: 18px;
+  line-height: 1.7;
   color: #4B5563;
   background: #FAFAF8;
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 {
+h1 {
+  font-size: 56px;
+  line-height: 1.1;
+  font-weight: 700;
   color: #111827;
+}
+
+h2 {
+  font-size: 42px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #111827;
+}
+
+h3 {
+  font-size: 30px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: #111827;
+}
+
+p {
+  font-size: 18px;
+  line-height: 1.7;
+  color: #4B5563;
+}
+
+.caption, small {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #6B7280;
 }
 
 /* Mission tab states */
@@ -28,27 +59,25 @@ h1, h2, h3 {
   @apply border-b-2 border-transparent text-lingo-muted hover:text-lingo-heading-2 font-medium transition-colors;
 }
 
-/* Primary CTA button */
+/* Buttons */
 .btn-primary {
-  @apply bg-lingo-red text-white font-semibold hover:bg-lingo-red-dark transition-colors;
+  @apply bg-lingo-red text-white font-semibold hover:bg-lingo-red-dark transition-colors rounded-lg;
 }
 
-/* Secondary button */
 .btn-secondary {
-  @apply bg-transparent border border-lingo-navy text-lingo-navy hover:bg-lingo-secondary-hover transition-colors;
+  @apply bg-transparent border border-lingo-navy text-lingo-navy hover:bg-lingo-secondary-hover transition-colors rounded-lg;
 }
 
-/* Ghost button */
 .btn-ghost {
   @apply text-lingo-navy hover:text-lingo-secondary transition-colors;
 }
 
-/* XP badge */
+/* XP / Achievement badge */
 .xp-badge {
   @apply bg-lingo-gold-bg text-lingo-gold-text text-xs font-bold px-2 py-0.5 rounded-full;
 }
 
-/* Progress bar */
+/* Progress bars */
 .progress-track {
   @apply bg-lingo-border rounded-full overflow-hidden;
 }
@@ -62,7 +91,11 @@ h1, h2, h3 {
   @apply bg-lingo-gold h-full rounded-full transition-all;
 }
 
-/* Footer link hover */
+/* Footer links */
 .footer-link {
-  @apply text-lingo-border hover:text-lingo-secondary transition-colors;
+  color: #E5E7EB;
+}
+
+.footer-link:hover {
+  color: #64C4B9;
 }
