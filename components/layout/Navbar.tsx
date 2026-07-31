@@ -17,32 +17,49 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-lingo-card/95 backdrop-blur-sm border-b border-lingo-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-1.5">
             <span className="text-xl font-bold text-lingo-navy">PM-Lingo</span>
-            <span className="w-2 h-2 rounded-full bg-lingo-red" />
+            {/* Aqua dot — brand accent, not orange (orange = CTA only) */}
+            <span className="w-2 h-2 rounded-full bg-lingo-secondary" />
           </Link>
 
+          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-8">
             {links.map((l) => (
-              <Link key={l.href} href={l.href} className="text-sm font-medium text-lingo-muted hover:text-lingo-navy transition-colors">
+              <Link
+                key={l.href}
+                href={l.href}
+                className="text-sm font-medium text-lingo-muted hover:text-lingo-navy transition-colors"
+              >
                 {l.label}
               </Link>
             ))}
           </div>
 
+          {/* Desktop auth */}
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/auth/login" className="text-sm font-medium text-lingo-muted hover:text-lingo-navy transition-colors">
+            <Link
+              href="/auth/login"
+              className="text-sm font-medium text-lingo-muted hover:text-lingo-navy transition-colors"
+            >
               Log in
             </Link>
-            <Link href="/auth/signup" className="bg-lingo-red hover:bg-lingo-red-dark text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
+            <Link
+              href="/auth/signup"
+              className="bg-lingo-red hover:bg-lingo-red-dark text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors"
+            >
               Start Free Trial
             </Link>
           </div>
 
+          {/* Mobile hamburger */}
           <button
             className="md:hidden p-2 rounded-lg hover:bg-lingo-bg-alt transition-colors"
             onClick={() => setOpen(!open)}
-            aria-label="Toggle menu"
+            aria-label="Toggle navigation menu"
+            aria-expanded={open}
           >
             <div className="w-5 space-y-1">
               <span className="block h-0.5 bg-lingo-text" />
@@ -52,16 +69,27 @@ export default function Navbar() {
           </button>
         </div>
 
+        {/* Mobile menu */}
         {open && (
           <div className="md:hidden pb-4 border-t border-lingo-border pt-3 space-y-1">
             {links.map((l) => (
-              <Link key={l.href} href={l.href} className="block py-2 text-sm font-medium text-lingo-heading-2 hover:text-lingo-navy" onClick={() => setOpen(false)}>
+              <Link
+                key={l.href}
+                href={l.href}
+                className="block py-2 text-sm font-medium text-lingo-heading-2 hover:text-lingo-navy"
+                onClick={() => setOpen(false)}
+              >
                 {l.label}
               </Link>
             ))}
             <div className="pt-3 space-y-2 border-t border-lingo-border mt-2">
-              <Link href="/auth/login" className="block py-2 text-sm text-lingo-muted">Log in</Link>
-              <Link href="/auth/signup" className="block bg-lingo-red text-white text-sm font-semibold px-4 py-2 rounded-lg text-center">
+              <Link href="/auth/login" className="block py-2 text-sm text-lingo-muted">
+                Log in
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="block bg-lingo-red text-white text-sm font-semibold px-4 py-2 rounded-lg text-center"
+              >
                 Start Free Trial
               </Link>
             </div>
