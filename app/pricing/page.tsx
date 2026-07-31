@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { pricingPlans } from '@/data/pricing'
-import Wave from '@/components/ui/Wave'
 import SectionLabel from '@/components/ui/SectionLabel'
 
 export const metadata = {
@@ -19,15 +18,10 @@ const faqs = [
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
 
       {/* Hero */}
-      <section className="bg-white pt-20 pb-4 px-4 text-center relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-5 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #0F766E 0%, transparent 70%)', transform: 'translate(30%, -30%)' }}
-        />
+      <section className="pt-20 pb-12 px-4 text-center border-b border-gray-100">
         <SectionLabel center>Pricing</SectionLabel>
         <h1 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(32px, 5vw, 54px)', lineHeight: 1.08 }}>Simple, honest pricing</h1>
         <p className="text-lingo-body text-xl max-w-2xl mx-auto">
@@ -35,24 +29,20 @@ export default function PricingPage() {
         </p>
       </section>
 
-      <Wave from="#FFFFFF" to="#FAFAF8" />
-
       {/* Plans */}
-      <section className="py-16 px-4" style={{ backgroundColor: '#FAFAF8' }}>
+      <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 items-start">
             {pricingPlans.map((plan) => (
               <div
                 key={plan.id}
                 className={`rounded-2xl p-8 border flex flex-col ${
-                  plan.highlighted
-                    ? 'text-white ring-4 ring-lingo-secondary/20 scale-105 shadow-2xl'
-                    : 'bg-white border-lingo-border shadow-sm'
+                  plan.highlighted ? 'scale-105 shadow-xl' : 'shadow-sm'
                 }`}
                 style={
                   plan.highlighted
-                    ? { background: 'linear-gradient(140deg, #0F766E 0%, #145E57 100%)', borderColor: 'transparent' }
-                    : {}
+                    ? { background: '#0F766E', borderColor: '#0F766E' }
+                    : { background: '#fff', borderColor: '#E5E7EB' }
                 }
               >
                 {plan.highlighted && (
@@ -69,11 +59,11 @@ export default function PricingPage() {
                     <span className={`text-sm ${plan.highlighted ? 'text-white/60' : 'text-lingo-muted'}`}>/{plan.period}</span>
                   )}
                 </div>
-                <p className={`text-base mb-6 ${plan.highlighted ? 'text-white/65' : 'text-lingo-muted'}`}>{plan.description}</p>
+                <p className={`text-base mb-6 ${plan.highlighted ? 'text-white/70' : 'text-lingo-muted'}`}>{plan.description}</p>
                 <ul className="space-y-3 mb-8 flex-1">
                   {plan.features.map((f) => (
-                    <li key={f} className={`text-base flex items-start gap-2 ${plan.highlighted ? 'text-white/80' : 'text-lingo-body'}`}>
-                      <span className={`mt-0.5 flex-shrink-0 font-bold ${plan.highlighted ? 'text-lingo-secondary' : 'text-lingo-success'}`}>✓</span>
+                    <li key={f} className={`text-base flex items-start gap-2 ${plan.highlighted ? 'text-white/85' : 'text-lingo-body'}`}>
+                      <span className={`mt-0.5 flex-shrink-0 font-bold ${plan.highlighted ? 'text-white' : 'text-lingo-navy'}`}>✓</span>
                       {f}
                     </li>
                   ))}
@@ -83,7 +73,7 @@ export default function PricingPage() {
                   className={`block text-center font-bold px-6 py-3 rounded-xl transition-colors min-h-[44px] flex items-center justify-center ${
                     plan.highlighted
                       ? 'bg-lingo-red hover:bg-lingo-red-dark text-white'
-                      : 'border-2 border-lingo-navy text-lingo-navy hover:bg-lingo-teal-soft'
+                      : 'border-2 border-lingo-navy text-lingo-navy hover:bg-gray-50'
                   }`}
                 >
                   {plan.ctaText}
@@ -94,16 +84,16 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <Wave from="#FAFAF8" to="#E8FAF8" />
+      <div className="border-t border-gray-100" />
 
       {/* FAQ */}
-      <section className="py-16 px-4" style={{ backgroundColor: '#E8FAF8' }}>
+      <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
           <SectionLabel center>Questions</SectionLabel>
           <h2 className="font-bold text-lingo-text text-center mb-12" style={{ fontSize: 'clamp(24px, 3vw, 38px)', lineHeight: 1.2 }}>Frequently asked questions</h2>
           <div className="space-y-4">
             {faqs.map((faq) => (
-              <div key={faq.q} className="bg-white rounded-xl border border-lingo-border p-6 shadow-sm">
+              <div key={faq.q} className="bg-white rounded-xl border border-gray-200 p-6">
                 <h3 className="font-bold text-lingo-text text-lg mb-2">{faq.q}</h3>
                 <p className="text-lingo-body leading-relaxed">{faq.a}</p>
               </div>
@@ -111,8 +101,6 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
-
-      <Wave from="#E8FAF8" to="#FF6B00" />
 
       {/* CTA */}
       <section className="py-16 px-4 text-center" style={{ backgroundColor: '#FF6B00' }}>

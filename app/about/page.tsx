@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import Wave from '@/components/ui/Wave'
 import SectionLabel from '@/components/ui/SectionLabel'
 
 export const metadata = {
   title: 'About — PM-Lingo',
-  description: 'PM-Lingo is built for international learners who need practical Chinese — not textbook Chinese.',
+  description: 'PM-Lingo is built for international learners who need practical Mandarin — not textbook Chinese.',
 }
 
 const stats = [
@@ -21,75 +20,49 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
 
       {/* Hero */}
-      <section className="bg-white pt-20 pb-4 px-4">
+      <section className="pt-20 pb-12 px-4 border-b border-gray-100">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <SectionLabel>Our Story</SectionLabel>
-              <h1 className="font-bold text-lingo-text mb-6 leading-tight" style={{ fontSize: 'clamp(34px, 5vw, 54px)', lineHeight: 1.08 }}>
+              <h1 className="font-bold text-lingo-text mb-6" style={{ fontSize: 'clamp(34px, 5vw, 54px)', lineHeight: 1.08 }}>
                 Chinese for the
                 <br />
                 <span className="text-lingo-navy">real world</span>
               </h1>
               <p className="text-lingo-body text-xl leading-relaxed">
-                PM-Lingo was built for international learners who need practical Chinese — not academic Chinese.
+                PM-Lingo was built for international learners who need practical Mandarin — not academic Chinese.
                 Whether you are travelling, working with Chinese colleagues, or building relationships in
                 Chinese-speaking communities, we help you communicate with confidence.
               </p>
             </div>
-            <div className="relative hidden md:block">
-              <div
-                className="absolute inset-0 rounded-3xl"
-                style={{ background: 'radial-gradient(circle at 60% 40%, #E8FAF8 0%, #F0FDFA 60%, transparent 100%)' }}
-                aria-hidden="true"
-              />
-              <div className="relative grid grid-cols-3 gap-4 py-8">
-                {stats.map((s) => (
-                  <div key={s.label} className="text-center bg-white rounded-2xl p-6 shadow-sm border border-lingo-border">
-                    <div className="text-3xl font-bold text-lingo-navy mb-1">{s.num}</div>
-                    <div className="text-sm text-lingo-body leading-snug">{s.label}</div>
-                  </div>
-                ))}
-              </div>
+            <div className="grid grid-cols-3 gap-4">
+              {stats.map((s) => (
+                <div key={s.label} className="text-center border border-gray-200 rounded-2xl p-6">
+                  <div className="text-3xl font-bold text-lingo-navy mb-1">{s.num}</div>
+                  <div className="text-sm text-lingo-body leading-snug">{s.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Mobile stats */}
-      <section className="md:hidden px-4 pb-8">
-        <div className="grid grid-cols-3 gap-4">
-          {stats.map((s) => (
-            <div key={s.label} className="text-center bg-lingo-teal-soft rounded-2xl p-5">
-              <div className="text-2xl font-bold text-lingo-navy mb-1">{s.num}</div>
-              <div className="text-sm text-lingo-body leading-snug">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <Wave from="#FFFFFF" to="#FAFAF8" />
-
       {/* Mission */}
-      <section className="py-20 px-4 relative overflow-hidden" style={{ backgroundColor: '#FAFAF8' }}>
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none opacity-40"
-          style={{ backgroundImage: 'radial-gradient(circle, #CBD5E1 1px, transparent 1px)', backgroundSize: '28px 28px' }}
-        />
-        <div className="max-w-6xl mx-auto relative">
+      <section className="py-20 px-4 border-b border-gray-100">
+        <div className="max-w-6xl mx-auto">
           <SectionLabel>Our Mission</SectionLabel>
           <div className="grid md:grid-cols-2 gap-12 items-start">
-            <h2 className="font-bold text-lingo-text leading-tight" style={{ fontSize: 'clamp(26px, 3.5vw, 40px)', lineHeight: 1.2 }}>
+            <h2 className="font-bold text-lingo-text" style={{ fontSize: 'clamp(26px, 3.5vw, 40px)', lineHeight: 1.2 }}>
               Language learning
               <br />
               <span className="text-lingo-navy">that respects your time</span>
             </h2>
             <p className="text-lingo-body text-lg leading-relaxed pt-2">
-              We believe Chinese should be learned through real-life experience, not textbook repetition.
+              We believe Mandarin should be learned through real-life experience, not textbook repetition.
               Every mission in PM-Lingo is built around a situation you will actually face — with the vocabulary,
               dialogue, and cultural context to handle it confidently.
             </p>
@@ -97,16 +70,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Wave from="#FAFAF8" to="#E8FAF8" flip />
-
       {/* Values */}
-      <section className="py-20 px-4" style={{ backgroundColor: '#E8FAF8' }}>
+      <section className="py-20 px-4 border-b border-gray-100">
         <div className="max-w-6xl mx-auto">
           <SectionLabel center>How we think</SectionLabel>
           <h2 className="font-bold text-lingo-text text-center mb-12" style={{ fontSize: 'clamp(24px, 3vw, 38px)', lineHeight: 1.2 }}>Built on three principles</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {values.map((v) => (
-              <div key={v.title} className="bg-white rounded-2xl p-8 shadow-sm border border-white">
+              <div key={v.title} className="border border-gray-200 rounded-2xl p-8">
                 <div className="text-3xl mb-4">{v.icon}</div>
                 <h3 className="font-bold text-lingo-navy text-xl mb-3">{v.title}</h3>
                 <p className="text-lingo-body text-base leading-relaxed">{v.body}</p>
@@ -116,10 +87,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Wave from="#E8FAF8" to="#FAFAF8" />
-
-      {/* Why mission-based + Built by PM Resources */}
-      <section className="py-20 px-4" style={{ backgroundColor: '#FAFAF8' }}>
+      {/* Why + Team */}
+      <section className="py-20 px-4 border-b border-gray-100">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-start">
           <div>
             <SectionLabel>The Approach</SectionLabel>
@@ -143,8 +112,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      <Wave from="#FAFAF8" to="#FF6B00" />
 
       {/* CTA */}
       <section className="py-16 px-4 text-center" style={{ backgroundColor: '#FF6B00' }}>
