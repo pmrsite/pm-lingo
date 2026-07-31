@@ -10,15 +10,59 @@
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  color: #0f0f23;
-  background: #ffffff;
+  color: #4B5563;
+  background: #FAFAF8;
   -webkit-font-smoothing: antialiased;
 }
 
+h1, h2, h3 {
+  color: #111827;
+}
+
+/* Mission tab states */
 .mission-tab-active {
   @apply border-b-2 border-lingo-red text-lingo-red font-semibold;
 }
 
 .mission-tab {
-  @apply border-b-2 border-transparent text-gray-500 hover:text-gray-900 font-medium transition-colors;
+  @apply border-b-2 border-transparent text-lingo-muted hover:text-lingo-heading-2 font-medium transition-colors;
+}
+
+/* Primary CTA button */
+.btn-primary {
+  @apply bg-lingo-red text-white font-semibold hover:bg-lingo-red-dark transition-colors;
+}
+
+/* Secondary button */
+.btn-secondary {
+  @apply bg-transparent border border-lingo-navy text-lingo-navy hover:bg-lingo-secondary-hover transition-colors;
+}
+
+/* Ghost button */
+.btn-ghost {
+  @apply text-lingo-navy hover:text-lingo-secondary transition-colors;
+}
+
+/* XP badge */
+.xp-badge {
+  @apply bg-lingo-gold-bg text-lingo-gold-text text-xs font-bold px-2 py-0.5 rounded-full;
+}
+
+/* Progress bar */
+.progress-track {
+  @apply bg-lingo-border rounded-full overflow-hidden;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #0F766E 0%, #64C4B9 100%);
+  @apply h-full rounded-full transition-all;
+}
+
+.progress-fill-gold {
+  @apply bg-lingo-gold h-full rounded-full transition-all;
+}
+
+/* Footer link hover */
+.footer-link {
+  @apply text-lingo-border hover:text-lingo-secondary transition-colors;
 }
