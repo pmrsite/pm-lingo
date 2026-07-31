@@ -2,20 +2,51 @@ import Link from 'next/link'
 import { missions } from '@/data/missions'
 import { pricingPlans } from '@/data/pricing'
 
-// ── Wave divider components ────────────────────────────────────────────────
-function WaveBottom({ fill }: { fill: string }) {
+// ── Wave divider: placed at bottom of a section, fill = next section’s bg ──
+function Wave({ from, to, flip = false }: { from: string; to: string; flip?: boolean }) {
+  const path = flip
+    ? 'M0,0 C360,80 1080,0 1440,80 L1440,0 L0,0 Z'
+    : 'M0,80 C360,0 1080,80 1440,0 L1440,80 L0,80 Z'
   return (
-    <div className="absolute bottom-0 left-0 right-0" style={{ lineHeight: 0 }} aria-hidden="true">
+    <div style={{ lineHeight: 0, background: from }} aria-hidden="true">
       <svg
         viewBox="0 0 1440 80"
         preserveAspectRatio="none"
         style={{ display: 'block', width: '100%', height: 80 }}
       >
-        <path
-          d="M0,40 C240,0 480,80 720,40 C960,0 1200,80 1440,40 L1440,80 L0,80 Z"
-          fill={fill}
-        />
+        <path d={path} fill={to} />
       </svg>
+    </div>
+  )
+}
+
+// ── Chinese speech bubble ───────────────────────────────────────────
+type BubbleVariant = 'teal' | 'aqua' | 'gold' | 'white'
+const bubbleStyles: Record<BubbleVariant, { bg: string; text: string; sub: string; border?: string }> = {
+  teal:  { bg: '#0F766E', text: '#fff',    sub: 'rgba(255,255,255,0.65)' },
+  aqua:  { bg: '#64C4B9', text: '#fff',    sub: 'rgba(255,255,255,0.75)' },
+  gold:  { bg: '#FFF8E1', text: '#B7791F', sub: '#B7791F' },
+  white: { bg: '#fff',    text: '#111827', sub: '#6B7280', border: '#E5E7EB' },
+}
+
+function ChineseBubble({
+  hanzi, pinyin, english, variant = 'teal', style,
+}: {
+  hanzi: string; pinyin: string; english: string;
+  variant?: BubbleVariant; style?: React.CSSProperties
+}) {
+  const s = bubbleStyles[variant]
+  return (
+    <div
+      className="absolute rounded-2xl px-4 py-3 shadow-lg"
+      style={{
+        background: s.bg,
+        border: s.border ? `1px solid ${s.border}` : 'none',
+        ...style,
+      }}
+    >
+      <div className="text-xl font-bold" style={{ color: s.text }}>{hanzi}</div>
+      <div className="text-xs mt-0.5" style={{ color: s.sub }}>{pinyin} · {english}</div>
     </div>
   )
 }
@@ -24,107 +55,145 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
 
-      {/* ── Hero ──────────────────────────────────────────────────── */}
-      <section
-        className="relative text-white pt-28 pb-36 px-4 overflow-hidden"
-        style={{ background: 'linear-gradient(140deg, #0F766E 0%, #0c6560 50%, #145E57 100%)' }}
-      >
-        {/* Decorative glowing blobs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <div
-            className="absolute -top-16 -right-16 w-[520px] h-[520px] rounded-full"
-            style={{ background: 'radial-gradient(circle, rgba(100,196,185,0.20) 0%, transparent 65%)' }}
-          />
-          <div
-            className="absolute bottom-24 -left-24 w-[400px] h-[400px] rounded-full"
-            style={{ background: 'radial-gradient(circle, rgba(100,196,185,0.14) 0%, transparent 65%)' }}
-          />
-          <div
-            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[280px] rounded-full"
-            style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%)' }}
-          />
-        </div>
+      {/* ── Hero: split layout ────────────────────────────────────────── */}
+      <section className="relative bg-white pt-14 sm:pt-20 pb-8 px-4 overflow-hidden">
+        {/* Soft teal blob behind right visual */}
+        <div
+          className="absolute right-0 top-0 h-full pointer-events-none"
+          aria-hidden="true"
+          style={{ width: '55%', background: 'radial-gradient(ellipse 80% 90% at 80% 50%, #E8FAF8 0%, transparent 75%)' }}
+        />
+        {/* Small decorative dot top-left */}
+        <div
+          className="absolute top-8 left-8 w-3 h-3 rounded-full pointer-events-none"
+          style={{ background: '#64C4B9', opacity: 0.5 }}
+          aria-hidden="true"
+        />
 
-        {/* Content */}
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-lingo-secondary animate-pulse" />
-            <span className="text-sm font-medium text-white/90 tracking-wide">Mission-Based Chinese Learning</span>
-          </div>
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
 
-          {/* Headline */}
-          <h1
-            className="font-bold leading-[1.05] tracking-tight mb-6 text-white"
-            style={{ fontSize: 'clamp(38px, 6vw, 68px)' }}
-          >
-            Speak Chinese<br />
-            <span className="text-lingo-secondary">with Confidence.</span>
-          </h1>
-
-          <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Learn practical Mandarin through real-world missions, AI guidance,
-            and live human coaching — designed for busy adults.
-          </p>
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/auth/signup"
-              className="bg-lingo-red hover:bg-lingo-red-dark text-white font-semibold px-8 py-3.5 rounded-xl text-base transition-colors shadow-lg shadow-black/25"
+          {/* Left — text */}
+          <div>
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-7"
+              style={{ background: '#F0FDFA', border: '1px solid rgba(100,196,185,0.35)' }}
             >
-              Start Free Trial
-            </Link>
-            <Link
-              href="/courses/chinese-survival-accelerator"
-              className="border border-white/30 hover:border-white/60 hover:bg-white/5 text-white font-medium px-8 py-3.5 rounded-xl text-base transition-all"
+              <span className="w-1.5 h-1.5 rounded-full bg-lingo-navy" />
+              <span className="text-sm font-medium text-lingo-navy tracking-wide">Mission-Based Chinese Learning</span>
+            </div>
+
+            <h1
+              className="font-bold text-lingo-text mb-5"
+              style={{ fontSize: 'clamp(38px, 5vw, 62px)', lineHeight: 1.05 }}
             >
-              Explore the Course
-            </Link>
-          </div>
+              Speak Chinese<br />
+              <span style={{ color: '#0F766E' }}>with Confidence.</span>
+            </h1>
 
-          <p className="mt-6 text-sm" style={{ color: 'rgba(255,255,255,0.42)' }}>
-            14-day free trial · Missions 1–3 free · No credit card required
-          </p>
+            <p className="text-lingo-muted text-lg mb-8 leading-relaxed" style={{ maxWidth: 440 }}>
+              Learn practical Mandarin through real-world missions, AI guidance,
+              and live human coaching — designed for busy adults.
+            </p>
 
-          {/* Glassmorphism stat cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-14">
-            {[
-              { value: '50',     label: 'Real-Life Missions' },
-              { value: '4',      label: 'AI Teachers' },
-              { value: '14-Day', label: 'Free Trial' },
-              { value: '100%',   label: 'Practical Mandarin' },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-2xl p-4 text-center"
-                style={{
-                  background: 'rgba(255,255,255,0.10)',
-                  backdropFilter: 'blur(16px)',
-                  WebkitBackdropFilter: 'blur(16px)',
-                  border: '1px solid rgba(255,255,255,0.16)',
-                }}
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/auth/signup"
+                className="bg-lingo-red hover:bg-lingo-red-dark text-white font-semibold px-8 py-3.5 rounded-xl transition-colors"
+                style={{ boxShadow: '0 6px 20px rgba(255,107,0,0.25)' }}
               >
-                <div className="text-2xl font-bold text-white">{stat.value}</div>
-                <div className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.58)' }}>{stat.label}</div>
-              </div>
-            ))}
+                Start Free Trial
+              </Link>
+              <Link
+                href="/courses/chinese-survival-accelerator"
+                className="border border-lingo-border text-lingo-heading-2 hover:border-lingo-border-hover font-medium px-8 py-3.5 rounded-xl transition-all"
+              >
+                Explore the Course
+              </Link>
+            </div>
+
+            <p className="mt-5 text-sm text-lingo-disabled">
+              14-day free trial · Missions 1–3 free · No credit card required
+            </p>
+          </div>
+
+          {/* Right — Chinese speech bubble visual */}
+          <div className="relative flex items-center justify-center" style={{ minHeight: 380 }}>
+            {/* Large soft circle */}
+            <div
+              className="rounded-full"
+              style={{
+                width: 260, height: 260,
+                background: 'linear-gradient(135deg, #E0F7F5 0%, #F0FDFA 100%)',
+              }}
+            />
+
+            {/* Central Chinese character */}
+            <div className="absolute flex flex-col items-center text-center">
+              <span
+                className="font-bold"
+                style={{ fontSize: 72, lineHeight: 1, color: '#0F766E' }}
+              >
+                普
+              </span>
+              <span className="text-xs text-lingo-muted mt-2 font-medium tracking-wider uppercase">Mandarin Chinese</span>
+            </div>
+
+            {/* Floating speech bubbles */}
+            <ChineseBubble hanzi="你好！" pinyin="Nǐ hǎo" english="Hello" variant="teal"
+              style={{ top: 24, left: 0 }} />
+            <ChineseBubble hanzi="谢谢" pinyin="Xièxie" english="Thank you" variant="aqua"
+              style={{ top: 48, right: -8 }} />
+            <ChineseBubble hanzi="再见" pinyin="Zàijiàn" english="Goodbye" variant="white"
+              style={{ bottom: 56, left: -8 }} />
+            <ChineseBubble hanzi="对不起" pinyin="Duìbu qǐ" english="Sorry" variant="gold"
+              style={{ bottom: 24, right: 0 }} />
+
+            {/* Small decorative circles */}
+            <div className="absolute w-4 h-4 rounded-full" style={{ background: '#64C4B9', opacity: 0.4, top: 8, right: '35%' }} aria-hidden="true" />
+            <div className="absolute w-3 h-3 rounded-full" style={{ background: '#F6C453', opacity: 0.6, bottom: 12, left: '35%' }} aria-hidden="true" />
           </div>
         </div>
 
-        {/* Wave → #FAFAF8 */}
-        <WaveBottom fill="#FAFAF8" />
+        {/* Stats strip */}
+        <div className="max-w-6xl mx-auto mt-14 relative z-10">
+          <div
+            className="rounded-2xl p-5"
+            style={{ background: '#FAFAF8', border: '1px solid #E5E7EB' }}
+          >
+            <div className="flex flex-wrap justify-around gap-6">
+              {[
+                { value: '50',     label: 'Real-Life Missions' },
+                { value: '4',      label: 'AI Teacher Personalities' },
+                { value: '14-Day', label: 'Free Trial' },
+                { value: '100%',   label: 'Practical Mandarin' },
+              ].map((stat) => (
+                <div key={stat.label} className="flex flex-col items-center">
+                  <span className="text-2xl font-bold" style={{ color: '#0F766E' }}>{stat.value}</span>
+                  <span className="text-xs text-lingo-muted mt-0.5 uppercase tracking-wide">{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* ── Value Pillars ──────────────────────────────────────────── */}
-      <section className="relative pt-16 pb-36 px-4 overflow-hidden" style={{ background: '#FAFAF8' }}>
+      {/* Wave: white → surface */}
+      <Wave from="#FFFFFF" to="#FAFAF8" />
+
+      {/* ── Value Pillars ────────────────────────────────────────── */}
+      <section className="py-24 px-4" style={{ background: '#FAFAF8' }}>
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(26px, 4vw, 42px)' }}>
-              A smarter way to learn Mandarin
-            </h2>
-            <p className="text-lingo-muted text-lg max-w-xl mx-auto leading-relaxed">
-              Structured missions, AI practice, and real human coaching — in one complete system.
+          {/* Asymmetric header: label + heading left, description right */}
+          <div className="grid md:grid-cols-2 gap-8 mb-16 items-end">
+            <div>
+              <p className="text-xs font-semibold text-lingo-navy uppercase tracking-widest mb-3">Why PM-Lingo</p>
+              <h2 className="font-bold text-lingo-text" style={{ fontSize: 'clamp(26px, 4vw, 42px)', lineHeight: 1.15 }}>
+                A smarter way<br />to learn Mandarin
+              </h2>
+            </div>
+            <p className="text-lingo-muted text-lg leading-relaxed self-end">
+              Structured missions, AI practice, and real human coaching —
+              three elements that work together in one complete system.
             </p>
           </div>
 
@@ -134,25 +203,22 @@ export default function HomePage() {
                 icon: '🎯',
                 bg: '#F0FDFA',
                 title: 'Mission-Based Learning',
-                description:
-                  'Every mission is a real-world scenario — greetings, ordering food, taking a taxi. You learn exactly what you need, nothing more.',
+                description: 'Every mission is a real-world scenario — greetings, ordering food, taking a taxi. No filler, no fluff.',
               },
               {
                 icon: '🤖',
                 bg: '#ECFDF5',
                 title: 'AI Tutor Practice',
-                description:
-                  'Practise with four distinct AI teachers, each with a unique personality. Get instant feedback, 24/7, without judgment.',
+                description: 'Practise with four distinct AI teachers, each with a unique personality. Get instant feedback, 24/7.',
               },
               {
                 icon: '👩‍🏫',
                 bg: '#FFF8E1',
                 title: 'Human Teacher Sessions',
-                description:
-                  'Book live sessions with certified coaches to fix pronunciation, practise conversation, and build the confidence AI alone cannot give.',
+                description: 'Book live sessions with certified coaches to fix pronunciation and build the confidence AI alone cannot give.',
               },
             ].map((p) => (
-              <div key={p.title} className="flex flex-col items-start">
+              <div key={p.title}>
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-5 shrink-0"
                   style={{ background: p.bg }}
@@ -165,33 +231,24 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-
-        {/* Wave → white */}
-        <WaveBottom fill="#FFFFFF" />
       </section>
 
-      {/* ── How It Works ─────────────────────────────────────────── */}
-      <section className="relative pt-16 pb-36 px-4 overflow-hidden bg-white">
-        {/* Decorative right blob */}
-        <div
-          className="absolute right-0 top-0 w-[600px] h-[600px] rounded-full pointer-events-none"
-          aria-hidden="true"
-          style={{
-            background: 'radial-gradient(circle, rgba(100,196,185,0.07) 0%, transparent 65%)',
-            transform: 'translate(35%, -25%)',
-          }}
-        />
+      {/* Wave: surface → soft teal */}
+      <Wave from="#FAFAF8" to="#E8FAF8" />
 
-        <div className="relative z-10 max-w-5xl mx-auto">
+      {/* ── How It Works: organic teal blob section ───────────────────── */}
+      <section className="py-24 px-4" style={{ background: '#E8FAF8' }}>
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(26px, 4vw, 42px)' }}>
+            <p className="text-xs font-semibold text-lingo-navy uppercase tracking-widest mb-3">The Method</p>
+            <h2 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(26px, 4vw, 42px)', lineHeight: 1.15 }}>
               How it works
             </h2>
             <p className="text-lingo-muted text-lg">Three steps to real Mandarin confidence</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Gradient connecting line — desktop only */}
+            {/* Gradient connecting line (desktop) */}
             <div
               className="hidden md:block absolute top-5 h-px pointer-events-none"
               aria-hidden="true"
@@ -201,25 +258,21 @@ export default function HomePage() {
                 background: 'linear-gradient(90deg, #0F766E, #64C4B9, #0F766E)',
               }}
             />
-
             {[
               {
                 step: '1',
                 title: 'Choose a mission',
-                description:
-                  'Pick a real-world scenario that matches your goal — from basic greetings to business meetings.',
+                description: 'Pick a real-world scenario that matches your goal — from greetings to business meetings.',
               },
               {
                 step: '2',
                 title: 'Learn and practise',
-                description:
-                  'Study vocabulary, practise with AI tutors, and get instant feedback on every response.',
+                description: 'Study vocabulary, practise with AI tutors, and get instant feedback on every response.',
               },
               {
                 step: '3',
                 title: 'Build confidence',
-                description:
-                  'Book a live session with a certified teacher to speak real Mandarin with confidence.',
+                description: 'Book a live session with a certified teacher to speak real Mandarin with confidence.',
               },
             ].map((s) => (
               <div key={s.step} className="flex flex-col items-center text-center">
@@ -235,28 +288,29 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-
-        {/* Wave → #FAFAF8 */}
-        <WaveBottom fill="#FAFAF8" />
       </section>
 
+      {/* Wave: soft teal → surface */}
+      <Wave from="#E8FAF8" to="#FAFAF8" flip />
+
       {/* ── Mission Preview ────────────────────────────────────────── */}
-      <section className="relative pt-16 pb-36 px-4 overflow-hidden" style={{ background: '#FAFAF8' }}>
-        {/* Subtle radial dot grid */}
+      <section className="relative py-24 px-4 overflow-hidden" style={{ background: '#FAFAF8' }}>
+        {/* Dot texture */}
         <div
           className="absolute inset-0 pointer-events-none"
           aria-hidden="true"
           style={{
-            backgroundImage: 'radial-gradient(rgba(15,118,110,0.12) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(rgba(15,118,110,0.1) 1px, transparent 1px)',
             backgroundSize: '28px 28px',
-            maskImage: 'radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%)',
-            WebkitMaskImage: 'radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%)',
+            maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%)',
           }}
         />
 
         <div className="relative z-10 max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(26px, 4vw, 42px)' }}>
+            <p className="text-xs font-semibold text-lingo-navy uppercase tracking-widest mb-3">Get Started</p>
+            <h2 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(26px, 4vw, 42px)', lineHeight: 1.15 }}>
               Your first 5 missions
             </h2>
             <p className="text-lingo-muted text-lg">From zero to functional Mandarin — in real situations</p>
@@ -269,13 +323,16 @@ export default function HomePage() {
                 href={`/student/mission/${mission.slug}`}
                 className="bg-white rounded-2xl border border-lingo-border p-6 hover:border-lingo-border-hover hover:shadow-md transition-all group relative overflow-hidden"
               >
-                {/* Top gradient accent on hover */}
+                {/* Gradient accent on hover */}
                 <div
                   className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{ background: 'linear-gradient(90deg, #0F766E, #64C4B9)' }}
                 />
                 <div className="flex items-start justify-between mb-4">
-                  <span className="text-2xl font-bold tabular-nums" style={{ color: 'rgba(107,114,128,0.35)' }}>
+                  <span
+                    className="text-2xl font-bold tabular-nums"
+                    style={{ color: 'rgba(107,114,128,0.30)' }}
+                  >
                     {String(mission.number).padStart(2, '0')}
                   </span>
                   <span className="xp-badge">+{mission.xpReward} XP</span>
@@ -290,7 +347,6 @@ export default function HomePage() {
               </Link>
             ))}
 
-            {/* Coming soon */}
             <div className="rounded-2xl border-2 border-dashed border-lingo-border p-6 flex flex-col items-center justify-center text-center min-h-[180px]">
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center mb-4 text-xl"
@@ -305,18 +361,19 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-
-        {/* Wave → white */}
-        <WaveBottom fill="#FFFFFF" />
       </section>
 
+      {/* Wave: surface → white */}
+      <Wave from="#FAFAF8" to="#FFFFFF" />
+
       {/* ── Pricing Teaser ────────────────────────────────────────── */}
-      <section className="relative pt-16 pb-36 px-4 overflow-hidden bg-white">
-        {/* Decorative left blob */}
+      <section className="relative py-24 px-4 overflow-hidden bg-white">
+        {/* Decorative blob */}
         <div
-          className="absolute left-0 bottom-0 w-[500px] h-[500px] rounded-full pointer-events-none"
+          className="absolute left-0 bottom-0 pointer-events-none"
           aria-hidden="true"
           style={{
+            width: 500, height: 500,
             background: 'radial-gradient(circle, rgba(15,118,110,0.07) 0%, transparent 65%)',
             transform: 'translate(-35%, 35%)',
           }}
@@ -324,7 +381,8 @@ export default function HomePage() {
 
         <div className="relative z-10 max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(26px, 4vw, 42px)' }}>
+            <p className="text-xs font-semibold text-lingo-navy uppercase tracking-widest mb-3">Pricing</p>
+            <h2 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(26px, 4vw, 42px)', lineHeight: 1.15 }}>
               Simple, honest pricing
             </h2>
             <p className="text-lingo-muted text-lg">Start free. Upgrade when you are ready.</p>
@@ -341,7 +399,10 @@ export default function HomePage() {
               >
                 {plan.highlighted && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="bg-lingo-gold text-[#5C4300] text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-sm">
+                    <span
+                      className="text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-sm"
+                      style={{ background: '#F6C453', color: '#5C4300' }}
+                    >
                       BEST VALUE
                     </span>
                   </div>
@@ -396,31 +457,26 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-
-        {/* Wave → orange CTA */}
-        <WaveBottom fill="#FF6B00" />
       </section>
 
+      {/* Wave: white → orange CTA */}
+      <Wave from="#FFFFFF" to="#FF6B00" />
+
       {/* ── CTA Banner ─────────────────────────────────────────────── */}
-      <section className="relative pt-16 pb-24 px-4 overflow-hidden" style={{ background: '#FF6B00' }}>
-        {/* Decorative blobs */}
+      <section className="relative py-20 px-4 overflow-hidden" style={{ background: '#FF6B00' }}>
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <div
             className="absolute top-0 right-[12%] w-80 h-80 rounded-full"
             style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.09) 0%, transparent 65%)' }}
           />
-          <div
-            className="absolute bottom-0 left-[8%] w-64 h-64 rounded-full"
-            style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 65%)' }}
-          />
         </div>
-
         <div className="relative z-10 max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-3">Ready to speak real Chinese?</h2>
           <p className="text-white/80 mb-8 text-lg">Start your free 14-day trial — no credit card required.</p>
           <Link
             href="/auth/signup"
-            className="inline-block bg-white text-lingo-red font-bold px-8 py-3.5 rounded-xl text-base hover:bg-gray-50 transition-colors shadow-lg shadow-black/10"
+            className="inline-block bg-white text-lingo-red font-bold px-8 py-3.5 rounded-xl text-base hover:bg-gray-50 transition-colors"
+            style={{ boxShadow: '0 6px 24px rgba(0,0,0,0.12)' }}
           >
             Start Free Trial
           </Link>
