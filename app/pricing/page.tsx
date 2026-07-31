@@ -31,6 +31,7 @@ function Wave({ from, to, flip = false }: { from: string; to: string; flip?: boo
 export default function PricingPage() {
   return (
     <div className="min-h-screen">
+
       {/* Hero */}
       <section className="bg-white pt-20 pb-4 px-4 text-center relative overflow-hidden">
         <div
@@ -38,9 +39,13 @@ export default function PricingPage() {
           className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-5 pointer-events-none"
           style={{ background: 'radial-gradient(circle, #0F766E 0%, transparent 70%)', transform: 'translate(30%, -30%)' }}
         />
-        <p className="text-xs font-bold tracking-widest text-lingo-navy uppercase mb-4">Pricing</p>
-        <h1 className="text-4xl md:text-5xl font-bold text-lingo-text mb-4">Simple, honest pricing</h1>
-        <p className="text-xl text-lingo-body max-w-2xl mx-auto">
+        <div className="flex items-center justify-center gap-2.5 mb-4">
+          <span className="w-6 h-0.5 rounded-full inline-block" style={{ background: '#0F766E' }} />
+          <span className="text-sm font-bold uppercase tracking-widest" style={{ color: '#0F766E' }}>Pricing</span>
+          <span className="w-6 h-0.5 rounded-full inline-block" style={{ background: '#0F766E' }} />
+        </div>
+        <h1 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(32px, 5vw, 54px)', lineHeight: 1.08 }}>Simple, honest pricing</h1>
+        <p className="text-lingo-body text-xl max-w-2xl mx-auto">
           No hidden fees. No complicated tiers. Start free and upgrade when you are ready.
         </p>
       </section>
@@ -49,7 +54,7 @@ export default function PricingPage() {
 
       {/* Plans */}
       <section className="py-16 px-4" style={{ backgroundColor: '#FAFAF8' }}>
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 items-start">
             {pricingPlans.map((plan) => (
               <div
@@ -74,10 +79,10 @@ export default function PricingPage() {
                     <span className={`text-sm ${plan.highlighted ? 'text-lingo-secondary' : 'text-lingo-muted'}`}>/{plan.period}</span>
                   )}
                 </div>
-                <p className={`text-sm mb-6 ${plan.highlighted ? 'text-lingo-secondary' : 'text-lingo-muted'}`}>{plan.description}</p>
+                <p className={`text-base mb-6 ${plan.highlighted ? 'text-lingo-secondary' : 'text-lingo-muted'}`}>{plan.description}</p>
                 <ul className="space-y-3 mb-8 flex-1">
                   {plan.features.map((f) => (
-                    <li key={f} className={`text-sm flex items-start gap-2 ${plan.highlighted ? 'text-gray-300' : 'text-lingo-body'}`}>
+                    <li key={f} className={`text-base flex items-start gap-2 ${plan.highlighted ? 'text-gray-300' : 'text-lingo-body'}`}>
                       <span className="text-lingo-success mt-0.5 flex-shrink-0 font-bold">✓</span>
                       {f}
                     </li>
@@ -103,14 +108,18 @@ export default function PricingPage() {
 
       {/* FAQ */}
       <section className="py-16 px-4" style={{ backgroundColor: '#F0FDFA' }}>
-        <div className="max-w-3xl mx-auto">
-          <p className="text-xs font-bold tracking-widest text-lingo-navy uppercase text-center mb-3">Questions</p>
-          <h2 className="text-3xl font-bold text-lingo-text text-center mb-12">Frequently asked questions</h2>
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-center gap-2.5 mb-4">
+            <span className="w-6 h-0.5 rounded-full inline-block" style={{ background: '#0F766E' }} />
+            <span className="text-sm font-bold uppercase tracking-widest" style={{ color: '#0F766E' }}>Questions</span>
+            <span className="w-6 h-0.5 rounded-full inline-block" style={{ background: '#0F766E' }} />
+          </div>
+          <h2 className="font-bold text-lingo-text text-center mb-12" style={{ fontSize: 'clamp(24px, 3vw, 38px)', lineHeight: 1.2 }}>Frequently asked questions</h2>
           <div className="space-y-4">
             {faqs.map((faq) => (
               <div key={faq.q} className="bg-white rounded-xl border border-lingo-border p-6 shadow-sm">
-                <h3 className="font-bold text-lingo-text mb-2">{faq.q}</h3>
-                <p className="text-lingo-body text-sm leading-relaxed">{faq.a}</p>
+                <h3 className="font-bold text-lingo-text text-lg mb-2">{faq.q}</h3>
+                <p className="text-lingo-body leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
@@ -121,12 +130,9 @@ export default function PricingPage() {
 
       {/* CTA */}
       <section className="py-16 px-4 text-center" style={{ backgroundColor: '#FF6B00' }}>
-        <h2 className="text-3xl font-bold text-white mb-4">Still have questions?</h2>
-        <p className="text-orange-100 mb-6 max-w-xl mx-auto">Our team is happy to help. Reach out and we will get back to you within one business day.</p>
-        <Link
-          href="/contact"
-          className="inline-block bg-white text-lingo-red font-bold px-8 py-3 rounded-xl hover:bg-orange-50 transition-colors"
-        >
+        <h2 className="text-4xl font-bold text-white mb-4">Still have questions?</h2>
+        <p className="text-orange-100 text-lg mb-6 max-w-xl mx-auto">Our team is happy to help. Reach out and we will get back to you within one business day.</p>
+        <Link href="/contact" className="inline-block bg-white text-lingo-red font-bold px-8 py-3 rounded-xl hover:bg-orange-50 transition-colors">
           Contact us →
         </Link>
       </section>
