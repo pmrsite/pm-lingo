@@ -1,29 +1,10 @@
+import Link from 'next/link'
+import Wave from '@/components/ui/Wave'
+import SectionLabel from '@/components/ui/SectionLabel'
+
 export const metadata = {
   title: 'About — PM-Lingo',
   description: 'PM-Lingo is built for international learners who need practical Chinese — not textbook Chinese.',
-}
-
-function Wave({ from, to, flip = false }: { from: string; to: string; flip?: boolean }) {
-  const path = flip
-    ? 'M0,0 C360,80 1080,0 1440,80 L1440,0 L0,0 Z'
-    : 'M0,80 C360,0 1080,80 1440,0 L1440,80 L0,80 Z'
-  return (
-    <div style={{ lineHeight: 0, background: from }} aria-hidden="true">
-      <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: 80 }}>
-        <path d={path} fill={to} />
-      </svg>
-    </div>
-  )
-}
-
-function SectionLabel({ children, center = false }: { children: React.ReactNode; center?: boolean }) {
-  return (
-    <div className={`flex items-center gap-2.5 mb-4 ${center ? 'justify-center' : ''}`}>
-      <span className="w-6 h-0.5 rounded-full inline-block" style={{ background: '#0F766E' }} />
-      <span className="text-sm font-bold uppercase tracking-widest" style={{ color: '#0F766E' }}>{children}</span>
-      {center && <span className="w-6 h-0.5 rounded-full inline-block" style={{ background: '#0F766E' }} />}
-    </div>
-  )
 }
 
 const stats = [
@@ -42,7 +23,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen">
 
-      {/* Hero — split layout */}
+      {/* Hero */}
       <section className="bg-white pt-20 pb-4 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -82,7 +63,7 @@ export default function AboutPage() {
       <section className="md:hidden px-4 pb-8">
         <div className="grid grid-cols-3 gap-4">
           {stats.map((s) => (
-            <div key={s.label} className="text-center bg-lingo-teal-soft rounded-2xl p-5">
+            <div key={s.label} className="text-center bg-lingo-aqua-soft rounded-2xl p-5">
               <div className="text-2xl font-bold text-lingo-navy mb-1">{s.num}</div>
               <div className="text-sm text-lingo-body leading-snug">{s.label}</div>
             </div>
@@ -90,14 +71,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Wave from="#FFFFFF" to="#FAFAF8" />
+      <Wave from="#FFFFFF" to="#FCFBF8" />
 
       {/* Mission */}
-      <section className="py-20 px-4 relative overflow-hidden" style={{ backgroundColor: '#FAFAF8' }}>
+      <section className="py-20 px-4 relative overflow-hidden" style={{ backgroundColor: '#FCFBF8' }}>
         <div
           aria-hidden="true"
-          className="absolute inset-0 pointer-events-none opacity-40"
-          style={{ backgroundImage: 'radial-gradient(circle, #CBD5E1 1px, transparent 1px)', backgroundSize: '28px 28px' }}
+          className="absolute inset-0 pointer-events-none opacity-30"
+          style={{ backgroundImage: 'radial-gradient(circle, #D1CDD8 1px, transparent 1px)', backgroundSize: '28px 28px' }}
         />
         <div className="max-w-6xl mx-auto relative">
           <SectionLabel>Our Mission</SectionLabel>
@@ -116,10 +97,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Wave from="#FAFAF8" to="#E8FAF8" flip />
+      <Wave from="#FCFBF8" to="#E8FAF7" flip />
 
       {/* Values */}
-      <section className="py-20 px-4" style={{ backgroundColor: '#E8FAF8' }}>
+      <section className="py-20 px-4" style={{ backgroundColor: '#E8FAF7' }}>
         <div className="max-w-6xl mx-auto">
           <SectionLabel center>How we think</SectionLabel>
           <h2 className="font-bold text-lingo-text text-center mb-12" style={{ fontSize: 'clamp(24px, 3vw, 38px)', lineHeight: 1.2 }}>Built on three principles</h2>
@@ -135,10 +116,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Wave from="#E8FAF8" to="#FAFAF8" />
+      <Wave from="#E8FAF7" to="#FCFBF8" />
 
       {/* Why mission-based + Built by PM Resources */}
-      <section className="py-20 px-4" style={{ backgroundColor: '#FAFAF8' }}>
+      <section className="py-20 px-4" style={{ backgroundColor: '#FCFBF8' }}>
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-start">
           <div>
             <SectionLabel>The Approach</SectionLabel>
@@ -163,15 +144,15 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Wave from="#FAFAF8" to="#FF6B00" />
+      <Wave from="#FCFBF8" to="#C21883" />
 
       {/* CTA */}
-      <section className="py-16 px-4 text-center" style={{ backgroundColor: '#FF6B00' }}>
+      <section className="py-16 px-4 text-center" style={{ backgroundColor: '#C21883' }}>
         <h2 className="text-4xl font-bold text-white mb-4">Start your first mission today</h2>
-        <p className="text-orange-100 text-lg mb-8 max-w-xl mx-auto">14 days free. No credit card required. Cancel anytime.</p>
-        <a href="/auth/signup" className="inline-block bg-white text-lingo-red font-bold px-8 py-3 rounded-xl hover:bg-orange-50 transition-colors">
+        <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">14 days free. No credit card required. Cancel anytime.</p>
+        <Link href="/auth/signup" className="inline-block bg-white font-bold px-8 py-3 rounded-xl hover:bg-lingo-magenta-soft transition-colors" style={{ color: '#C21883' }}>
           Try free for 14 days →
-        </a>
+        </Link>
       </section>
     </div>
   )

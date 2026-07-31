@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { pricingPlans } from '@/data/pricing'
+import Wave from '@/components/ui/Wave'
+import SectionLabel from '@/components/ui/SectionLabel'
 
 export const metadata = {
   title: 'Pricing — PM-Lingo',
@@ -15,19 +17,6 @@ const faqs = [
   { q: 'Can I switch between monthly and annual?', a: 'Yes. You can upgrade from monthly to annual at any time and we will prorate the difference.' },
 ]
 
-function Wave({ from, to, flip = false }: { from: string; to: string; flip?: boolean }) {
-  const path = flip
-    ? 'M0,0 C360,80 1080,0 1440,80 L1440,0 L0,0 Z'
-    : 'M0,80 C360,0 1080,80 1440,0 L1440,80 L0,80 Z'
-  return (
-    <div style={{ lineHeight: 0, background: from }} aria-hidden="true">
-      <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: 80 }}>
-        <path d={path} fill={to} />
-      </svg>
-    </div>
-  )
-}
-
 export default function PricingPage() {
   return (
     <div className="min-h-screen">
@@ -39,21 +28,17 @@ export default function PricingPage() {
           className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-5 pointer-events-none"
           style={{ background: 'radial-gradient(circle, #0F766E 0%, transparent 70%)', transform: 'translate(30%, -30%)' }}
         />
-        <div className="flex items-center justify-center gap-2.5 mb-4">
-          <span className="w-6 h-0.5 rounded-full inline-block" style={{ background: '#0F766E' }} />
-          <span className="text-sm font-bold uppercase tracking-widest" style={{ color: '#0F766E' }}>Pricing</span>
-          <span className="w-6 h-0.5 rounded-full inline-block" style={{ background: '#0F766E' }} />
-        </div>
+        <SectionLabel center>Pricing</SectionLabel>
         <h1 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(32px, 5vw, 54px)', lineHeight: 1.08 }}>Simple, honest pricing</h1>
         <p className="text-lingo-body text-xl max-w-2xl mx-auto">
           No hidden fees. No complicated tiers. Start free and upgrade when you are ready.
         </p>
       </section>
 
-      <Wave from="#FFFFFF" to="#FAFAF8" />
+      <Wave from="#FFFFFF" to="#FCFBF8" />
 
       {/* Plans */}
-      <section className="py-16 px-4" style={{ backgroundColor: '#FAFAF8' }}>
+      <section className="py-16 px-4" style={{ backgroundColor: '#FCFBF8' }}>
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 items-start">
             {pricingPlans.map((plan) => (
@@ -61,12 +46,17 @@ export default function PricingPage() {
                 key={plan.id}
                 className={`rounded-2xl p-8 border flex flex-col ${
                   plan.highlighted
-                    ? 'bg-lingo-navy border-lingo-navy text-white ring-4 ring-lingo-secondary/30 scale-105 shadow-2xl'
+                    ? 'text-white ring-4 ring-lingo-aqua/20 scale-105 shadow-2xl'
                     : 'bg-white border-lingo-border shadow-sm'
                 }`}
+                style={
+                  plan.highlighted
+                    ? { background: 'linear-gradient(140deg, #0F766E 0%, #0B625C 100%)', borderColor: 'transparent' }
+                    : {}
+                }
               >
                 {plan.highlighted && (
-                  <div className="bg-lingo-gold-bg text-lingo-gold-text text-xs font-bold px-3 py-1 rounded-full inline-block mb-4 self-start border border-lingo-gold">
+                  <div className="text-xs font-bold px-3 py-1 rounded-full inline-block mb-4 self-start" style={{ background: '#FFD24A', color: '#5C3200' }}>
                     MOST POPULAR
                   </div>
                 )}
@@ -76,24 +66,24 @@ export default function PricingPage() {
                     {plan.price === 0 ? 'Free' : `$${plan.price}`}
                   </span>
                   {plan.price > 0 && (
-                    <span className={`text-sm ${plan.highlighted ? 'text-lingo-secondary' : 'text-lingo-muted'}`}>/{plan.period}</span>
+                    <span className={`text-sm ${plan.highlighted ? 'text-white/60' : 'text-lingo-muted'}`}>/{plan.period}</span>
                   )}
                 </div>
-                <p className={`text-base mb-6 ${plan.highlighted ? 'text-lingo-secondary' : 'text-lingo-muted'}`}>{plan.description}</p>
+                <p className={`text-base mb-6 ${plan.highlighted ? 'text-white/65' : 'text-lingo-muted'}`}>{plan.description}</p>
                 <ul className="space-y-3 mb-8 flex-1">
                   {plan.features.map((f) => (
-                    <li key={f} className={`text-base flex items-start gap-2 ${plan.highlighted ? 'text-gray-300' : 'text-lingo-body'}`}>
-                      <span className="text-lingo-success mt-0.5 flex-shrink-0 font-bold">✓</span>
+                    <li key={f} className={`text-base flex items-start gap-2 ${plan.highlighted ? 'text-white/80' : 'text-lingo-body'}`}>
+                      <span className={`mt-0.5 flex-shrink-0 font-bold ${plan.highlighted ? 'text-lingo-aqua' : 'text-lingo-success'}`}>✓</span>
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link
                   href="/auth/signup"
-                  className={`block text-center font-bold px-6 py-3 rounded-xl transition-colors ${
+                  className={`block text-center font-bold px-6 py-3 rounded-xl transition-colors min-h-[44px] flex items-center justify-center ${
                     plan.highlighted
-                      ? 'bg-lingo-red hover:bg-lingo-red-dark text-white'
-                      : 'border-2 border-lingo-navy text-lingo-navy hover:bg-lingo-navy hover:text-white'
+                      ? 'bg-lingo-magenta hover:bg-lingo-magenta-dark text-white'
+                      : 'border-2 border-lingo-navy text-lingo-navy hover:bg-lingo-aqua-soft'
                   }`}
                 >
                   {plan.ctaText}
@@ -104,16 +94,12 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <Wave from="#FAFAF8" to="#F0FDFA" />
+      <Wave from="#FCFBF8" to="#F1ECFA" />
 
       {/* FAQ */}
-      <section className="py-16 px-4" style={{ backgroundColor: '#F0FDFA' }}>
+      <section className="py-16 px-4" style={{ backgroundColor: '#F1ECFA' }}>
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-center gap-2.5 mb-4">
-            <span className="w-6 h-0.5 rounded-full inline-block" style={{ background: '#0F766E' }} />
-            <span className="text-sm font-bold uppercase tracking-widest" style={{ color: '#0F766E' }}>Questions</span>
-            <span className="w-6 h-0.5 rounded-full inline-block" style={{ background: '#0F766E' }} />
-          </div>
+          <SectionLabel center>Questions</SectionLabel>
           <h2 className="font-bold text-lingo-text text-center mb-12" style={{ fontSize: 'clamp(24px, 3vw, 38px)', lineHeight: 1.2 }}>Frequently asked questions</h2>
           <div className="space-y-4">
             {faqs.map((faq) => (
@@ -126,13 +112,13 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <Wave from="#F0FDFA" to="#FF6B00" />
+      <Wave from="#F1ECFA" to="#C21883" />
 
       {/* CTA */}
-      <section className="py-16 px-4 text-center" style={{ backgroundColor: '#FF6B00' }}>
+      <section className="py-16 px-4 text-center" style={{ backgroundColor: '#C21883' }}>
         <h2 className="text-4xl font-bold text-white mb-4">Still have questions?</h2>
-        <p className="text-orange-100 text-lg mb-6 max-w-xl mx-auto">Our team is happy to help. Reach out and we will get back to you within one business day.</p>
-        <Link href="/contact" className="inline-block bg-white text-lingo-red font-bold px-8 py-3 rounded-xl hover:bg-orange-50 transition-colors">
+        <p className="text-white/80 text-lg mb-6 max-w-xl mx-auto">Our team is happy to help. Reach out and we will get back to you within one business day.</p>
+        <Link href="/contact" className="inline-block bg-white font-bold px-8 py-3 rounded-xl hover:bg-lingo-magenta-soft transition-colors" style={{ color: '#C21883' }}>
           Contact us →
         </Link>
       </section>
