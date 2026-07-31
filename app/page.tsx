@@ -62,7 +62,7 @@ export default function HomePage() {
             </div>
 
             <h1 className="font-bold text-lingo-text mb-5" style={{ fontSize: 'clamp(38px, 5vw, 62px)', lineHeight: 1.05 }}>
-              Speak Chinese<br />
+              Speak <span style={{ color: '#FF6B00' }}>Mandarin</span><br />
               <span style={{ color: '#0F766E' }}>with Confidence.</span>
             </h1>
 
@@ -383,7 +383,7 @@ export default function HomePage() {
           <div className="absolute top-0 right-[12%] w-80 h-80 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.09) 0%, transparent 65%)' }} />
         </div>
         <div className="relative z-10 max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-3">Ready to speak real Chinese?</h2>
+          <h2 className="text-4xl font-bold text-white mb-3">Ready to speak real Mandarin?</h2>
           <p className="text-white/80 mb-8 text-lg">Start your free 14-day trial — no credit card required.</p>
           <Link
             href="/auth/signup"
