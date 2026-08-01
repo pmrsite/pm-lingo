@@ -52,7 +52,8 @@ small, .caption { font-size: 14px; line-height: 1.5; color: #6B7280; }
 }
 
 .progress-track     { @apply bg-lingo-border rounded-full overflow-hidden; }
-.progress-fill      { background: linear-gradient(90deg, #2B2E63 0%, #64C4B9 100%); @apply h-full rounded-full transition-all; }
+/* teal progress fill — orange start to teal end */
+.progress-fill      { background: linear-gradient(90deg, #FF6B00 0%, #0F766E 100%); @apply h-full rounded-full transition-all; }
 .progress-fill-gold { @apply bg-lingo-gold h-full rounded-full transition-all; }
 
 .footer-link       { color: #E5E7EB; transition: color 0.15s; }

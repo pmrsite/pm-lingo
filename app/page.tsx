@@ -32,7 +32,7 @@ function ChineseBubble({
 }
 
 const teacherAccents: Record<string, { accent: string; textColor: string; emoji: string }> = {
-  mei: { accent: '#64C4B9', textColor: '#2B2E63', emoji: '🧘' },
+  mei: { accent: '#0F766E', textColor: '#0F766E', emoji: '🧘' },
   lin: { accent: '#E0006A', textColor: '#C2005C', emoji: '✨' },
   jun: { accent: '#2B2E63', textColor: '#1E2147', emoji: '📚' },
   kai: { accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯' },
@@ -44,14 +44,14 @@ const testimonials = [
     role: 'Marketing Manager',
     quote: 'I ordered food entirely in Mandarin on my KL business trip. The AI practice gave me the confidence to actually try.',
     initial: 'S',
-    color: '#2B2E63',
+    color: '#0F766E',
   },
   {
     name: 'David C.',
     role: 'Software Engineer',
     quote: 'Mission 7 — Taking a Taxi — literally saved me on my first day in Shenzhen. That real-world focus is what sets PM-Lingo apart.',
     initial: 'D',
-    color: '#E0006A',
+    color: '#2B2E63',
   },
   {
     name: 'Priya M.',
@@ -63,31 +63,29 @@ const testimonials = [
 ]
 
 const upcomingSessions = [
-  { month: 'AUG', day: '5',  title: 'Live Pronunciation Clinic',     teacher: 'with Teacher Mei', color: '#2B2E63' },
+  { month: 'AUG', day: '5',  title: 'Live Pronunciation Clinic',           teacher: 'with Teacher Mei', color: '#0F766E' },
   { month: 'AUG', day: '12', title: 'Conversational Practice: Ordering Food', teacher: 'with Teacher Lin', color: '#E0006A' },
-  { month: 'AUG', day: '19', title: 'Business Mandarin: Introductions', teacher: 'with Teacher Jun', color: '#FF6B00' },
+  { month: 'AUG', day: '19', title: 'Business Mandarin: Introductions',      teacher: 'with Teacher Jun', color: '#2B2E63' },
 ]
 
 const homeStats = [
-  { value: 50,  suffix: '+', label: 'Real-Life Missions' },
-  { value: 4,   suffix: '',  label: 'AI Teacher Personalities' },
+  { value: 50,  suffix: '+',    label: 'Real-Life Missions' },
+  { value: 4,   suffix: '',     label: 'AI Teacher Personalities' },
   { value: 14,  suffix: '-Day', label: 'Free Trial' },
-  { value: 100, suffix: '%', label: 'Practical Mandarin' },
+  { value: 100, suffix: '%',    label: 'Practical Mandarin' },
 ]
 
 export default function HomePage() {
   return (
     <div className="flex flex-col">
 
-      {/* ── Hero ──────────────────────────────────────────────────────── */}
+      {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section className="bg-white pt-14 sm:pt-20 pb-12 px-4">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <div
-              className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-7 border border-lingo-border"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-lingo-navy" />
-              <span className="text-sm font-medium text-lingo-navy tracking-wide">Mission-Based Chinese Learning</span>
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-7 border border-lingo-border">
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#0F766E' }} />
+              <span className="text-sm font-medium tracking-wide" style={{ color: '#0F766E' }}>Mission-Based Mandarin Learning</span>
             </div>
 
             <h1 className="font-bold text-lingo-text mb-5" style={{ fontSize: 'clamp(38px, 5vw, 62px)', lineHeight: 1.05 }}>
@@ -161,7 +159,7 @@ export default function HomePage() {
             {[
               { icon: '🎯', title: 'Mission-Based Learning', description: 'Every mission is a real-world scenario — greetings, ordering food, taking a taxi. No filler, no fluff.', accent: '#FF6B00' },
               { icon: '🤖', title: 'AI Tutor Practice',      description: 'Practise with four distinct AI teachers, each with a unique personality. Get instant feedback, 24/7.',     accent: '#E0006A' },
-              { icon: '👩‍🏫', title: 'Human Teacher Sessions', description: 'Book live sessions with certified coaches to fix pronunciation and build the confidence AI alone cannot give.', accent: '#2B2E63' },
+              { icon: '👩‍🏫', title: 'Human Teacher Sessions', description: 'Book live sessions with certified coaches to fix pronunciation and build the confidence AI alone cannot give.', accent: '#0F766E' },
             ].map((p) => (
               <div key={p.title} className="border border-gray-200 rounded-2xl p-8 relative overflow-hidden">
                 <div className="absolute top-0 left-0 right-0 h-1" style={{ background: p.accent }} />
@@ -177,7 +175,7 @@ export default function HomePage() {
       {/* ── Find Your Level ───────────────────────────────────────────────── */}
       <section style={{ background: '#2B2E63' }} className="py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#E0006A' }}>Free Placement Quiz</p>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#64C4B9' }}>Free Placement Quiz</p>
           <h2 className="font-bold text-white mb-4" style={{ fontSize: 'clamp(24px, 4vw, 38px)', lineHeight: 1.2 }}>
             Not sure where to start?<br />Find your Mandarin level.
           </h2>
@@ -206,9 +204,9 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { step: '1', title: 'Choose a mission',  description: 'Pick a real-world scenario that matches your goal — from greetings to business meetings.', color: '#FF6B00' },
+              { step: '1', title: 'Choose a mission',   description: 'Pick a real-world scenario that matches your goal — from greetings to business meetings.', color: '#FF6B00' },
               { step: '2', title: 'Learn and practise', description: 'Study vocabulary, practise with AI tutors, and get instant feedback on every response.',   color: '#E0006A' },
-              { step: '3', title: 'Build confidence',  description: 'Book a live session with a certified teacher to speak real Mandarin with confidence.',       color: '#2B2E63' },
+              { step: '3', title: 'Build confidence',   description: 'Book a live session with a certified teacher to speak real Mandarin with confidence.',       color: '#0F766E' },
             ].map((s) => (
               <div key={s.step} className="flex flex-col items-center text-center">
                 <div
@@ -244,10 +242,7 @@ export default function HomePage() {
             {aiTeachers.map((t) => {
               const a = teacherAccents[t.id] ?? teacherAccents.mei
               return (
-                <div
-                  key={t.id}
-                  className="rounded-2xl overflow-hidden border border-gray-200"
-                >
+                <div key={t.id} className="rounded-2xl overflow-hidden border border-gray-200">
                   <div className="h-1.5" style={{ background: a.accent }} />
                   <div className="p-6 bg-white">
                     <div className="text-2xl mb-4">{a.emoji}</div>
@@ -285,7 +280,7 @@ export default function HomePage() {
 
           <div className="grid sm:grid-cols-3 gap-5">
             {upcomingSessions.map((s) => (
-              <div key={s.title} className="flex gap-4 border border-gray-200 rounded-2xl p-5 hover:border-lingo-navy hover:shadow-sm transition-all group">
+              <div key={s.title} className="flex gap-4 border border-gray-200 rounded-2xl p-5 hover:border-lingo-navy hover:shadow-sm transition-all">
                 <div
                   className="rounded-xl flex flex-col items-center justify-center shrink-0 text-white"
                   style={{ background: s.color, width: 56, height: 56 }}
@@ -305,7 +300,7 @@ export default function HomePage() {
 
       <div className="border-t border-gray-100" />
 
-      {/* ── Mission Preview ─────────────────────────────────────────────────── */}
+      {/* ── Mission Preview ───────────────────────────────────────────────── */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -321,7 +316,7 @@ export default function HomePage() {
                 href={`/student/mission/${mission.slug}`}
                 className="bg-white rounded-2xl border border-gray-200 p-6 hover:border-lingo-navy hover:shadow-md transition-all group relative overflow-hidden"
               >
-                <div className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-lingo-navy" />
+                <div className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-lingo-teal" />
                 <div className="flex items-start justify-between mb-4">
                   <span className="text-2xl font-bold tabular-nums text-gray-200">{String(mission.number).padStart(2, '0')}</span>
                   <span className="xp-badge">+{mission.xpReward} XP</span>
@@ -347,7 +342,7 @@ export default function HomePage() {
 
       <div className="border-t border-gray-100" />
 
-      {/* ── Testimonials ─────────────────────────────────────────────────── */}
+      {/* ── Testimonials ──────────────────────────────────────────────────── */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
@@ -361,7 +356,6 @@ export default function HomePage() {
             {testimonials.map((t) => (
               <div key={t.name} className="border border-gray-200 rounded-2xl p-7 flex flex-col relative overflow-hidden">
                 <div className="absolute top-0 left-0 right-0 h-1" style={{ background: t.color }} />
-                {/* Stars */}
                 <div className="flex gap-0.5 mb-5 mt-2">
                   {[1,2,3,4,5].map((i) => (
                     <span key={i} style={{ color: '#F59E0B', fontSize: 16 }}>★</span>
@@ -388,7 +382,7 @@ export default function HomePage() {
 
       <div className="border-t border-gray-100" />
 
-      {/* ── Pricing Teaser ─────────────────────────────────────────────────── */}
+      {/* ── Pricing Teaser ────────────────────────────────────────────────── */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
@@ -398,16 +392,21 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-5">
-            {pricingPlans.map((plan) => (
+            {pricingPlans.map((plan, i) => (
               <div
                 key={plan.id}
-                className="rounded-2xl p-7 border relative"
+                className="rounded-2xl p-7 border relative overflow-hidden"
                 style={
                   plan.highlighted
-                    ? { background: '#2B2E63', borderColor: '#2B2E63', color: '#fff' }
+                    ? { background: '#2B2E63', borderColor: '#2B2E63' }
                     : { background: '#fff', borderColor: '#E5E7EB' }
                 }
               >
+                {/* top accent bar: teal for free, pink badge for best value, orange for pro */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-1"
+                  style={{ background: i === 0 ? '#0F766E' : i === 2 ? '#FF6B00' : 'transparent' }}
+                />
                 {plan.highlighted && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                     <span className="text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap" style={{ background: '#E0006A', color: '#fff' }}>BEST VALUE</span>
@@ -422,7 +421,7 @@ export default function HomePage() {
                 <ul className="space-y-2.5 mb-6">
                   {plan.features.map((f) => (
                     <li key={f} className={`text-sm flex items-start gap-2 ${plan.highlighted ? 'text-white/85' : 'text-lingo-body'}`}>
-                      <span className={`mt-0.5 shrink-0 font-bold ${plan.highlighted ? 'text-white' : 'text-lingo-navy'}`}>✓</span>
+                      <span className={`mt-0.5 shrink-0 font-bold ${plan.highlighted ? 'text-white' : ''}`} style={!plan.highlighted ? { color: '#0F766E' } : {}}>✓</span>
                       {f}
                     </li>
                   ))}
@@ -447,7 +446,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── CTA Banner ───────────────────────────────────────────────────── */}
+      {/* ── CTA Banner ────────────────────────────────────────────────────── */}
       <section className="py-20 px-4" style={{ background: '#FF6B00' }}>
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-3">Ready to speak real Mandarin?</h2>

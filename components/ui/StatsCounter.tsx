@@ -31,7 +31,6 @@ function Counter({ value, prefix = '', suffix = '' }: { value: number; prefix?: 
     const step = (ts: number) => {
       if (!startTime) startTime = ts
       const progress = Math.min((ts - startTime) / duration, 1)
-      // ease-out curve
       const eased = 1 - Math.pow(1 - progress, 3)
       setCount(Math.floor(eased * value))
       if (progress < 1) requestAnimationFrame(step)
@@ -40,7 +39,7 @@ function Counter({ value, prefix = '', suffix = '' }: { value: number; prefix?: 
   }, [started, value])
 
   return (
-    <span ref={ref} className="text-2xl font-bold text-lingo-navy">
+    <span ref={ref} className="text-2xl font-bold" style={{ color: '#0F766E' }}>
       {prefix}{count}{suffix}
     </span>
   )
