@@ -3,6 +3,7 @@ import { missions } from '@/data/missions'
 import { pricingPlans } from '@/data/pricing'
 import { aiTeachers } from '@/data/aiTeachers'
 import SectionLabel from '@/components/ui/SectionLabel'
+import StatsCounter from '@/components/ui/StatsCounter'
 
 type BubbleVariant = 'navy' | 'pink' | 'gold' | 'white'
 const bubbleStyles: Record<BubbleVariant, { bg: string; text: string; sub: string; border?: string }> = {
@@ -13,15 +14,15 @@ const bubbleStyles: Record<BubbleVariant, { bg: string; text: string; sub: strin
 }
 
 function ChineseBubble({
-  hanzi, pinyin, english, variant = 'navy', style,
+  hanzi, pinyin, english, variant = 'navy', style, animClass,
 }: {
   hanzi: string; pinyin: string; english: string;
-  variant?: BubbleVariant; style?: React.CSSProperties
+  variant?: BubbleVariant; style?: React.CSSProperties; animClass?: string
 }) {
   const s = bubbleStyles[variant]
   return (
     <div
-      className="absolute rounded-2xl px-4 py-3 shadow-md"
+      className={`absolute rounded-2xl px-4 py-3 shadow-md ${animClass ?? ''}`}
       style={{ background: s.bg, border: s.border ? `1px solid ${s.border}` : 'none', ...style }}
     >
       <div className="text-xl font-bold" style={{ color: s.text }}>{hanzi}</div>
@@ -36,6 +37,43 @@ const teacherAccents: Record<string, { accent: string; textColor: string; emoji:
   jun: { accent: '#2B2E63', textColor: '#1E2147', emoji: '📚' },
   kai: { accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯' },
 }
+
+const testimonials = [
+  {
+    name: 'Sarah L.',
+    role: 'Marketing Manager',
+    quote: 'I ordered food entirely in Mandarin on my KL business trip. The AI practice gave me the confidence to actually try.',
+    initial: 'S',
+    color: '#2B2E63',
+  },
+  {
+    name: 'David C.',
+    role: 'Software Engineer',
+    quote: 'Mission 7 — Taking a Taxi — literally saved me on my first day in Shenzhen. That real-world focus is what sets PM-Lingo apart.',
+    initial: 'D',
+    color: '#E0006A',
+  },
+  {
+    name: 'Priya M.',
+    role: 'HR Director',
+    quote: 'My team uses PM-Lingo before client meetings in China. The business Mandarin missions are practical and straight to the point.',
+    initial: 'P',
+    color: '#FF6B00',
+  },
+]
+
+const upcomingSessions = [
+  { month: 'AUG', day: '5',  title: 'Live Pronunciation Clinic',     teacher: 'with Teacher Mei', color: '#2B2E63' },
+  { month: 'AUG', day: '12', title: 'Conversational Practice: Ordering Food', teacher: 'with Teacher Lin', color: '#E0006A' },
+  { month: 'AUG', day: '19', title: 'Business Mandarin: Introductions', teacher: 'with Teacher Jun', color: '#FF6B00' },
+]
+
+const homeStats = [
+  { value: 50,  suffix: '+', label: 'Real-Life Missions' },
+  { value: 4,   suffix: '',  label: 'AI Teacher Personalities' },
+  { value: 14,  suffix: '-Day', label: 'Free Trial' },
+  { value: 100, suffix: '%', label: 'Practical Mandarin' },
+]
 
 export default function HomePage() {
   return (
@@ -86,29 +124,17 @@ export default function HomePage() {
               <span className="font-bold" style={{ fontSize: 72, lineHeight: 1, color: '#2B2E63' }}>普</span>
               <span className="text-xs text-lingo-muted mt-2 font-medium tracking-wider uppercase">Mandarin Chinese</span>
             </div>
-            <ChineseBubble hanzi="你好！" pinyin="Nǐ hǎo" english="Hello" variant="navy" style={{ top: 24, left: 0 }} />
-            <ChineseBubble hanzi="谢谢" pinyin="Xièxie" english="Thank you" variant="pink" style={{ top: 48, right: -8 }} />
-            <ChineseBubble hanzi="再见" pinyin="Zàijiàn" english="Goodbye" variant="white" style={{ bottom: 56, left: -8 }} />
-            <ChineseBubble hanzi="对不起" pinyin="Duìbu qǐ" english="Sorry" variant="gold" style={{ bottom: 24, right: 0 }} />
+            <ChineseBubble hanzi="你好！" pinyin="Nǐ hǎo" english="Hello"      variant="navy"  animClass="bubble-float-1" style={{ top: 24,   left: 0   }} />
+            <ChineseBubble hanzi="谢谢"   pinyin="Xièxie" english="Thank you" variant="pink"  animClass="bubble-float-2" style={{ top: 48,   right: -8 }} />
+            <ChineseBubble hanzi="再见"   pinyin="Zàijiàn" english="Goodbye"  variant="white" animClass="bubble-float-3" style={{ bottom: 56, left: -8  }} />
+            <ChineseBubble hanzi="对不起" pinyin="Duìbu qǐ" english="Sorry"   variant="gold"  animClass="bubble-float-4" style={{ bottom: 24, right: 0  }} />
           </div>
         </div>
 
         {/* Stats bar */}
         <div className="max-w-6xl mx-auto mt-14">
           <div className="rounded-2xl p-5 border border-gray-200">
-            <div className="flex flex-wrap justify-around gap-6">
-              {[
-                { value: '50',     label: 'Real-Life Missions' },
-                { value: '4',      label: 'AI Teacher Personalities' },
-                { value: '14-Day', label: 'Free Trial' },
-                { value: '100%',   label: 'Practical Mandarin' },
-              ].map((stat) => (
-                <div key={stat.label} className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-lingo-navy">{stat.value}</span>
-                  <span className="text-xs text-lingo-muted mt-0.5 uppercase tracking-wide">{stat.label}</span>
-                </div>
-              ))}
-            </div>
+            <StatsCounter stats={homeStats} />
           </div>
         </div>
       </section>
@@ -145,6 +171,25 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Find Your Level ───────────────────────────────────────────────── */}
+      <section style={{ background: '#2B2E63' }} className="py-16 px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#E0006A' }}>Free Placement Quiz</p>
+          <h2 className="font-bold text-white mb-4" style={{ fontSize: 'clamp(24px, 4vw, 38px)', lineHeight: 1.2 }}>
+            Not sure where to start?<br />Find your Mandarin level.
+          </h2>
+          <p className="mb-8 text-lg" style={{ color: 'rgba(255,255,255,0.75)' }}>
+            Answer 10 quick questions and we'll recommend the right mission to begin with.
+          </p>
+          <Link
+            href="/placement-test"
+            className="inline-flex items-center gap-2 bg-lingo-red hover:bg-lingo-red-dark text-white font-semibold px-8 py-3.5 rounded-xl transition-colors min-h-[48px]"
+          >
+            Take the Quiz — it's free
+          </Link>
         </div>
       </section>
 
@@ -225,6 +270,41 @@ export default function HomePage() {
 
       <div className="border-t border-gray-100" />
 
+      {/* ── Upcoming Live Sessions ────────────────────────────────────────── */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+            <div>
+              <SectionLabel>Live Coaching</SectionLabel>
+              <h2 className="font-bold text-lingo-text" style={{ fontSize: 'clamp(24px, 3vw, 36px)', lineHeight: 1.2 }}>Upcoming live sessions</h2>
+            </div>
+            <Link href="/teachers" className="text-sm font-semibold text-lingo-navy hover:text-lingo-pink transition-colors shrink-0">
+              View all sessions →
+            </Link>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-5">
+            {upcomingSessions.map((s) => (
+              <div key={s.title} className="flex gap-4 border border-gray-200 rounded-2xl p-5 hover:border-lingo-navy hover:shadow-sm transition-all group">
+                <div
+                  className="rounded-xl flex flex-col items-center justify-center shrink-0 text-white"
+                  style={{ background: s.color, width: 56, height: 56 }}
+                >
+                  <span className="text-xs font-bold uppercase leading-none">{s.month}</span>
+                  <span className="text-xl font-bold leading-tight">{s.day}</span>
+                </div>
+                <div>
+                  <p className="font-semibold text-lingo-text text-sm leading-snug mb-0.5">{s.title}</p>
+                  <p className="text-xs text-lingo-muted">{s.teacher}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="border-t border-gray-100" />
+
       {/* ── Mission Preview ─────────────────────────────────────────────────── */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
@@ -261,6 +341,47 @@ export default function HomePage() {
               <p className="text-lingo-heading-2 font-semibold text-sm mb-1">45 more missions coming</p>
               <p className="text-lingo-disabled text-xs leading-relaxed" style={{ maxWidth: 160 }}>New missions monthly. Annual members get early access.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="border-t border-gray-100" />
+
+      {/* ── Testimonials ─────────────────────────────────────────────────── */}
+      <section className="py-24 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-14">
+            <SectionLabel center>What Learners Say</SectionLabel>
+            <h2 className="font-bold text-lingo-text mb-4" style={{ fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 1.15 }}>
+              Real results,<br />real Mandarin
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((t) => (
+              <div key={t.name} className="border border-gray-200 rounded-2xl p-7 flex flex-col relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1" style={{ background: t.color }} />
+                {/* Stars */}
+                <div className="flex gap-0.5 mb-5 mt-2">
+                  {[1,2,3,4,5].map((i) => (
+                    <span key={i} style={{ color: '#F59E0B', fontSize: 16 }}>★</span>
+                  ))}
+                </div>
+                <p className="text-lingo-body text-base leading-relaxed mb-6 flex-1">&ldquo;{t.quote}&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
+                    style={{ background: t.color }}
+                  >
+                    {t.initial}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-lingo-text text-sm leading-none mb-0.5">{t.name}</p>
+                    <p className="text-xs text-lingo-muted">{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
