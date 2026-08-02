@@ -7,15 +7,15 @@ export const metadata = {
 }
 
 const stats = [
-  { num: '50', label: 'Real-life missions' },
-  { num: '4', label: 'AI teacher personalities' },
-  { num: '14', label: 'Day free trial' },
+  { num: '50+', label: 'Real-life missions' },
+  { num: '4',   label: 'AI teacher personalities' },
+  { num: '14',  label: 'Day free trial' },
 ]
 
 const values = [
-  { icon: '🎯', title: 'Situation first', body: 'We start with the real scenario — ordering food, taking a taxi, meeting a client. Language is the tool, not the lesson.', accent: '#FF6B00' },
-  { icon: '🤝', title: 'Cultural fluency', body: 'Every mission includes regional notes covering Mainland China, Taiwan, Malaysia, and international contexts — because context changes meaning.', accent: '#E0006A' },
-  { icon: '🤖', title: 'AI as your coach', body: 'Our AI tutor adapts to your pace, corrects your tones, and gives personalised feedback — available 24/7, without judgment.', accent: '#2B2E63' },
+  { icon: '🎯', title: 'Situation first',    body: 'We start with the real scenario — ordering food, taking a taxi, meeting a client. Language is the tool, not the lesson.', accent: '#FF6B00' },
+  { icon: '🤝', title: 'Cultural fluency',   body: 'Every mission includes regional notes covering Mainland China, Taiwan, Malaysia, and international contexts — because context changes meaning.', accent: '#E0006A' },
+  { icon: '🤖', title: 'AI as your coach',   body: 'Our AI tutor adapts to your pace, corrects your tones, and gives personalised feedback — available 24/7, without judgment.', accent: '#0F766E' },
 ]
 
 export default function AboutPage() {
@@ -29,9 +29,9 @@ export default function AboutPage() {
             <div>
               <SectionLabel>Our Story</SectionLabel>
               <h1 className="font-bold text-lingo-text mb-6" style={{ fontSize: 'clamp(34px, 5vw, 54px)', lineHeight: 1.08 }}>
-                Chinese for the
+                Mandarin for the
                 <br />
-                <span className="text-lingo-navy">real world</span>
+                <span style={{ color: '#0F766E' }}>real world</span>
               </h1>
               <p className="text-lingo-body text-xl leading-relaxed">
                 PM-Lingo was built for international learners who need practical Mandarin — not academic Chinese.
@@ -42,7 +42,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-3 gap-4">
               {stats.map((s) => (
                 <div key={s.label} className="text-center border border-gray-200 rounded-2xl p-6">
-                  <div className="text-3xl font-bold text-lingo-navy mb-1">{s.num}</div>
+                  <div className="text-3xl font-bold mb-1" style={{ color: '#0F766E' }}>{s.num}</div>
                   <div className="text-sm text-lingo-body leading-snug">{s.label}</div>
                 </div>
               ))}
@@ -59,7 +59,7 @@ export default function AboutPage() {
             <h2 className="font-bold text-lingo-text" style={{ fontSize: 'clamp(26px, 3.5vw, 40px)', lineHeight: 1.2 }}>
               Language learning
               <br />
-              <span className="text-lingo-navy">that respects your time</span>
+              <span style={{ color: '#0F766E' }}>that respects your time</span>
             </h2>
             <p className="text-lingo-body text-lg leading-relaxed pt-2">
               We believe Mandarin should be learned through real-life experience, not textbook repetition.
@@ -80,7 +80,7 @@ export default function AboutPage() {
               <div key={v.title} className="border border-gray-200 rounded-2xl p-8 relative overflow-hidden">
                 <div className="absolute top-0 left-0 right-0 h-1" style={{ background: v.accent }} />
                 <div className="text-3xl mb-4 mt-2">{v.icon}</div>
-                <h3 className="font-bold text-lingo-navy text-xl mb-3">{v.title}</h3>
+                <h3 className="font-bold text-xl mb-3" style={{ color: v.accent }}>{v.title}</h3>
                 <p className="text-lingo-body text-base leading-relaxed">{v.body}</p>
               </div>
             ))}

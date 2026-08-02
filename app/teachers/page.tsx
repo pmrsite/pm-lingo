@@ -5,7 +5,7 @@ import SectionLabel from '@/components/ui/SectionLabel'
 export const metadata = { title: 'Teachers — PM-Lingo' }
 
 const teacherAccents: Record<string, { accent: string; textColor: string; emoji: string }> = {
-  mei: { accent: '#64C4B9', textColor: '#2B2E63', emoji: '🧘' },
+  mei: { accent: '#0F766E', textColor: '#0F766E', emoji: '🧘' },
   lin: { accent: '#E0006A', textColor: '#C2005C', emoji: '✨' },
   jun: { accent: '#2B2E63', textColor: '#1E2147', emoji: '📚' },
   kai: { accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯' },
@@ -63,9 +63,7 @@ export default function TeachersPage() {
                         </div>
                       ))}
 
-                      <button
-                        className="w-full text-sm font-medium px-4 py-2.5 rounded-xl border border-gray-200 text-lingo-muted hover:border-gray-300 transition-colors mt-2"
-                      >
+                      <button className="w-full text-sm font-medium px-4 py-2.5 rounded-xl border border-gray-200 text-lingo-muted hover:border-gray-300 transition-colors mt-2">
                         🎤 Voice demo coming soon
                       </button>
                     </div>

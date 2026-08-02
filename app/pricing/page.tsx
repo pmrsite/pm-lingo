@@ -4,7 +4,7 @@ import SectionLabel from '@/components/ui/SectionLabel'
 
 export const metadata = {
   title: 'Pricing — PM-Lingo',
-  description: 'Simple, honest pricing for Chinese language learning. Start free, upgrade anytime.',
+  description: 'Simple, honest pricing for Mandarin language learning. Start free, upgrade anytime.',
 }
 
 const faqs = [
@@ -15,6 +15,8 @@ const faqs = [
   { q: 'Is there a student or group discount?', a: 'Yes. Contact us at hello@pm-lingo.com for group pricing for schools, companies, or cohorts of 5 or more learners.' },
   { q: 'Can I switch between monthly and annual?', a: 'Yes. You can upgrade from monthly to annual at any time and we will prorate the difference.' },
 ]
+
+const planAccents = ['#0F766E', '#2B2E63', '#FF6B00']
 
 export default function PricingPage() {
   return (
@@ -33,10 +35,10 @@ export default function PricingPage() {
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 items-start">
-            {pricingPlans.map((plan) => (
+            {pricingPlans.map((plan, i) => (
               <div
                 key={plan.id}
-                className={`rounded-2xl p-8 border flex flex-col ${
+                className={`rounded-2xl p-8 border flex flex-col relative overflow-hidden ${
                   plan.highlighted ? 'scale-105 shadow-xl' : 'shadow-sm'
                 }`}
                 style={
@@ -45,6 +47,10 @@ export default function PricingPage() {
                     : { background: '#fff', borderColor: '#E5E7EB' }
                 }
               >
+                {/* top accent bar */}
+                {!plan.highlighted && (
+                  <div className="absolute top-0 left-0 right-0 h-1" style={{ background: planAccents[i] }} />
+                )}
                 {plan.highlighted && (
                   <div className="text-xs font-bold px-3 py-1 rounded-full inline-block mb-4 self-start" style={{ background: '#E0006A', color: '#fff' }}>
                     MOST POPULAR
@@ -63,7 +69,10 @@ export default function PricingPage() {
                 <ul className="space-y-3 mb-8 flex-1">
                   {plan.features.map((f) => (
                     <li key={f} className={`text-base flex items-start gap-2 ${plan.highlighted ? 'text-white/85' : 'text-lingo-body'}`}>
-                      <span className={`mt-0.5 flex-shrink-0 font-bold ${plan.highlighted ? 'text-white' : 'text-lingo-navy'}`}>✓</span>
+                      <span
+                        className="mt-0.5 flex-shrink-0 font-bold"
+                        style={{ color: plan.highlighted ? '#fff' : planAccents[i] }}
+                      >✓</span>
                       {f}
                     </li>
                   ))}
