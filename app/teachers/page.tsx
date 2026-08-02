@@ -7,7 +7,7 @@ export const metadata = { title: 'Teachers — PM-Lingo' }
 const teacherAccents: Record<string, { accent: string; textColor: string; emoji: string }> = {
   mei: { accent: '#0F766E', textColor: '#0F766E', emoji: '🧘' },
   lin: { accent: '#E0006A', textColor: '#C2005C', emoji: '✨' },
-  jun: { accent: '#2B2E63', textColor: '#1E2147', emoji: '📚' },
+  jun: { accent: '#0C4A45', textColor: '#0C4A45', emoji: '📚' },
   kai: { accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯' },
 }
 
@@ -63,7 +63,7 @@ export default function TeachersPage() {
                         </div>
                       ))}
 
-                      <button className="w-full text-sm font-medium px-4 py-2.5 rounded-xl border border-gray-200 text-lingo-muted hover:border-gray-300 transition-colors mt-2">
+                      <button className="w-full text-sm font-medium px-4 py-2.5 rounded-xl border border-gray-200 text-lingo-muted hover:border-lingo-teal hover:text-lingo-teal transition-colors mt-2">
                         🎤 Voice demo coming soon
                       </button>
                     </div>
@@ -98,7 +98,7 @@ export default function TeachersPage() {
           <h2 className="text-3xl font-bold text-white mb-3">Start learning with your AI teacher today</h2>
           <p className="text-white/80 mb-8">14-day free trial. No credit card required.</p>
           <Link href="/auth/signup" className="inline-block bg-white text-lingo-red font-bold px-8 py-3.5 rounded-xl hover:bg-gray-50 transition-colors">
-            Join the waitlist
+            Start Free Trial
           </Link>
         </div>
       </section>

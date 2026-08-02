@@ -4,10 +4,10 @@ import { useState } from 'react'
 
 const links = [
   { href: '/courses/chinese-survival-accelerator', label: 'Courses' },
-  { href: '/pricing', label: 'Pricing' },
+  { href: '/pricing',    label: 'Pricing' },
   { href: '/pinyin-lab', label: 'Pinyin Lab' },
-  { href: '/teachers', label: 'Teachers' },
-  { href: '/about', label: 'About' },
+  { href: '/teachers',   label: 'Teachers' },
+  { href: '/about',      label: 'About' },
 ]
 
 export default function Navbar() {
@@ -20,8 +20,8 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1.5">
-            <span className="text-xl font-bold text-lingo-navy">PM-Lingo</span>
-            <span className="w-2 h-2 rounded-full bg-lingo-pink" />
+            <span className="text-xl font-bold text-lingo-teal">PM-Lingo</span>
+            <span className="w-2 h-2 rounded-full bg-lingo-red" />
           </Link>
 
           {/* Desktop nav */}
@@ -30,7 +30,7 @@ export default function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm font-medium text-lingo-muted hover:text-lingo-navy transition-colors"
+                className="text-sm font-medium text-lingo-muted hover:text-lingo-teal transition-colors"
               >
                 {l.label}
               </Link>
@@ -41,7 +41,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/auth/login"
-              className="text-sm font-medium text-lingo-muted hover:text-lingo-navy transition-colors"
+              className="text-sm font-medium text-lingo-muted hover:text-lingo-teal transition-colors"
             >
               Log in
             </Link>
@@ -75,7 +75,7 @@ export default function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="block py-2 text-sm font-medium text-lingo-heading-2 hover:text-lingo-navy"
+                className="block py-2 text-sm font-medium text-lingo-heading-2 hover:text-lingo-teal"
                 onClick={() => setOpen(false)}
               >
                 {l.label}

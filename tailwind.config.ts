@@ -18,53 +18,54 @@ const config: Config = {
         'lingo-caption': ['14px', { lineHeight: '1.5',  fontWeight: '400' }],
       },
       colors: {
-        // ── Primary Brand: Corporate Blue ─────────────────────────────
-        'lingo-navy':          '#2B2E63',
-        'lingo-navy-dark':     '#1E2147',
-        'lingo-navy-light':    '#3B3F8C',
+        // ── Primary Brand: Teal ─────────────────────────────────────
+        'lingo-teal':          '#0F766E',
+        'lingo-teal-dark':     '#0C4A45',
+        'lingo-teal-soft':     '#F0FDFA',
+        'lingo-secondary':     '#64C4B9',
+        'lingo-secondary-hover': '#F0FDFA',
 
-        // ── Corporate Pink ────────────────────────────────────────────
-        'lingo-pink':          '#E0006A',
-        'lingo-pink-dark':     '#C2005C',
-        'lingo-pink-soft':     '#FFE5F0',
-
-        // ── CTA: Orange ───────────────────────────────────────────────
+        // ── Primary Action: Orange ──────────────────────────────
         'lingo-red':           '#FF6B00',
         'lingo-red-dark':      '#E85D04',
         'lingo-red-light':     '#FF8C38',
 
-        // ── Supporting: Teal ──────────────────────────────────────────
-        'lingo-secondary':       '#64C4B9',
-        'lingo-secondary-hover': '#F0FDFA',
-        'lingo-teal':            '#0F766E',
-        'lingo-teal-soft':       '#F0FDFA',
+        // ── Deep Contrast: Navy (use sparingly) ──────────────────
+        'lingo-navy':          '#2B2E63',
+        'lingo-navy-dark':     '#1E2147',
+        'lingo-navy-light':    '#3B3F8C',
 
-        // ── Energy: Yellow / Gold ─────────────────────────────────────
+        // ── Minor Accent: Pink ──────────────────────────────────
+        'lingo-pink':          '#E0006A',
+        'lingo-pink-dark':     '#C2005C',
+        'lingo-pink-soft':     '#FFE5F0',
+
+        // ── Energy: Yellow / Gold ────────────────────────────
         'lingo-yellow':      '#FFD24A',
         'lingo-yellow-soft': '#FFF5C7',
         'lingo-gold':        '#F6C453',
         'lingo-gold-bg':     '#FFF8E1',
         'lingo-gold-text':   '#8A6415',
 
-        // ── Status ────────────────────────────────────────────────────
+        // ── Status ──────────────────────────────────────────────
         'lingo-success':      '#22C55E',
         'lingo-success-soft': '#ECFDF5',
         'lingo-warning':      '#F59E0B',
         'lingo-error':        '#EF4444',
 
-        // ── Backgrounds ───────────────────────────────────────────────
+        // ── Backgrounds ───────────────────────────────────────
         'lingo-surface':   '#FCFBF8',
         'lingo-card':      '#FFFFFF',
         'lingo-bg-alt':    '#F5F7F8',
 
-        // ── Typography ────────────────────────────────────────────────
+        // ── Typography ──────────────────────────────────────
         'lingo-text':      '#171717',
         'lingo-heading-2': '#252525',
         'lingo-body':      '#596273',
         'lingo-muted':     '#70798A',
         'lingo-disabled':  '#9AA1AE',
 
-        // ── Borders ───────────────────────────────────────────────────
+        // ── Borders ──────────────────────────────────────────
         'lingo-border':       '#E7E5EA',
         'lingo-border-hover': '#D1CDD8',
       },
@@ -72,8 +73,8 @@ const config: Config = {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        'lingo-hero':     'linear-gradient(160deg, #2B2E63 0%, #1E2147 55%, #1A1D40 100%)',
-        'lingo-progress': 'linear-gradient(90deg, #2B2E63 0%, #64C4B9 100%)',
+        'lingo-hero':     'linear-gradient(160deg, #0F766E 0%, #0C4A45 55%, #0A3D38 100%)',
+        'lingo-progress': 'linear-gradient(90deg, #FF6B00 0%, #0F766E 100%)',
       },
       borderRadius: {
         'lingo-sm': '8px',

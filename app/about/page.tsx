@@ -13,9 +13,9 @@ const stats = [
 ]
 
 const values = [
-  { icon: '🎯', title: 'Situation first',    body: 'We start with the real scenario — ordering food, taking a taxi, meeting a client. Language is the tool, not the lesson.', accent: '#FF6B00' },
-  { icon: '🤝', title: 'Cultural fluency',   body: 'Every mission includes regional notes covering Mainland China, Taiwan, Malaysia, and international contexts — because context changes meaning.', accent: '#E0006A' },
-  { icon: '🤖', title: 'AI as your coach',   body: 'Our AI tutor adapts to your pace, corrects your tones, and gives personalised feedback — available 24/7, without judgment.', accent: '#0F766E' },
+  { icon: '🎯', title: 'Situation first',  body: 'We start with the real scenario — ordering food, taking a taxi, meeting a client. Language is the tool, not the lesson.', accent: '#FF6B00' },
+  { icon: '🤝', title: 'Cultural fluency', body: 'Every mission includes regional notes covering Mainland China, Taiwan, Malaysia, and international contexts — because context changes meaning.', accent: '#0F766E' },
+  { icon: '🤖', title: 'AI as your coach', body: 'Our AI tutor adapts to your pace, corrects your tones, and gives personalised feedback — available 24/7, without judgment.', accent: '#0C4A45' },
 ]
 
 export default function AboutPage() {
@@ -42,7 +42,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-3 gap-4">
               {stats.map((s) => (
                 <div key={s.label} className="text-center border border-gray-200 rounded-2xl p-6">
-                  <div className="text-3xl font-bold mb-1" style={{ color: '#0F766E' }}>{s.num}</div>
+                  <div className="text-3xl font-bold mb-1 text-lingo-teal">{s.num}</div>
                   <div className="text-sm text-lingo-body leading-snug">{s.label}</div>
                 </div>
               ))}
@@ -59,7 +59,7 @@ export default function AboutPage() {
             <h2 className="font-bold text-lingo-text" style={{ fontSize: 'clamp(26px, 3.5vw, 40px)', lineHeight: 1.2 }}>
               Language learning
               <br />
-              <span style={{ color: '#0F766E' }}>that respects your time</span>
+              <span style={{ color: '#FF6B00' }}>that respects your time</span>
             </h2>
             <p className="text-lingo-body text-lg leading-relaxed pt-2">
               We believe Mandarin should be learned through real-life experience, not textbook repetition.

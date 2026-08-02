@@ -25,13 +25,13 @@ p  { font-size: 18px; line-height: 1.7; color: #4B5563; }
 small, .caption { font-size: 14px; line-height: 1.5; color: #6B7280; }
 
 :focus-visible {
-  outline: 2px solid #2B2E63;
+  outline: 2px solid #0F766E;
   outline-offset: 2px;
   border-radius: 4px;
 }
 
 .mission-tab-active {
-  @apply border-b-2 border-lingo-navy text-lingo-navy font-semibold;
+  @apply border-b-2 border-lingo-teal text-lingo-teal font-semibold;
 }
 .mission-tab {
   @apply border-b-2 border-transparent text-lingo-muted hover:text-lingo-heading-2 font-medium transition-colors;
@@ -41,10 +41,10 @@ small, .caption { font-size: 14px; line-height: 1.5; color: #6B7280; }
   @apply bg-lingo-red text-white font-semibold hover:bg-lingo-red-dark transition-colors rounded-xl px-6 py-3 inline-flex items-center justify-center min-h-[44px];
 }
 .btn-secondary {
-  @apply bg-transparent border border-lingo-navy text-lingo-navy hover:bg-blue-50 transition-colors rounded-xl px-6 py-3 inline-flex items-center justify-center min-h-[44px];
+  @apply bg-transparent border border-lingo-teal text-lingo-teal hover:bg-teal-50 transition-colors rounded-xl px-6 py-3 inline-flex items-center justify-center min-h-[44px];
 }
 .btn-ghost {
-  @apply text-lingo-navy hover:text-lingo-pink transition-colors;
+  @apply text-lingo-teal hover:text-lingo-red transition-colors;
 }
 
 .xp-badge {
@@ -52,7 +52,6 @@ small, .caption { font-size: 14px; line-height: 1.5; color: #6B7280; }
 }
 
 .progress-track     { @apply bg-lingo-border rounded-full overflow-hidden; }
-/* teal progress fill — orange start to teal end */
 .progress-fill      { background: linear-gradient(90deg, #FF6B00 0%, #0F766E 100%); @apply h-full rounded-full transition-all; }
 .progress-fill-gold { @apply bg-lingo-gold h-full rounded-full transition-all; }
 
