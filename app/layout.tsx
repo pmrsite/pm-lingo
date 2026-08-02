@@ -7,8 +7,8 @@ import Footer from '@/components/layout/Footer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'PM-Lingo — Master Real-World Chinese',
-  description: 'Learn practical Chinese through real-life missions, practice with AI tutors, and book real teachers.',
+  title: 'PM-Lingo — Master Real-World Mandarin',
+  description: 'Learn practical Mandarin through real-life missions, practice with AI tutors, and book real teachers.',
   metadataBase: new URL('https://pm-lingo.com'),
 }
 
