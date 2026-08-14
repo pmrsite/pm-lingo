@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { missions } from '@/data/missions'
 import WaveDivider from '@/components/ui/WaveDivider'
+import CourseCurriculum from '@/components/ui/CourseCurriculum'
 
 export const metadata = {
   title: 'Mandarin Survival Accelerator — PM-Lingo',
@@ -84,38 +85,7 @@ export default function CoursePage() {
       <section className="py-16 px-4" style={{ background: '#F0FDFA' }}>
         <div className="max-w-5xl mx-auto">
           <h2 className="font-bold text-lingo-text mb-10" style={{ fontSize: 'clamp(24px, 3vw, 36px)', lineHeight: 1.2 }}>Course curriculum</h2>
-          <div className="space-y-3">
-            {missions.map((mission) => (
-              <div
-                key={mission.id}
-                className="bg-white rounded-xl border border-gray-200 p-5 flex items-center justify-between hover:border-lingo-teal hover:shadow-sm transition-all"
-              >
-                <div className="flex items-center gap-5">
-                  <span
-                    className="text-2xl font-bold tabular-nums w-10 text-center shrink-0"
-                    style={{ color: '#FF6B00' }}
-                  >
-                    {String(mission.number).padStart(2, '0')}
-                  </span>
-                  <div>
-                    <h3 className="font-bold text-lingo-text">{mission.title}</h3>
-                    <p className="text-sm text-lingo-muted">{mission.subtitle} · {mission.estimatedMinutes} min · +{mission.xpReward} XP</p>
-                  </div>
-                </div>
-                <Link
-                  href={`/student/mission/${mission.slug}`}
-                  className="bg-lingo-teal hover:bg-lingo-teal-dark text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors shrink-0"
-                >
-                  Start
-                </Link>
-              </div>
-            ))}
-
-            <div className="bg-white rounded-xl border-2 border-dashed border-gray-200 p-6 text-center">
-              <p className="text-lingo-heading-2 font-semibold">+ 45 more missions coming soon</p>
-              <p className="text-sm text-lingo-muted mt-1">New missions released monthly. Annual subscribers get early access.</p>
-            </div>
-          </div>
+          <CourseCurriculum missions={missions} />
         </div>
       </section>
 

@@ -1,31 +1,50 @@
 import { Mission } from '@/types'
+import { DEFAULT_MASTERY } from './gamification'
 
 export const missions: Mission[] = [
+  // ── Mission 1 — Greetings ──────────────────────────────────────────────────
   {
     id: 'mission-1',
     slug: 'greetings',
     number: 1,
     title: 'Greetings',
     subtitle: 'Say hello like a local',
+    multilingualTitle: {
+      simplified:  '你好',
+      traditional: '你好',
+      pinyin:      'nǐhǎo',
+      english:     'Greetings',
+    },
+    multilingualSubtitle: {
+      simplified:  '像本地人一样打招呼',
+      traditional: '像本地人一樣打招呼',
+      pinyin:      'xiàng běndì rén yīyàng dǎ zhāohu',
+      english:     'Say hello like a local',
+    },
     objective: 'By the end of this mission, you will be able to greet people in Mandarin at any time of day, say goodbye, and respond to basic greetings confidently.',
     imagePlaceholder: '/missions/greetings.jpg',
     estimatedMinutes: 20,
     xpReward: 100,
+    gamification: {
+      xpReward: 100,
+      badgeIds: ['first-hello'],
+      mastery: DEFAULT_MASTERY,
+    },
     vocabulary: [
-      { simplified: '你好',   traditional: '你好',   pinyin: 'nǐhǎo',        english: 'Hello',             audioPlaceholder: '/audio/nihao.mp3',        slowAudioPlaceholder: '/audio/nihao-slow.mp3' },
-      { simplified: '您好',   traditional: '您好',   pinyin: 'nínhǎo',       english: 'Hello (formal)',     audioPlaceholder: '/audio/ninhao.mp3',       slowAudioPlaceholder: '/audio/ninhao-slow.mp3' },
-      { simplified: '早上好', traditional: '早上好', pinyin: 'zǎoshang hǎo', english: 'Good morning',       audioPlaceholder: '/audio/zaoshanghao.mp3',  slowAudioPlaceholder: '/audio/zaoshanghao-slow.mp3' },
-      { simplified: '下午好', traditional: '下午好', pinyin: 'xiàwǔ hǎo',    english: 'Good afternoon',     audioPlaceholder: '/audio/xiawuhao.mp3',     slowAudioPlaceholder: '/audio/xiawuhao-slow.mp3' },
-      { simplified: '晚上好', traditional: '晚上好', pinyin: 'wǎnshang hǎo', english: 'Good evening',       audioPlaceholder: '/audio/wanshanghao.mp3',  slowAudioPlaceholder: '/audio/wanshanghao-slow.mp3' },
-      { simplified: '再见',   traditional: '再見',   pinyin: 'zàijiàn',      english: 'Goodbye',            audioPlaceholder: '/audio/zaijian.mp3',      slowAudioPlaceholder: '/audio/zaijian-slow.mp3' },
-      { simplified: '拜拜',   traditional: '拜拜',   pinyin: 'bāibāi',       english: 'Bye bye (casual)',   audioPlaceholder: '/audio/baibai.mp3',       slowAudioPlaceholder: '/audio/baibai-slow.mp3' },
+      { simplified: '你好',   traditional: '你好',   pinyin: 'nǐhǎo',        english: 'Hello',           audioPlaceholder: '/audio/nihao.mp3',        slowAudioPlaceholder: '/audio/nihao-slow.mp3' },
+      { simplified: '您好',   traditional: '您好',   pinyin: 'nínhǎo',       english: 'Hello (formal)',  audioPlaceholder: '/audio/ninhao.mp3',       slowAudioPlaceholder: '/audio/ninhao-slow.mp3' },
+      { simplified: '早上好', traditional: '早上好', pinyin: 'zǎoshang hǎo', english: 'Good morning',    audioPlaceholder: '/audio/zaoshanghao.mp3',  slowAudioPlaceholder: '/audio/zaoshanghao-slow.mp3' },
+      { simplified: '下午好', traditional: '下午好', pinyin: 'xiàwǔ hǎo',    english: 'Good afternoon',  audioPlaceholder: '/audio/xiawuhao.mp3',     slowAudioPlaceholder: '/audio/xiawuhao-slow.mp3' },
+      { simplified: '晚上好', traditional: '晚上好', pinyin: 'wǎnshang hǎo', english: 'Good evening',    audioPlaceholder: '/audio/wanshanghao.mp3',  slowAudioPlaceholder: '/audio/wanshanghao-slow.mp3' },
+      { simplified: '再见',   traditional: '再見',   pinyin: 'zàijiàn',      english: 'Goodbye',         audioPlaceholder: '/audio/zaijian.mp3',      slowAudioPlaceholder: '/audio/zaijian-slow.mp3' },
+      { simplified: '拜拜',   traditional: '拜拜',   pinyin: 'bāibāi',       english: 'Bye bye (casual)', audioPlaceholder: '/audio/baibai.mp3',      slowAudioPlaceholder: '/audio/baibai-slow.mp3' },
     ],
     dialogue: [
-      { speaker: 'Mei', simplified: '你好！',             traditional: '你好！',             pinyin: 'Nǐhǎo!',                        english: 'Hello!' },
-      { speaker: 'Kai', simplified: '你好！你好吗？',      traditional: '你好！你好嗎？',      pinyin: 'Nǐhǎo! Nǐ hǎo ma?',            english: 'Hello! How are you?' },
-      { speaker: 'Mei', simplified: '我很好，谢谢！你呢？', traditional: '我很好，謝謝！你呢？', pinyin: 'Wǒ hěn hǎo, xièxie! Nǐ ne?',   english: 'I am very well, thank you! And you?' },
-      { speaker: 'Kai', simplified: '我也很好。再见！',    traditional: '我也很好。再見！',    pinyin: 'Wǒ yě hěn hǎo. Zàijiàn!',     english: 'I am also very well. Goodbye!' },
-      { speaker: 'Mei', simplified: '再见！',             traditional: '再見！',             pinyin: 'Zàijiàn!',                      english: 'Goodbye!' },
+      { speaker: 'Mei', simplified: '你好！',             traditional: '你好！',             pinyin: 'Nǐhǎo!',                       english: 'Hello!' },
+      { speaker: 'Kai', simplified: '你好！你好吗？',      traditional: '你好！你好嗎？',      pinyin: 'Nǐhǎo! Nǐ hǎo ma?',           english: 'Hello! How are you?' },
+      { speaker: 'Mei', simplified: '我很好，谢谢！你呢？', traditional: '我很好，謝謝！你呢？', pinyin: 'Wǒ hěn hǎo, xièxie! Nǐ ne?',  english: 'I am very well, thank you! And you?' },
+      { speaker: 'Kai', simplified: '我也很好。再见！',    traditional: '我也很好。再見！',    pinyin: 'Wǒ yě hěn hǎo. Zàijiàn!',    english: 'I am also very well. Goodbye!' },
+      { speaker: 'Mei', simplified: '再见！',             traditional: '再見！',             pinyin: 'Zàijiàn!',                     english: 'Goodbye!' },
     ],
     grammarNotes: [
       {
@@ -92,10 +111,42 @@ export const missions: Mission[] = [
       },
     ],
     regionalNotes: [
-      { region: 'mainland', note: 'In mainland China, 你好 is universal. 您好 is used in formal contexts like shops and offices.' },
-      { region: 'taiwan', note: 'Taiwanese speakers use 你好 freely. 拜拜 (bāibāi) is extremely common as a casual goodbye, often heard more than 再見.' },
-      { region: 'malaysia', note: 'Malaysian Chinese communities often mix Mandarin with Malay or English. You might hear "Hello" or "Hi" blended into Chinese conversations.' },
-      { region: 'international', note: 'In international business contexts, 您好 on a first meeting shows respect and professionalism.' },
+      {
+        region: 'mainland',
+        content: [
+          'In mainland China, ',
+          { s: '你好', t: '你好', p: 'nǐhǎo' },
+          ' is universal. ',
+          { s: '您好', t: '您好', p: 'nínhǎo' },
+          ' is used in formal contexts like shops and offices.',
+        ],
+      },
+      {
+        region: 'taiwan',
+        content: [
+          'Taiwanese speakers use ',
+          { s: '你好', t: '你好', p: 'nǐhǎo' },
+          ' freely. ',
+          { s: '拜拜', t: '拜拜', p: 'bāibāi' },
+          ' is extremely common as a casual goodbye, often heard more than ',
+          { s: '再见', t: '再見', p: 'zàijiàn' },
+          '.',
+        ],
+      },
+      {
+        region: 'malaysia',
+        content: [
+          'Malaysian Chinese communities often mix Mandarin with Malay or English. You might hear "Hello" or "Hi" blended into Chinese conversations.',
+        ],
+      },
+      {
+        region: 'international',
+        content: [
+          'In international business contexts, ',
+          { s: '您好', t: '您好', p: 'nínhǎo' },
+          ' on a first meeting shows respect and professionalism.',
+        ],
+      },
     ],
     quiz: [
       {
@@ -167,51 +218,64 @@ export const missions: Mission[] = [
       },
     ],
     assessment: {
-      vocabularyScore: 0,
-      listeningScore: 0,
-      grammarScore: 0,
-      speakingConfidenceScore: 0,
-      overallScore: 0,
+      vocabularyScore: 0, listeningScore: 0, grammarScore: 0, speakingConfidenceScore: 0, overallScore: 0,
       aiFeedbackPlaceholder: 'Complete the quiz to receive personalised AI feedback on your performance in this mission.',
       recommendation: 'Complete the quiz above to unlock your personalised learning recommendation.',
     },
     pdfPlaceholder: '/pdfs/mission-1-greetings.pdf',
   },
+
+  // ── Mission 2 — Self Introduction ─────────────────────────────────────────
   {
     id: 'mission-2',
     slug: 'self-introduction',
     number: 2,
     title: 'Self Introduction',
     subtitle: 'Tell people who you are',
+    multilingualTitle: {
+      simplified:  '自我介绍',
+      traditional: '自我介紹',
+      pinyin:      'zìwǒ jièshào',
+      english:     'Self Introduction',
+    },
+    multilingualSubtitle: {
+      simplified:  '用中文介绍自己',
+      traditional: '用中文介紹自己',
+      pinyin:      'yòng zhōngwén jièshào zìjǐ',
+      english:     'Tell people who you are',
+    },
     objective: 'By the end of this mission, you will be able to introduce yourself in Mandarin — sharing your name, nationality, and occupation — and respond when others introduce themselves.',
     imagePlaceholder: '/missions/self-introduction.jpg',
     estimatedMinutes: 25,
     xpReward: 120,
+    gamification: {
+      xpReward: 120,
+      badgeIds: [],
+      mastery: DEFAULT_MASTERY,
+    },
     vocabulary: [
-      { simplified: '我叫',      traditional: '我叫',      pinyin: 'wǒ jiào',           english: 'My name is',       audioPlaceholder: '/audio/wojiao.mp3',        slowAudioPlaceholder: '/audio/wojiao-slow.mp3' },
-      { simplified: '我是',      traditional: '我是',      pinyin: 'wǒ shì',            english: 'I am',             audioPlaceholder: '/audio/woshi.mp3',         slowAudioPlaceholder: '/audio/woshi-slow.mp3' },
-      { simplified: '名字',      traditional: '名字',      pinyin: 'míngzi',            english: 'Name',             audioPlaceholder: '/audio/mingzi.mp3',        slowAudioPlaceholder: '/audio/mingzi-slow.mp3' },
-      { simplified: '哪国人',    traditional: '哪國人',    pinyin: 'nǎ guó rén',        english: 'What nationality', audioPlaceholder: '/audio/naguoren.mp3',      slowAudioPlaceholder: '/audio/naguoren-slow.mp3' },
-      { simplified: '马来西亚人', traditional: '馬來西亞人', pinyin: 'mǎlái xīyà rén',   english: 'Malaysian',        audioPlaceholder: '/audio/malaixiyaren.mp3',  slowAudioPlaceholder: '/audio/malaixiyaren-slow.mp3' },
-      { simplified: '英国人',    traditional: '英國人',    pinyin: 'yīng guó rén',      english: 'British',          audioPlaceholder: '/audio/yingguoren.mp3',    slowAudioPlaceholder: '/audio/yingguoren-slow.mp3' },
-      { simplified: '工作',      traditional: '工作',      pinyin: 'gōngzuò',           english: 'Work / job',       audioPlaceholder: '/audio/gongzuo.mp3',       slowAudioPlaceholder: '/audio/gongzuo-slow.mp3' },
-      { simplified: '学生',      traditional: '學生',      pinyin: 'xuéshēng',          english: 'Student',          audioPlaceholder: '/audio/xuesheng.mp3',      slowAudioPlaceholder: '/audio/xuesheng-slow.mp3' },
-      { simplified: '高兴认识你', traditional: '高興認識你', pinyin: 'gāoxìng rènshi nǐ', english: 'Nice to meet you', audioPlaceholder: '/audio/gaoxingrenshi.mp3', slowAudioPlaceholder: '/audio/gaoxingrenshi-slow.mp3' },
+      { simplified: '我叫',      traditional: '我叫',      pinyin: 'wǒ jiào',           english: 'My name is',       audioPlaceholder: '/audio/wojiao.mp3' },
+      { simplified: '我是',      traditional: '我是',      pinyin: 'wǒ shì',            english: 'I am',             audioPlaceholder: '/audio/woshi.mp3' },
+      { simplified: '名字',      traditional: '名字',      pinyin: 'míngzi',            english: 'Name',             audioPlaceholder: '/audio/mingzi.mp3' },
+      { simplified: '哪国人',    traditional: '哪國人',    pinyin: 'nǎ guó rén',        english: 'What nationality', audioPlaceholder: '/audio/naguoren.mp3' },
+      { simplified: '马来西亚人', traditional: '馬來西亞人', pinyin: 'mǎlái xīyà rén',   english: 'Malaysian',        audioPlaceholder: '/audio/malaixiyaren.mp3' },
+      { simplified: '英国人',    traditional: '英國人',    pinyin: 'yīng guó rén',      english: 'British',          audioPlaceholder: '/audio/yingguoren.mp3' },
+      { simplified: '工作',      traditional: '工作',      pinyin: 'gōngzuò',           english: 'Work / job',       audioPlaceholder: '/audio/gongzuo.mp3' },
+      { simplified: '学生',      traditional: '學生',      pinyin: 'xuéshēng',          english: 'Student',          audioPlaceholder: '/audio/xuesheng.mp3' },
+      { simplified: '高兴认识你', traditional: '高興認識你', pinyin: 'gāoxìng rènshi nǐ', english: 'Nice to meet you', audioPlaceholder: '/audio/gaoxingrenshi.mp3' },
     ],
     dialogue: [
-      { speaker: 'Lin',     simplified: '你好！我叫林老师。你叫什么名字？', traditional: '你好！我叫林老師。你叫什麼名字？', pinyin: 'Nǐhǎo! Wǒ jiào Lín lǎoshī. Nǐ jiào shénme míngzi?',   english: 'Hello! My name is Teacher Lin. What is your name?' },
-      { speaker: 'Student', simplified: '你好！我叫大卫。',               traditional: '你好！我叫大衛。',               pinyin: 'Nǐhǎo! Wǒ jiào Dàwèi.',                               english: 'Hello! My name is David.' },
-      { speaker: 'Lin',     simplified: '大卫，你是哪国人？',              traditional: '大衛，你是哪國人？',              pinyin: 'Dàwèi, nǐ shì nǎ guó rén?',                           english: 'David, what nationality are you?' },
-      { speaker: 'Student', simplified: '我是马来西亚人。你呢？',          traditional: '我是馬來西亞人。你呢？',          pinyin: 'Wǒ shì mǎlái xīyà rén. Nǐ ne?',                       english: 'I am Malaysian. And you?' },
-      { speaker: 'Lin',     simplified: '我是中国人。你做什么工作？',       traditional: '我是中國人。你做什麼工作？',       pinyin: 'Wǒ shì zhōngguó rén. Nǐ zuò shénme gōngzuò?',         english: 'I am Chinese. What do you do for work?' },
-      { speaker: 'Student', simplified: '我是学生。高兴认识你！',          traditional: '我是學生。高興認識你！',          pinyin: 'Wǒ shì xuéshēng. Gāoxìng rènshi nǐ!',                 english: 'I am a student. Nice to meet you!' },
-      { speaker: 'Lin',     simplified: '我也很高兴认识你！',              traditional: '我也很高興認識你！',              pinyin: 'Wǒ yě hěn gāoxìng rènshi nǐ!',                        english: 'I am also very pleased to meet you!' },
+      { speaker: 'Lin',     simplified: '你好！我叫林老师。你叫什么名字？', traditional: '你好！我叫林老師。你叫什麼名字？', pinyin: 'Nǐhǎo! Wǒ jiào Lín lǎoshī. Nǐ jiào shénme míngzi?', english: 'Hello! My name is Teacher Lin. What is your name?' },
+      { speaker: 'Student', simplified: '你好！我叫大卫。',               traditional: '你好！我叫大衛。',               pinyin: 'Nǐhǎo! Wǒ jiào Dàwèi.',                             english: 'Hello! My name is David.' },
+      { speaker: 'Lin',     simplified: '大卫，你是哪国人？',              traditional: '大衛，你是哪國人？',              pinyin: 'Dàwèi, nǐ shì nǎ guó rén?',                         english: 'David, what nationality are you?' },
+      { speaker: 'Student', simplified: '我是马来西亚人。你呢？',          traditional: '我是馬來西亞人。你呢？',          pinyin: 'Wǒ shì mǎlái xīyà rén. Nǐ ne?',                     english: 'I am Malaysian. And you?' },
+      { speaker: 'Lin',     simplified: '我是中国人。你做什么工作？',       traditional: '我是中國人。你做什麼工作？',       pinyin: 'Wǒ shì zhōngguó rén. Nǐ zuò shénme gōngzuò?',       english: 'I am Chinese. What do you do for work?' },
+      { speaker: 'Student', simplified: '我是学生。高兴认识你！',          traditional: '我是學生。高興認識你！',          pinyin: 'Wǒ shì xuéshēng. Gāoxìng rènshi nǐ!',               english: 'I am a student. Nice to meet you!' },
+      { speaker: 'Lin',     simplified: '我也很高兴认识你！',              traditional: '我也很高興認識你！',              pinyin: 'Wǒ yě hěn gāoxìng rènshi nǐ!',                      english: 'I am also very pleased to meet you!' },
     ],
     grammarNotes: [
       {
-        simplified: '我叫',
-        traditional: '我叫',
-        pinyin: 'wǒ jiào',
+        simplified: '我叫', traditional: '我叫', pinyin: 'wǒ jiào',
         title: 'Giving your name',
         explanation: [
           { s: '我叫', t: '我叫', p: 'wǒ jiào' },
@@ -219,9 +283,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '我是',
-        traditional: '我是',
-        pinyin: 'wǒ shì',
+        simplified: '我是', traditional: '我是', pinyin: 'wǒ shì',
         title: 'Identity statements — 是 (shì)',
         explanation: [
           { s: '我是', t: '我是', p: 'wǒ shì' },
@@ -231,9 +293,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '什么',
-        traditional: '什麼',
-        pinyin: 'shénme',
+        simplified: '什么', traditional: '什麼', pinyin: 'shénme',
         title: 'Question word "what"',
         explanation: [
           { s: '什么', t: '什麼', p: 'shénme' },
@@ -243,9 +303,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '马来西亚人',
-        traditional: '馬來西亞人',
-        pinyin: 'mǎlái xīyà rén',
+        simplified: '马来西亚人', traditional: '馬來西亞人', pinyin: 'mǎlái xīyà rén',
         title: 'Nationality: country + 人',
         explanation: [
           'To express nationality, add ',
@@ -260,9 +318,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '工作',
-        traditional: '工作',
-        pinyin: 'gōngzuò',
+        simplified: '工作', traditional: '工作', pinyin: 'gōngzuò',
         title: 'Asking about work',
         explanation: [
           { s: '你做什么工作？', t: '你做什麼工作？', p: 'nǐ zuò shénme gōngzuò?' },
@@ -277,12 +333,32 @@ export const missions: Mission[] = [
     regionalNotes: [
       {
         region: 'mainland',
-        note: 'In mainland China, people often ask 你是哪里人 (nǐ shì nǎ lǐ rén) meaning "Where are you from?" referring to which province or city.',
-        noteTraditional: 'In mainland China, people often ask 你是哪裡人 (nǐ shì nǎ lǐ rén) meaning "Where are you from?" referring to which province or city.',
+        content: [
+          'In mainland China, people often ask ',
+          { s: '你是哪里人', t: '你是哪裡人', p: 'nǐ shì nǎlǐ rén' },
+          ' meaning "Where are you from?" referring to which province or city.',
+        ],
       },
-      { region: 'taiwan', note: 'Taiwanese people tend to be very friendly and curious about foreigners. Do not be surprised if you are asked about your salary early in a conversation — it is not considered rude.' },
-      { region: 'malaysia', note: 'Malaysian Chinese may switch between Mandarin, Cantonese, Hokkien, and English mid-sentence. Introducing yourself in Mandarin is universally welcomed.' },
-      { region: 'international', note: 'In international business, having a Chinese name (中文名字, zhōngwén míngzi) shows respect and cultural awareness. Many expats adopt one.' },
+      {
+        region: 'taiwan',
+        content: [
+          'Taiwanese people tend to be very friendly and curious about foreigners. Do not be surprised if you are asked about your salary early in a conversation — it is not considered rude.',
+        ],
+      },
+      {
+        region: 'malaysia',
+        content: [
+          'Malaysian Chinese may switch between Mandarin, Cantonese, Hokkien, and English mid-sentence. Introducing yourself in Mandarin is universally welcomed.',
+        ],
+      },
+      {
+        region: 'international',
+        content: [
+          'In international business, having a Chinese name (',
+          { s: '中文名字', t: '中文名字', p: 'zhōngwén míngzi' },
+          ') shows respect and cultural awareness. Many expats adopt one.',
+        ],
+      },
     ],
     quiz: [
       {
@@ -290,10 +366,10 @@ export const missions: Mission[] = [
         type: 'multiple-choice',
         prompt: { english: 'How do you say "My name is..." in Mandarin?' },
         options: [
-          { id: 'woshi', simplified: '我是...', traditional: '我是...', pinyin: 'wǒ shì...' },
+          { id: 'woshi',  simplified: '我是...', traditional: '我是...', pinyin: 'wǒ shì...' },
           { id: 'wojiao', simplified: '我叫...', traditional: '我叫...', pinyin: 'wǒ jiào...' },
-          { id: 'woyou', simplified: '我有...', traditional: '我有...', pinyin: 'wǒ yǒu...' },
-          { id: 'wozuo', simplified: '我做...', traditional: '我做...', pinyin: 'wǒ zuò...' },
+          { id: 'woyou',  simplified: '我有...', traditional: '我有...', pinyin: 'wǒ yǒu...' },
+          { id: 'wozuo',  simplified: '我做...', traditional: '我做...', pinyin: 'wǒ zuò...' },
         ],
         correctOptionId: 'wojiao',
         explanation: '我叫 (wǒ jiào) literally means "I am called" and is the standard way to introduce your name.',
@@ -303,10 +379,10 @@ export const missions: Mission[] = [
         type: 'multiple-choice',
         prompt: { english: 'How do you say "I am Malaysian" in Mandarin?' },
         options: [
-          { id: 'yingguoren',    simplified: '我是英国人',    traditional: '我是英國人',    pinyin: 'wǒ shì yīng guó rén' },
-          { id: 'zhongguoren',   simplified: '我是中国人',    traditional: '我是中國人',    pinyin: 'wǒ shì zhōngguó rén' },
-          { id: 'malaixiyaren',  simplified: '我是马来西亚人', traditional: '我是馬來西亞人', pinyin: 'wǒ shì mǎlái xīyà rén' },
-          { id: 'xuesheng',      simplified: '我是学生',      traditional: '我是學生',      pinyin: 'wǒ shì xuéshēng' },
+          { id: 'yingguoren',   simplified: '我是英国人',    traditional: '我是英國人',    pinyin: 'wǒ shì yīng guó rén' },
+          { id: 'zhongguoren',  simplified: '我是中国人',    traditional: '我是中國人',    pinyin: 'wǒ shì zhōngguó rén' },
+          { id: 'malaixiyaren', simplified: '我是马来西亚人', traditional: '我是馬來西亞人', pinyin: 'wǒ shì mǎlái xīyà rén' },
+          { id: 'xuesheng',     simplified: '我是学生',      traditional: '我是學生',      pinyin: 'wǒ shì xuéshēng' },
         ],
         correctOptionId: 'malaixiyaren',
         explanation: '马来西亚人 (mǎlái xīyà rén) means "Malaysian". 人 (rén) is added after the country to mean "person from that country".',
@@ -349,37 +425,52 @@ export const missions: Mission[] = [
       },
     ],
     assessment: {
-      vocabularyScore: 0,
-      listeningScore: 0,
-      grammarScore: 0,
-      speakingConfidenceScore: 0,
-      overallScore: 0,
+      vocabularyScore: 0, listeningScore: 0, grammarScore: 0, speakingConfidenceScore: 0, overallScore: 0,
       aiFeedbackPlaceholder: 'Complete the quiz to receive personalised AI feedback on your performance in this mission.',
       recommendation: 'Complete the quiz above to unlock your personalised learning recommendation.',
     },
     pdfPlaceholder: '/pdfs/mission-2-self-introduction.pdf',
   },
+
+  // ── Mission 3 — Finding a Toilet ──────────────────────────────────────────
   {
     id: 'mission-3',
     slug: 'finding-a-toilet',
     number: 3,
     title: 'Finding a Toilet',
     subtitle: 'Navigate to the nearest restroom',
+    multilingualTitle: {
+      simplified:  '找厕所',
+      traditional: '找廁所',
+      pinyin:      'zhǎo cèsuǒ',
+      english:     'Finding a Toilet',
+    },
+    multilingualSubtitle: {
+      simplified:  '找到最近的卫生间',
+      traditional: '找到最近的衛生間',
+      pinyin:      'zhǎodào zuìjìn de wèishēngjiān',
+      english:     'Navigate to the nearest restroom',
+    },
     objective: 'By the end of this mission, you will be able to ask where the restroom is, understand basic directional responses, and navigate successfully in any Chinese-speaking environment.',
     imagePlaceholder: '/missions/finding-a-toilet.jpg',
     estimatedMinutes: 20,
     xpReward: 100,
+    gamification: {
+      xpReward: 100,
+      badgeIds: ['city-navigator'],
+      mastery: DEFAULT_MASTERY,
+    },
     vocabulary: [
-      { simplified: '厕所',  traditional: '廁所',  pinyin: 'cèsuǒ',        english: 'Toilet',                       audioPlaceholder: '/audio/cesuo.mp3',        slowAudioPlaceholder: '/audio/cesuo-slow.mp3' },
-      { simplified: '卫生间', traditional: '衛生間', pinyin: 'wèishēngjiān', english: 'Bathroom',                     audioPlaceholder: '/audio/weishengjian.mp3', slowAudioPlaceholder: '/audio/weishengjian-slow.mp3' },
-      { simplified: '洗手间', traditional: '洗手間', pinyin: 'xǐshǒujiān',   english: 'Restroom (wash hands room)',   audioPlaceholder: '/audio/xishoujian.mp3',   slowAudioPlaceholder: '/audio/xishoujian-slow.mp3' },
-      { simplified: '在哪里', traditional: '在哪裡', pinyin: 'zài nǎlǐ',     english: 'Where is it',                  audioPlaceholder: '/audio/zainali.mp3',      slowAudioPlaceholder: '/audio/zainali-slow.mp3' },
-      { simplified: '请问',  traditional: '請問',  pinyin: 'qǐng wèn',     english: 'Excuse me / May I ask',         audioPlaceholder: '/audio/qingwen.mp3',      slowAudioPlaceholder: '/audio/qingwen-slow.mp3' },
-      { simplified: '左边',  traditional: '左邊',  pinyin: 'zuǒbiān',      english: 'Left side',                    audioPlaceholder: '/audio/zuobian.mp3',      slowAudioPlaceholder: '/audio/zuobian-slow.mp3' },
-      { simplified: '右边',  traditional: '右邊',  pinyin: 'yòubiān',      english: 'Right side',                   audioPlaceholder: '/audio/youbian.mp3',      slowAudioPlaceholder: '/audio/youbian-slow.mp3' },
-      { simplified: '直走',  traditional: '直走',  pinyin: 'zhí zǒu',      english: 'Go straight',                  audioPlaceholder: '/audio/zhizou.mp3',       slowAudioPlaceholder: '/audio/zhizou-slow.mp3' },
-      { simplified: '前面',  traditional: '前面',  pinyin: 'qiánmiàn',     english: 'Ahead / in front',             audioPlaceholder: '/audio/qianmian.mp3',     slowAudioPlaceholder: '/audio/qianmian-slow.mp3' },
-      { simplified: '谢谢',  traditional: '謝謝',  pinyin: 'xièxie',       english: 'Thank you',                    audioPlaceholder: '/audio/xiexie.mp3',       slowAudioPlaceholder: '/audio/xiexie-slow.mp3' },
+      { simplified: '厕所',  traditional: '廁所',  pinyin: 'cèsuǒ',        english: 'Toilet',                     audioPlaceholder: '/audio/cesuo.mp3' },
+      { simplified: '卫生间', traditional: '衛生間', pinyin: 'wèishēngjiān', english: 'Bathroom',                   audioPlaceholder: '/audio/weishengjian.mp3' },
+      { simplified: '洗手间', traditional: '洗手間', pinyin: 'xǐshǒujiān',   english: 'Restroom (wash hands room)', audioPlaceholder: '/audio/xishoujian.mp3' },
+      { simplified: '在哪里', traditional: '在哪裡', pinyin: 'zài nǎlǐ',     english: 'Where is it',                audioPlaceholder: '/audio/zainali.mp3' },
+      { simplified: '请问',  traditional: '請問',  pinyin: 'qǐng wèn',     english: 'Excuse me / May I ask',      audioPlaceholder: '/audio/qingwen.mp3' },
+      { simplified: '左边',  traditional: '左邊',  pinyin: 'zuǒbiān',      english: 'Left side',                  audioPlaceholder: '/audio/zuobian.mp3' },
+      { simplified: '右边',  traditional: '右邊',  pinyin: 'yòubiān',      english: 'Right side',                 audioPlaceholder: '/audio/youbian.mp3' },
+      { simplified: '直走',  traditional: '直走',  pinyin: 'zhí zǒu',      english: 'Go straight',                audioPlaceholder: '/audio/zhizou.mp3' },
+      { simplified: '前面',  traditional: '前面',  pinyin: 'qiánmiàn',     english: 'Ahead / in front',           audioPlaceholder: '/audio/qianmian.mp3' },
+      { simplified: '谢谢',  traditional: '謝謝',  pinyin: 'xièxie',       english: 'Thank you',                  audioPlaceholder: '/audio/xiexie.mp3' },
     ],
     dialogue: [
       { speaker: 'Student', simplified: '请问，洗手间在哪里？',   traditional: '請問，洗手間在哪裡？',   pinyin: 'Qǐng wèn, xǐshǒujiān zài nǎlǐ?',       english: 'Excuse me, where is the restroom?' },
@@ -391,9 +482,7 @@ export const missions: Mission[] = [
     ],
     grammarNotes: [
       {
-        simplified: '请问',
-        traditional: '請問',
-        pinyin: 'qǐng wèn',
+        simplified: '请问', traditional: '請問', pinyin: 'qǐng wèn',
         title: 'Polite question opener',
         explanation: [
           { s: '请问', t: '請問', p: 'qǐng wèn' },
@@ -401,9 +490,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '在哪里',
-        traditional: '在哪裡',
-        pinyin: 'zài nǎlǐ',
+        simplified: '在哪里', traditional: '在哪裡', pinyin: 'zài nǎlǐ',
         title: 'Asking "Where is…?"',
         explanation: [
           'The pattern [place] ',
@@ -416,9 +503,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '直走',
-        traditional: '直走',
-        pinyin: 'zhí zǒu',
+        simplified: '直走', traditional: '直走', pinyin: 'zhí zǒu',
         title: '"Go straight"',
         explanation: [
           { s: '直走', t: '直走', p: 'zhí zǒu' },
@@ -430,9 +515,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '然后',
-        traditional: '然後',
-        pinyin: 'rán hòu',
+        simplified: '然后', traditional: '然後', pinyin: 'rán hòu',
         title: 'Connecting steps — "then / after that"',
         explanation: [
           { s: '然后', t: '然後', p: 'rán hòu' },
@@ -442,9 +525,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '对',
-        traditional: '對',
-        pinyin: 'duì',
+        simplified: '对', traditional: '對', pinyin: 'duì',
         title: 'Confirming — "correct / right"',
         explanation: [
           { s: '对', t: '對', p: 'duì' },
@@ -455,18 +536,38 @@ export const missions: Mission[] = [
     regionalNotes: [
       {
         region: 'mainland',
-        note: '厕所 is the most common word for toilet in mainland China. Signs in public places often say 卫生间 or 洗手间. In rural areas, facilities may be less modern — always check.',
+        content: [
+          { s: '厕所', t: '廁所', p: 'cèsuǒ' },
+          ' is the most common word for toilet in mainland China. Signs in public places often say ',
+          { s: '卫生间', t: '衛生間', p: 'wèishēngjiān' },
+          ' or ',
+          { s: '洗手间', t: '洗手間', p: 'xǐshǒujiān' },
+          '. In rural areas, facilities may be less modern — always check.',
+        ],
       },
       {
         region: 'taiwan',
-        note: 'In Taiwan, 洗手间 and 化妆室 (huà zhuāng shì, literally "makeup room") are common terms. Taiwanese restrooms in public spaces are generally very clean and well-maintained.',
-        noteTraditional: 'In Taiwan, 洗手間 and 化妝室 (huà zhuāng shì, literally "makeup room") are common terms. Taiwanese restrooms in public spaces are generally very clean and well-maintained.',
+        content: [
+          'In Taiwan, ',
+          { s: '洗手间', t: '洗手間', p: 'xǐshǒujiān' },
+          ' and ',
+          { s: '化妆室', t: '化妝室', p: 'huà zhuāng shì' },
+          ' (literally "makeup room") are common terms. Taiwanese restrooms in public spaces are generally very clean and well-maintained.',
+        ],
       },
-      { region: 'malaysia', note: 'In Malaysia, you may also see "Tandas" (Malay for toilet) in public signs. Chinese speakers will understand all three Mandarin terms for restroom.' },
+      {
+        region: 'malaysia',
+        content: [
+          'In Malaysia, you may also see "Tandas" (Malay for toilet) in public signs. Chinese speakers will understand all three Mandarin terms for restroom.',
+        ],
+      },
       {
         region: 'international',
-        note: 'In Chinese restaurants and hotels worldwide, 洗手间 is the most universally understood and polite term to use.',
-        noteTraditional: 'In Chinese restaurants and hotels worldwide, 洗手間 is the most universally understood and polite term to use.',
+        content: [
+          'In Chinese restaurants and hotels worldwide, ',
+          { s: '洗手间', t: '洗手間', p: 'xǐshǒujiān' },
+          ' is the most universally understood and polite term to use.',
+        ],
       },
     ],
     quiz: [
@@ -488,9 +589,9 @@ export const missions: Mission[] = [
         type: 'multiple-choice',
         prompt: { english: 'How do you say "Go straight" in Mandarin?' },
         options: [
-          { id: 'zuobian', simplified: '左边', traditional: '左邊', pinyin: 'zuǒbiān' },
-          { id: 'youbian', simplified: '右边', traditional: '右邊', pinyin: 'yòubiān' },
-          { id: 'zhizou',  simplified: '直走', traditional: '直走', pinyin: 'zhí zǒu' },
+          { id: 'zuobian',  simplified: '左边', traditional: '左邊', pinyin: 'zuǒbiān' },
+          { id: 'youbian',  simplified: '右边', traditional: '右邊', pinyin: 'yòubiān' },
+          { id: 'zhizou',   simplified: '直走', traditional: '直走', pinyin: 'zhí zǒu' },
           { id: 'qianmian', simplified: '前面', traditional: '前面', pinyin: 'qiánmiàn' },
         ],
         correctOptionId: 'zhizou',
@@ -506,10 +607,10 @@ export const missions: Mission[] = [
           pinyin:      'xǐshǒujiān ______ nǎlǐ? (Where is the restroom?)',
         },
         options: [
-          { id: 'zai',  simplified: '在',   traditional: '在',   pinyin: 'zài' },
-          { id: 'shi',  simplified: '是',   traditional: '是',   pinyin: 'shì' },
-          { id: 'you',  simplified: '有',   traditional: '有',   pinyin: 'yǒu' },
-          { id: 'qu',   simplified: '去',   traditional: '去',   pinyin: 'qù' },
+          { id: 'zai', simplified: '在', traditional: '在', pinyin: 'zài' },
+          { id: 'shi', simplified: '是', traditional: '是', pinyin: 'shì' },
+          { id: 'you', simplified: '有', traditional: '有', pinyin: 'yǒu' },
+          { id: 'qu',  simplified: '去', traditional: '去', pinyin: 'qù' },
         ],
         correctOptionId: 'zai',
         explanation: '在 (zài) means "is at / located at". The pattern is [place] 在哪里 = "Where is [place]?"',
@@ -529,37 +630,52 @@ export const missions: Mission[] = [
       },
     ],
     assessment: {
-      vocabularyScore: 0,
-      listeningScore: 0,
-      grammarScore: 0,
-      speakingConfidenceScore: 0,
-      overallScore: 0,
+      vocabularyScore: 0, listeningScore: 0, grammarScore: 0, speakingConfidenceScore: 0, overallScore: 0,
       aiFeedbackPlaceholder: 'Complete the quiz to receive personalised AI feedback on your performance in this mission.',
       recommendation: 'Complete the quiz above to unlock your personalised learning recommendation.',
     },
     pdfPlaceholder: '/pdfs/mission-3-finding-a-toilet.pdf',
   },
+
+  // ── Mission 4 — Ordering Food ──────────────────────────────────────────────
   {
     id: 'mission-4',
     slug: 'ordering-food',
     number: 4,
     title: 'Ordering Food',
     subtitle: 'Order with confidence at any restaurant',
+    multilingualTitle: {
+      simplified:  '点菜',
+      traditional: '點菜',
+      pinyin:      'diǎncài',
+      english:     'Ordering Food',
+    },
+    multilingualSubtitle: {
+      simplified:  '在餐厅自信点菜',
+      traditional: '在餐廳自信點菜',
+      pinyin:      'zài cāntīng zìxìn diǎncài',
+      english:     'Order with confidence at any restaurant',
+    },
     objective: 'By the end of this mission, you will be able to ask for a menu, order food and drinks, specify preferences like spicy or not spicy, and ask for the bill in Mandarin.',
     imagePlaceholder: '/missions/ordering-food.jpg',
     estimatedMinutes: 30,
     xpReward: 150,
+    gamification: {
+      xpReward: 150,
+      badgeIds: ['food-explorer'],
+      mastery: DEFAULT_MASTERY,
+    },
     vocabulary: [
-      { simplified: '菜单',  traditional: '菜單',  pinyin: 'càidān',       english: 'Menu',                       audioPlaceholder: '/audio/caidan.mp3',        slowAudioPlaceholder: '/audio/caidan-slow.mp3' },
-      { simplified: '点菜',  traditional: '點菜',  pinyin: 'diǎncài',      english: 'To order (food)',             audioPlaceholder: '/audio/diancai.mp3',       slowAudioPlaceholder: '/audio/diancai-slow.mp3' },
-      { simplified: '我要',  traditional: '我要',  pinyin: 'wǒ yào',       english: 'I want / I would like',      audioPlaceholder: '/audio/woyao.mp3',         slowAudioPlaceholder: '/audio/woyao-slow.mp3' },
-      { simplified: '一碗面', traditional: '一碗麵', pinyin: 'yì wǎn miàn',  english: 'A bowl of noodles',          audioPlaceholder: '/audio/yiwanmian.mp3',     slowAudioPlaceholder: '/audio/yiwanmian-slow.mp3' },
-      { simplified: '一杯水', traditional: '一杯水', pinyin: 'yì bēi shuǐ',  english: 'A glass of water',           audioPlaceholder: '/audio/yibeishui.mp3',     slowAudioPlaceholder: '/audio/yibeishui-slow.mp3' },
-      { simplified: '好吃',  traditional: '好吃',  pinyin: 'hǎochī',       english: 'Delicious',                  audioPlaceholder: '/audio/haochi.mp3',        slowAudioPlaceholder: '/audio/haochi-slow.mp3' },
-      { simplified: '买单',  traditional: '買單',  pinyin: 'mǎidān',       english: 'Bill please / check please', audioPlaceholder: '/audio/maidan.mp3',        slowAudioPlaceholder: '/audio/maidan-slow.mp3' },
-      { simplified: '多少钱', traditional: '多少錢', pinyin: 'duōshǎoqián',  english: 'How much (money)?',          audioPlaceholder: '/audio/duoshaoquian.mp3',  slowAudioPlaceholder: '/audio/duoshaoquian-slow.mp3' },
-      { simplified: '辣',    traditional: '辣',    pinyin: 'là',           english: 'Spicy',                      audioPlaceholder: '/audio/la.mp3',            slowAudioPlaceholder: '/audio/la-slow.mp3' },
-      { simplified: '不辣',  traditional: '不辣',  pinyin: 'bù là',        english: 'Not spicy',                  audioPlaceholder: '/audio/bula.mp3',          slowAudioPlaceholder: '/audio/bula-slow.mp3' },
+      { simplified: '菜单',  traditional: '菜單',  pinyin: 'càidān',      english: 'Menu',                       audioPlaceholder: '/audio/caidan.mp3' },
+      { simplified: '点菜',  traditional: '點菜',  pinyin: 'diǎncài',     english: 'To order (food)',             audioPlaceholder: '/audio/diancai.mp3' },
+      { simplified: '我要',  traditional: '我要',  pinyin: 'wǒ yào',      english: 'I want / I would like',      audioPlaceholder: '/audio/woyao.mp3' },
+      { simplified: '一碗面', traditional: '一碗麵', pinyin: 'yì wǎn miàn', english: 'A bowl of noodles',          audioPlaceholder: '/audio/yiwanmian.mp3' },
+      { simplified: '一杯水', traditional: '一杯水', pinyin: 'yì bēi shuǐ', english: 'A glass of water',           audioPlaceholder: '/audio/yibeishui.mp3' },
+      { simplified: '好吃',  traditional: '好吃',  pinyin: 'hǎochī',      english: 'Delicious',                  audioPlaceholder: '/audio/haochi.mp3' },
+      { simplified: '买单',  traditional: '買單',  pinyin: 'mǎidān',      english: 'Bill please / check please', audioPlaceholder: '/audio/maidan.mp3' },
+      { simplified: '多少钱', traditional: '多少錢', pinyin: 'duōshǎoqián', english: 'How much (money)?',          audioPlaceholder: '/audio/duoshaoquian.mp3' },
+      { simplified: '辣',    traditional: '辣',    pinyin: 'là',          english: 'Spicy',                      audioPlaceholder: '/audio/la.mp3' },
+      { simplified: '不辣',  traditional: '不辣',  pinyin: 'bù là',       english: 'Not spicy',                  audioPlaceholder: '/audio/bula.mp3' },
     ],
     dialogue: [
       { speaker: 'Student', simplified: '你好！请给我菜单。',            traditional: '你好！請給我菜單。',            pinyin: 'Nǐhǎo! Qǐng gěi wǒ càidān.',                    english: 'Hello! Please give me the menu.' },
@@ -572,9 +688,7 @@ export const missions: Mission[] = [
     ],
     grammarNotes: [
       {
-        simplified: '我要',
-        traditional: '我要',
-        pinyin: 'wǒ yào',
+        simplified: '我要', traditional: '我要', pinyin: 'wǒ yào',
         title: 'Expressing what you want',
         explanation: [
           { s: '我要', t: '我要', p: 'wǒ yào' },
@@ -582,9 +696,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '一碗 / 一杯',
-        traditional: '一碗 / 一杯',
-        pinyin: 'yì wǎn / yì bēi',
+        simplified: '一碗 / 一杯', traditional: '一碗 / 一杯', pinyin: 'yì wǎn / yì bēi',
         title: 'Chinese measure words',
         explanation: [
           { s: '一碗', t: '一碗', p: 'yì wǎn' },
@@ -598,9 +710,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '不',
-        traditional: '不',
-        pinyin: 'bù',
+        simplified: '不', traditional: '不', pinyin: 'bù',
         title: 'Negation — "not"',
         explanation: [
           { s: '不', t: '不', p: 'bù' },
@@ -614,9 +724,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '还要',
-        traditional: '還要',
-        pinyin: 'hái yào',
+        simplified: '还要', traditional: '還要', pinyin: 'hái yào',
         title: 'Adding another item',
         explanation: [
           { s: '还要', t: '還要', p: 'hái yào' },
@@ -626,9 +734,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '买单',
-        traditional: '買單',
-        pinyin: 'mǎidān',
+        simplified: '买单', traditional: '買單', pinyin: 'mǎidān',
         title: 'Asking for the bill',
         explanation: [
           { s: '买单', t: '買單', p: 'mǎidān' },
@@ -639,20 +745,38 @@ export const missions: Mission[] = [
     regionalNotes: [
       {
         region: 'mainland',
-        note: 'In mainland China, waving for the bill and saying 买单 or 结账 (jié zhàng) is common. Mobile payment (WeChat Pay, Alipay) is now nearly universal — cash is rarely needed.',
-        noteTraditional: 'In mainland China, waving for the bill and saying 買單 or 結帳 (jié zhàng) is common. Mobile payment (WeChat Pay, Alipay) is now nearly universal — cash is rarely needed.',
+        content: [
+          'In mainland China, waving for the bill and saying ',
+          { s: '买单', t: '買單', p: 'mǎidān' },
+          ' or ',
+          { s: '结账', t: '結帳', p: 'jié zhàng' },
+          ' is common. Mobile payment (WeChat Pay, Alipay) is now nearly universal — cash is rarely needed.',
+        ],
       },
       {
         region: 'taiwan',
-        note: 'Taiwan uses 结账 (jié zhàng) more commonly than 买单. Tipping is not customary in Taiwan restaurants.',
-        noteTraditional: 'Taiwan uses 結帳 (jié zhàng) more commonly than 買單. Tipping is not customary in Taiwan restaurants.',
+        content: [
+          'Taiwan uses ',
+          { s: '结账', t: '結帳', p: 'jié zhàng' },
+          ' more commonly than ',
+          { s: '买单', t: '買單', p: 'mǎidān' },
+          '. Tipping is not customary in Taiwan restaurants.',
+        ],
       },
       {
         region: 'malaysia',
-        note: 'Malaysian Chinese hawker stalls are a cultural institution. You order at the stall, find a seat, and pay when you are done. Say 多少钱 at the stall counter.',
-        noteTraditional: 'Malaysian Chinese hawker stalls are a cultural institution. You order at the stall, find a seat, and pay when you are done. Say 多少錢 at the stall counter.',
+        content: [
+          'Malaysian Chinese hawker stalls are a cultural institution. You order at the stall, find a seat, and pay when you are done. Say ',
+          { s: '多少钱', t: '多少錢', p: 'duōshǎoqián' },
+          ' at the stall counter.',
+        ],
       },
-      { region: 'international', note: 'At Chinese restaurants internationally, staff are always pleased when customers attempt to order in Mandarin. Do not worry about perfection — the effort is always appreciated.' },
+      {
+        region: 'international',
+        content: [
+          'At Chinese restaurants internationally, staff are always pleased when customers attempt to order in Mandarin. Do not worry about perfection — the effort is always appreciated.',
+        ],
+      },
     ],
     quiz: [
       {
@@ -666,7 +790,7 @@ export const missions: Mission[] = [
           { id: 'maidan', simplified: '我要买单',   traditional: '我要買單',   pinyin: 'wǒ yào mǎidān' },
         ],
         correctOptionId: 'mian',
-        explanation: '我要 (wǒ yào) = "I would like", 一碗 (yì wǎn) = "one bowl", 面 (miàn) = "noodles". Together: "I would like a bowl of noodles".',
+        explanation: '我要 (wǒ yào) = "I would like", 一碗 (yì wǎn) = "one bowl", 面 (miàn) = "noodles".',
       },
       {
         id: 'q4-2',
@@ -684,25 +808,25 @@ export const missions: Mission[] = [
           { id: 'howmuch',   english: 'How much?' },
         ],
         correctOptionId: 'bill',
-        explanation: '买单 (mǎidān) means "bill please" or "check please". It is the standard phrase used across Chinese restaurants.',
+        explanation: '买单 (mǎidān) means "bill please". It is the standard phrase used across Chinese restaurants.',
       },
       {
         id: 'q4-3',
         type: 'multiple-choice',
         prompt: {
-          english:     'Complete: 不 ______  (not spicy)',
-          simplified:  '不 ______  (not spicy)',
-          traditional: '不 ______  (not spicy)',
-          pinyin:      'bù ______  (not spicy)',
+          english:     'Complete: 不 ______ (not spicy)',
+          simplified:  '不 ______ (not spicy)',
+          traditional: '不 ______ (not spicy)',
+          pinyin:      'bù ______ (not spicy)',
         },
         options: [
-          { id: 'la',    simplified: '辣',   traditional: '辣',   pinyin: 'là' },
-          { id: 'tian',  simplified: '甜',   traditional: '甜',   pinyin: 'tián' },
-          { id: 'suan',  simplified: '酸',   traditional: '酸',   pinyin: 'suān' },
-          { id: 'xian',  simplified: '咸',   traditional: '鹹',   pinyin: 'xián' },
+          { id: 'la',   simplified: '辣', traditional: '辣', pinyin: 'là' },
+          { id: 'tian', simplified: '甜', traditional: '甜', pinyin: 'tián' },
+          { id: 'suan', simplified: '酸', traditional: '酸', pinyin: 'suān' },
+          { id: 'xian', simplified: '咸', traditional: '鹹', pinyin: 'xián' },
         ],
         correctOptionId: 'la',
-        explanation: '辣 (là) means "spicy". Add 不 (bù) in front to negate it: 不辣 (bù là) = "not spicy".',
+        explanation: '辣 (là) means "spicy". 不辣 (bù là) = "not spicy".',
       },
       {
         id: 'q4-4',
@@ -724,55 +848,68 @@ export const missions: Mission[] = [
       },
     ],
     assessment: {
-      vocabularyScore: 0,
-      listeningScore: 0,
-      grammarScore: 0,
-      speakingConfidenceScore: 0,
-      overallScore: 0,
+      vocabularyScore: 0, listeningScore: 0, grammarScore: 0, speakingConfidenceScore: 0, overallScore: 0,
       aiFeedbackPlaceholder: 'Complete the quiz to receive personalised AI feedback on your performance in this mission.',
       recommendation: 'Complete the quiz above to unlock your personalised learning recommendation.',
     },
     pdfPlaceholder: '/pdfs/mission-4-ordering-food.pdf',
   },
+
+  // ── Mission 5 — Taking a Taxi ──────────────────────────────────────────────
   {
     id: 'mission-5',
     slug: 'taking-a-taxi',
     number: 5,
     title: 'Taking a Taxi',
     subtitle: 'Get anywhere you need to go',
+    multilingualTitle: {
+      simplified:  '打车',
+      traditional: '打車',
+      pinyin:      'dǎ chē',
+      english:     'Taking a Taxi',
+    },
+    multilingualSubtitle: {
+      simplified:  '坐出租车去任何地方',
+      traditional: '坐出租車去任何地方',
+      pinyin:      'zuò chūzūchē qù rènhé dìfāng',
+      english:     'Get anywhere you need to go',
+    },
     objective: 'By the end of this mission, you will be able to hail a taxi, tell the driver your destination, ask for the meter to be used, and request a receipt — all in Mandarin.',
     imagePlaceholder: '/missions/taking-a-taxi.jpg',
     estimatedMinutes: 25,
     xpReward: 130,
+    gamification: {
+      xpReward: 130,
+      badgeIds: ['travel-ready'],
+      mastery: DEFAULT_MASTERY,
+    },
     vocabulary: [
-      { simplified: '出租车', traditional: '出租車', pinyin: 'chūzūchē',    english: 'Taxi',                        audioPlaceholder: '/audio/chuzuche.mp3',      slowAudioPlaceholder: '/audio/chuzuche-slow.mp3' },
-      { simplified: '打车',  traditional: '打車',  pinyin: 'dǎ chē',      english: 'To take a taxi / hail a cab', audioPlaceholder: '/audio/dache.mp3',         slowAudioPlaceholder: '/audio/dache-slow.mp3' },
-      { simplified: '去',    traditional: '去',    pinyin: 'qù',           english: 'To go (to)',                  audioPlaceholder: '/audio/qu.mp3',            slowAudioPlaceholder: '/audio/qu-slow.mp3' },
-      { simplified: '我要去', traditional: '我要去', pinyin: 'wǒ yào qù',   english: 'I want to go to',             audioPlaceholder: '/audio/woyaoqu.mp3',       slowAudioPlaceholder: '/audio/woyaoqu-slow.mp3' },
-      { simplified: '机场',  traditional: '機場',  pinyin: 'jīchǎng',     english: 'Airport',                     audioPlaceholder: '/audio/jichang.mp3',       slowAudioPlaceholder: '/audio/jichang-slow.mp3' },
-      { simplified: '酒店',  traditional: '酒店',  pinyin: 'jiǔdiàn',     english: 'Hotel',                       audioPlaceholder: '/audio/jiudian.mp3',       slowAudioPlaceholder: '/audio/jiudian-slow.mp3' },
-      { simplified: '火车站', traditional: '火車站', pinyin: 'huǒchēzhàn',  english: 'Train station',               audioPlaceholder: '/audio/huochezhan.mp3',    slowAudioPlaceholder: '/audio/huochezhan-slow.mp3' },
-      { simplified: '多少钱', traditional: '多少錢', pinyin: 'duōshǎoqián', english: 'How much?',                   audioPlaceholder: '/audio/duoshaoquian2.mp3', slowAudioPlaceholder: '/audio/duoshaoquian2-slow.mp3' },
-      { simplified: '打表',  traditional: '打表',  pinyin: 'dǎ biǎo',     english: 'Use the meter',               audioPlaceholder: '/audio/dabiao.mp3',        slowAudioPlaceholder: '/audio/dabiao-slow.mp3' },
-      { simplified: '停',    traditional: '停',    pinyin: 'tíng',        english: 'Stop',                        audioPlaceholder: '/audio/ting.mp3',          slowAudioPlaceholder: '/audio/ting-slow.mp3' },
-      { simplified: '这里',  traditional: '這裡',  pinyin: 'zhèlǐ',       english: 'Here',                        audioPlaceholder: '/audio/zheli.mp3',         slowAudioPlaceholder: '/audio/zheli-slow.mp3' },
-      { simplified: '发票',  traditional: '發票',  pinyin: 'fāpiào',      english: 'Receipt',                     audioPlaceholder: '/audio/fapiao.mp3',        slowAudioPlaceholder: '/audio/fapiao-slow.mp3' },
+      { simplified: '出租车', traditional: '出租車', pinyin: 'chūzūchē',    english: 'Taxi',                        audioPlaceholder: '/audio/chuzuche.mp3' },
+      { simplified: '打车',  traditional: '打車',  pinyin: 'dǎ chē',      english: 'To take a taxi / hail a cab', audioPlaceholder: '/audio/dache.mp3' },
+      { simplified: '去',    traditional: '去',    pinyin: 'qù',           english: 'To go (to)',                  audioPlaceholder: '/audio/qu.mp3' },
+      { simplified: '我要去', traditional: '我要去', pinyin: 'wǒ yào qù',   english: 'I want to go to',             audioPlaceholder: '/audio/woyaoqu.mp3' },
+      { simplified: '机场',  traditional: '機場',  pinyin: 'jīchǎng',     english: 'Airport',                     audioPlaceholder: '/audio/jichang.mp3' },
+      { simplified: '酒店',  traditional: '酒店',  pinyin: 'jiǔdiàn',     english: 'Hotel',                       audioPlaceholder: '/audio/jiudian.mp3' },
+      { simplified: '火车站', traditional: '火車站', pinyin: 'huǒchēzhàn',  english: 'Train station',               audioPlaceholder: '/audio/huochezhan.mp3' },
+      { simplified: '多少钱', traditional: '多少錢', pinyin: 'duōshǎoqián', english: 'How much?',                   audioPlaceholder: '/audio/duoshaoquian2.mp3' },
+      { simplified: '打表',  traditional: '打表',  pinyin: 'dǎ biǎo',     english: 'Use the meter',               audioPlaceholder: '/audio/dabiao.mp3' },
+      { simplified: '停',    traditional: '停',    pinyin: 'tíng',        english: 'Stop',                        audioPlaceholder: '/audio/ting.mp3' },
+      { simplified: '这里',  traditional: '這裡',  pinyin: 'zhèlǐ',       english: 'Here',                        audioPlaceholder: '/audio/zheli.mp3' },
+      { simplified: '发票',  traditional: '發票',  pinyin: 'fāpiào',      english: 'Receipt',                     audioPlaceholder: '/audio/fapiao.mp3' },
     ],
     dialogue: [
-      { speaker: 'Student', simplified: '你好！我要去机场。',        traditional: '你好！我要去機場。',        pinyin: 'Nǐhǎo! Wǒ yào qù jīchǎng.',              english: 'Hello! I want to go to the airport.' },
-      { speaker: 'Driver',  simplified: '好的，上车吧。打表吗？',    traditional: '好的，上車吧。打表嗎？',    pinyin: 'Hǎo de, shàng chē ba. Dǎ biǎo ma?',      english: 'Okay, get in. Using the meter?' },
-      { speaker: 'Student', simplified: '打表。多少钱大概？',        traditional: '打表。多少錢大概？',        pinyin: 'Dǎ biǎo. Duōshǎoqián dàgài?',            english: 'Yes, use the meter. How much approximately?' },
-      { speaker: 'Driver',  simplified: '大概八十块左右。',          traditional: '大概八十塊左右。',          pinyin: 'Dàgài bāshí kuài zuǒyòu.',               english: 'Approximately 80 yuan or so.' },
-      { speaker: 'Student', simplified: '好的，谢谢。',             traditional: '好的，謝謝。',             pinyin: 'Hǎo de, xièxie.',                         english: 'Okay, thank you.' },
-      { speaker: 'Student', simplified: '停！就在这里！',            traditional: '停！就在這裡！',            pinyin: 'Tíng! Jiù zài zhèlǐ!',                   english: 'Stop! Right here!' },
-      { speaker: 'Driver',  simplified: '好的，到了。七十五块。',    traditional: '好的，到了。七十五塊。',    pinyin: 'Hǎo de, dào le. Qīshíwǔ kuài.',          english: 'Okay, we have arrived. 75 yuan.' },
-      { speaker: 'Student', simplified: '给你。请给我发票。',        traditional: '給你。請給我發票。',        pinyin: 'Gěi nǐ. Qǐng gěi wǒ fāpiào.',            english: 'Here you are. Please give me a receipt.' },
+      { speaker: 'Student', simplified: '你好！我要去机场。',     traditional: '你好！我要去機場。',     pinyin: 'Nǐhǎo! Wǒ yào qù jīchǎng.',         english: 'Hello! I want to go to the airport.' },
+      { speaker: 'Driver',  simplified: '好的，上车吧。打表吗？', traditional: '好的，上車吧。打表嗎？', pinyin: 'Hǎo de, shàng chē ba. Dǎ biǎo ma?', english: 'Okay, get in. Using the meter?' },
+      { speaker: 'Student', simplified: '打表。多少钱大概？',     traditional: '打表。多少錢大概？',     pinyin: 'Dǎ biǎo. Duōshǎoqián dàgài?',       english: 'Yes, use the meter. How much approximately?' },
+      { speaker: 'Driver',  simplified: '大概八十块左右。',       traditional: '大概八十塊左右。',       pinyin: 'Dàgài bāshí kuài zuǒyòu.',          english: 'Approximately 80 yuan or so.' },
+      { speaker: 'Student', simplified: '好的，谢谢。',          traditional: '好的，謝謝。',          pinyin: 'Hǎo de, xièxie.',                    english: 'Okay, thank you.' },
+      { speaker: 'Student', simplified: '停！就在这里！',         traditional: '停！就在這裡！',         pinyin: 'Tíng! Jiù zài zhèlǐ!',              english: 'Stop! Right here!' },
+      { speaker: 'Driver',  simplified: '好的，到了。七十五块。', traditional: '好的，到了。七十五塊。', pinyin: 'Hǎo de, dào le. Qīshíwǔ kuài.',     english: 'Okay, we have arrived. 75 yuan.' },
+      { speaker: 'Student', simplified: '给你。请给我发票。',     traditional: '給你。請給我發票。',     pinyin: 'Gěi nǐ. Qǐng gěi wǒ fāpiào.',       english: 'Here you are. Please give me a receipt.' },
     ],
     grammarNotes: [
       {
-        simplified: '我要去',
-        traditional: '我要去',
-        pinyin: 'wǒ yào qù',
+        simplified: '我要去', traditional: '我要去', pinyin: 'wǒ yào qù',
         title: 'Saying where you want to go',
         explanation: [
           { s: '我要去', t: '我要去', p: 'wǒ yào qù' },
@@ -782,9 +919,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '打表',
-        traditional: '打表',
-        pinyin: 'dǎ biǎo',
+        simplified: '打表', traditional: '打表', pinyin: 'dǎ biǎo',
         title: 'Requesting the meter',
         explanation: [
           { s: '打表', t: '打表', p: 'dǎ biǎo' },
@@ -792,9 +927,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '大概',
-        traditional: '大概',
-        pinyin: 'dàgài',
+        simplified: '大概', traditional: '大概', pinyin: 'dàgài',
         title: '"Approximately" — estimates',
         explanation: [
           { s: '大概', t: '大概', p: 'dàgài' },
@@ -802,9 +935,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '左右',
-        traditional: '左右',
-        pinyin: 'zuǒyòu',
+        simplified: '左右', traditional: '左右', pinyin: 'zuǒyòu',
         title: '"Around / more or less"',
         explanation: [
           { s: '左右', t: '左右', p: 'zuǒyòu' },
@@ -814,9 +945,7 @@ export const missions: Mission[] = [
         ],
       },
       {
-        simplified: '停',
-        traditional: '停',
-        pinyin: 'tíng',
+        simplified: '停', traditional: '停', pinyin: 'tíng',
         title: '"Stop"',
         explanation: [
           { s: '停', t: '停', p: 'tíng' },
@@ -825,14 +954,38 @@ export const missions: Mission[] = [
       },
     ],
     regionalNotes: [
-      { region: 'mainland', note: 'In mainland China, ride-hailing apps like DiDi (滴滴) are more common than street taxis in big cities. The Mandarin phrases are identical — you can use them to communicate with DiDi drivers too.' },
+      {
+        region: 'mainland',
+        content: [
+          'In mainland China, ride-hailing apps like DiDi (',
+          { s: '滴滴', t: '滴滴', p: 'dīdī' },
+          ') are more common than street taxis in big cities. The Mandarin phrases are identical — you can use them to communicate with DiDi drivers too.',
+        ],
+      },
       {
         region: 'taiwan',
-        note: 'Taiwan taxis are metered and generally trustworthy. The word for taxi in Taiwan is 计程车 (jì chéng chē) rather than 出租车. Uber also operates in major Taiwanese cities.',
-        noteTraditional: 'Taiwan taxis are metered and generally trustworthy. The word for taxi in Taiwan is 計程車 (jì chéng chē) rather than 出租車. Uber also operates in major Taiwanese cities.',
+        content: [
+          'Taiwan taxis are metered and generally trustworthy. The word for taxi in Taiwan is ',
+          { s: '计程车', t: '計程車', p: 'jì chéng chē' },
+          ' rather than ',
+          { s: '出租车', t: '出租車', p: 'chūzūchē' },
+          '. Uber also operates in major Taiwanese cities.',
+        ],
       },
-      { region: 'malaysia', note: 'In Malaysia, Grab (the Southeast Asian Uber) dominates. Traditional taxis require you to insist on the meter (打表) — otherwise drivers may quote a flat (often higher) price.' },
-      { region: 'international', note: 'When showing your destination to a driver who may not understand your pronunciation, having the destination written in Chinese characters on your phone is always a reliable backup strategy.' },
+      {
+        region: 'malaysia',
+        content: [
+          'In Malaysia, Grab (the Southeast Asian Uber) dominates. Traditional taxis require you to insist on the meter (',
+          { s: '打表', t: '打表', p: 'dǎ biǎo' },
+          ') — otherwise drivers may quote a flat (often higher) price.',
+        ],
+      },
+      {
+        region: 'international',
+        content: [
+          'When showing your destination to a driver who may not understand your pronunciation, having the destination written in Chinese characters on your phone is always a reliable backup strategy.',
+        ],
+      },
     ],
     quiz: [
       {
@@ -876,10 +1029,10 @@ export const missions: Mission[] = [
           pinyin:      '______ zhèlǐ! (Stop here!)',
         },
         options: [
-          { id: 'ting',  simplified: '停',   traditional: '停',   pinyin: 'tíng' },
-          { id: 'qu',    simplified: '去',   traditional: '去',   pinyin: 'qù' },
-          { id: 'zai',   simplified: '在',   traditional: '在',   pinyin: 'zài' },
-          { id: 'lai',   simplified: '来',   traditional: '來',   pinyin: 'lái' },
+          { id: 'ting', simplified: '停', traditional: '停', pinyin: 'tíng' },
+          { id: 'qu',   simplified: '去', traditional: '去', pinyin: 'qù' },
+          { id: 'zai',  simplified: '在', traditional: '在', pinyin: 'zài' },
+          { id: 'lai',  simplified: '来', traditional: '來', pinyin: 'lái' },
         ],
         correctOptionId: 'ting',
         explanation: '停 (tíng) means "stop". 停这里 or 就在这里停 means "stop here".',
@@ -904,11 +1057,7 @@ export const missions: Mission[] = [
       },
     ],
     assessment: {
-      vocabularyScore: 0,
-      listeningScore: 0,
-      grammarScore: 0,
-      speakingConfidenceScore: 0,
-      overallScore: 0,
+      vocabularyScore: 0, listeningScore: 0, grammarScore: 0, speakingConfidenceScore: 0, overallScore: 0,
       aiFeedbackPlaceholder: 'Complete the quiz to receive personalised AI feedback on your performance in this mission.',
       recommendation: 'Complete the quiz above to unlock your personalised learning recommendation.',
     },

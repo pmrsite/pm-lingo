@@ -6,6 +6,7 @@ import type { QuizQuestion, QuizOption, QuizPrompt } from '@/types'
 import { useLanguagePreferences } from '@/hooks/useLanguagePreferences'
 import StudyViewControls from '@/components/ui/StudyViewControls'
 import GrammarAccordion from '@/components/ui/GrammarAccordion'
+import ExplanationRenderer from '@/components/ui/ExplanationRenderer'
 
 type Tab = 'learn' | 'practice' | 'review' | 'assess'
 type ReviewRep = 'simplified' | 'traditional' | 'pinyin'
@@ -300,16 +301,11 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                 </button>
               ))}
             </div>
-            {mission.regionalNotes.filter((r) => r.region === activeRegion).map((r, i) => {
-              const noteText = prefs.showTraditional && !prefs.showSimplified && r.noteTraditional
-                ? r.noteTraditional
-                : r.note
-              return (
-                <div key={i} className="bg-lingo-surface rounded-xl p-5 border border-lingo-border text-base text-lingo-body">
-                  {noteText}
-                </div>
-              )
-            })}
+            {mission.regionalNotes.filter((r) => r.region === activeRegion).map((r, i) => (
+              <div key={i} className="bg-lingo-surface rounded-xl p-5 border border-lingo-border">
+                <ExplanationRenderer segments={r.content} prefs={prefs} />
+              </div>
+            ))}
           </div>
 
           <div className="flex gap-4">
