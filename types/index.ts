@@ -55,13 +55,32 @@ export interface DialogueLine {
   english: string
 }
 
+// Structured multi-representation answers for fill-blank Mandarin questions
+export interface QuizAnswers {
+  simplified?: string[]
+  traditional?: string[]
+  pinyin?: string[]
+}
+
 export interface QuizQuestion {
   id: string
   type: 'multiple-choice' | 'fill-blank' | 'matching' | 'sentence-order'
+  // 'mandarin' = accepts simplified/traditional/pinyin per active prefs
+  // 'english'  = expects English answer regardless of script prefs
+  answerLanguage?: 'mandarin' | 'english'
   question: string
   options?: string[]
-  answer: string | string[]
+  answer: string | string[]    // primary answer (MC correct option; fill-blank simplified fallback)
+  answers?: QuizAnswers        // structured per-representation answers for fill-blank mandarin
   explanation: string
+}
+
+export interface GrammarNote {
+  simplified: string
+  traditional: string | null   // null = pending content review
+  pinyin: string
+  title: string                // short English grammar label shown in accordion header
+  explanation: string          // instructional explanation shown when expanded
 }
 
 export interface RegionalNote {
@@ -89,7 +108,7 @@ export interface Mission {
   imagePlaceholder: string
   vocabulary: VocabItem[]
   dialogue: DialogueLine[]
-  grammarNotes: string[]
+  grammarNotes: GrammarNote[]
   regionalNotes: RegionalNote[]
   quiz: QuizQuestion[]
   assessment: AssessmentCriteria
