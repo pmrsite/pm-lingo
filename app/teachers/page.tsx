@@ -6,16 +6,16 @@ export const metadata = { title: 'Teachers — PM-Lingo' }
 
 const teacherAccents: Record<string, { accent: string; textColor: string; emoji: string; softBg: string }> = {
   mei: { accent: '#0F766E', textColor: '#0F766E', emoji: '🧘', softBg: '#F0FDFA' },
-  lin: { accent: '#E0006A', textColor: '#C2005C', emoji: '✨',     softBg: '#FDF2F8' },
-  jun: { accent: '#2B2E63', textColor: '#2B2E63', emoji: '📚',     softBg: '#F5F3FF' },
-  kai: { accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯',     softBg: '#FFF7ED' },
+  lin: { accent: '#E0006A', textColor: '#C2005C', emoji: '✨',       softBg: '#FDF2F8' },
+  jun: { accent: '#2B2E63', textColor: '#2B2E63', emoji: '📚', softBg: '#EEEEF8' },
+  kai: { accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯', softBg: '#FFF4EC' },
 }
 
 export default function TeachersPage() {
   return (
     <div className="flex flex-col">
 
-      {/* ── Soft-teal Hero ───────────────────────────────────────────────── */}
+      {/* ── Soft-teal Hero ──────────────────────────────────────── */}
       <section style={{ background: '#F0FDFA' }} className="pt-16 pb-10 px-4 text-center">
         <div className="max-w-6xl mx-auto">
           <div className="inline-flex items-center gap-2.5 mb-5">
@@ -34,7 +34,7 @@ export default function TeachersPage() {
       {/* Wave: soft-teal → white */}
       <WaveDivider variant="soft-teal-to-white" shape="valley" />
 
-      {/* ── AI Teachers Grid ─────────────────────────────────────────────── */}
+      {/* ── AI Teachers Grid ──────────────────────────────────── */}
       <section className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -88,11 +88,11 @@ export default function TeachersPage() {
         </div>
       </section>
 
-      {/* Wave: white → soft-lavender */}
-      <WaveDivider variant="white-to-soft-lavender" shape="slope" />
+      {/* Wave: white → soft-teal */}
+      <WaveDivider variant="white-to-soft-teal" shape="slope" />
 
-      {/* ── Human Teachers ─────────────────────────────────────────────── */}
-      <section className="py-20 px-4" style={{ background: '#F5F3FF' }}>
+      {/* ── Human Teachers ─────────────────────────────────── */}
+      <section className="py-20 px-4" style={{ background: '#F0FDFA' }}>
         <div className="max-w-2xl mx-auto text-center">
           <div className="inline-flex items-center gap-2.5 mb-5">
             <span className="w-6 h-0.5 rounded-full inline-block bg-lingo-teal" />
@@ -106,19 +106,19 @@ export default function TeachersPage() {
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             {['📅 Live scheduling', '🎤 Pronunciation coaching', '✅ Progress tracking', '💬 Personalised feedback'].map((b) => (
-              <div key={b} className="rounded-xl px-5 py-3 text-sm font-medium bg-white border border-gray-200 text-lingo-body">{b}</div>
+              <div key={b} className="rounded-xl px-5 py-3 text-sm font-medium bg-white border border-lingo-border text-lingo-body">{b}</div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Wave: soft-lavender → white */}
-      <WaveDivider variant="soft-lavender-to-white" shape="arch" />
+      {/* Wave: soft-teal → white */}
+      <WaveDivider variant="soft-teal-to-white" shape="arch" />
 
       {/* Wave: white → orange */}
       <WaveDivider variant="white-to-orange" shape="arch" />
 
-      {/* ── CTA ──────────────────────────────────────────────────────────────── */}
+      {/* ── CTA ────────────────────────────────────────────────────────── */}
       <section className="py-20 px-4" style={{ background: '#FF6B00' }}>
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-3">Start learning with your AI teacher today</h2>
