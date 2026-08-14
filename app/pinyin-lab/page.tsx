@@ -4,9 +4,12 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import WaveDivider from '@/components/ui/WaveDivider'
 import Link from 'next/link'
 
-const TEAL   = '#0F766E'
-const ORANGE = '#FF6B00'
-const POPUP_W = 316
+const TEAL      = '#0F766E'
+const ORANGE    = '#FF6B00'
+const POPUP_W   = 320
+const GAP       = 10   // px gap between anchor edge and popup
+const MARGIN    = 12   // minimum distance from viewport edge
+const MOBILE_BP = 640  // px — below this use bottom-sheet
 
 const INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's']
 
@@ -14,7 +17,7 @@ const FINAL_GROUPS = [
   { label: 'FINALS', finals: ['a', 'o', 'e', 'ai', 'ei', 'ao', 'ou', 'an', 'en', 'ang', 'eng', 'er'] },
   { label: 'i',      finals: ['i', 'ia', 'iao', 'ie', 'iu', 'ian', 'in', 'iang', 'ing', 'iong'] },
   { label: 'u',      finals: ['u', 'ua', 'uo', 'uai', 'ui', 'uan', 'un', 'uang'] },
-  { label: 'ü', finals: ['ü', 'üe', 'üan', 'ün'] },
+  { label: 'ü',     finals: ['ü', 'üe', 'üan', 'ün'] },
 ]
 
 const STANDALONE: Record<string, string> = {
@@ -96,6 +99,35 @@ function speak(syllable: string, tone: number) {
   window.speechSynthesis.speak(utter)
 }
 
+/**
+ * Given the anchor's bounding rect, compute a collision-safe {x, y} for the
+ * popup panel (fixed position).
+ *
+ * Preferred: right of cell.
+ * Fallback: left of cell.
+ * Then clamp vertically so the popup stays within the viewport.
+ */
+function calcPos(anchor: DOMRect, popupH: number): { x: number; y: number } {
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+
+  // Try right first
+  let x = anchor.right + GAP
+  if (x + POPUP_W > vw - MARGIN) {
+    // Flip to left
+    x = anchor.left - POPUP_W - GAP
+  }
+  // Hard clamp
+  x = Math.max(MARGIN, Math.min(x, vw - POPUP_W - MARGIN))
+
+  // Align top with anchor top, then clamp
+  let y = anchor.top
+  if (y + popupH > vh - MARGIN) y = vh - popupH - MARGIN
+  y = Math.max(MARGIN, y)
+
+  return { x, y }
+}
+
 const TONE_INFO = [
   { tone: 1, mark: 'ā', name: '1st Tone', desc: 'High & flat',   symbol: '—',  light: 'bg-blue-50 border-blue-300 text-blue-700' },
   { tone: 2, mark: 'á', name: '2nd Tone', desc: 'Rising',        symbol: '↗',  light: 'bg-green-50 border-green-300 text-green-700' },
@@ -104,88 +136,181 @@ const TONE_INFO = [
   { tone: 0, mark: 'a',      name: 'Neutral',  desc: 'Short & light', symbol: '·', light: 'bg-gray-50 border-gray-300 text-gray-600' },
 ]
 
-interface PopupState {
+// ─── Tone panel (shared between desktop popover and mobile sheet) ─────────────
+function TonePanel({
+  syllable, playingTone, onTone, onClose,
+}: {
   syllable: string
-  // fixed-position coords of the popup panel itself (already collision-resolved)
-  x: number
-  y: number
+  playingTone: number | null
+  onTone: (tone: number) => void
+  onClose: () => void
+}) {
+  return (
+    <>
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <div className="text-3xl font-bold" style={{ color: TEAL }}>{syllable}</div>
+          <div className="text-xs text-gray-400 mt-0.5">Tap a tone to hear it</div>
+        </div>
+        <button
+          onClick={onClose}
+          aria-label="Close tone panel"
+          className="text-gray-400 hover:text-gray-700 text-lg leading-none p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          ✕
+        </button>
+      </div>
+      <div className="space-y-1.5">
+        {TONE_INFO.map(({ tone, name, desc, symbol, light }) => {
+          const withTone  = addTone(syllable, tone)
+          const isPlaying = playingTone === tone
+          return (
+            <button
+              key={tone}
+              onClick={() => onTone(tone)}
+              className={[
+                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 transition-all',
+                isPlaying
+                  ? light + ' shadow-sm'
+                  : 'border-gray-200 bg-gray-50 hover:border-[#0F766E]/40 hover:bg-[#F0FDFA]',
+              ].join(' ')}
+            >
+              <span className="text-base w-6 text-center shrink-0">{symbol}</span>
+              <span
+                className="text-xl font-bold flex-1 text-left"
+                style={{ color: isPlaying ? undefined : TEAL }}
+              >
+                {withTone}
+              </span>
+              <div className="text-right">
+                <div className="text-xs font-semibold text-gray-700">{name}</div>
+                <div className="text-[10px] text-gray-400">{desc}</div>
+              </div>
+              <span className="text-base">{isPlaying ? '🔊' : '▶️'}</span>
+            </button>
+          )
+        })}
+      </div>
+      <div className="mt-3 pt-3 border-t border-gray-100 text-[10px] text-gray-400 text-center">
+        Audio via browser TTS (zh-CN)
+      </div>
+    </>
+  )
 }
 
-/** Compute a collision-safe fixed position for the popup adjacent to the anchor rect. */
-function calcPopupPos(anchor: DOMRect): { x: number; y: number } {
-  const vw = window.innerWidth
-  const vh = window.innerHeight
-  const popupH = 360 // estimated
-  const gap = 12
-  const margin = 12
-
-  // Prefer right of cell
-  let x = anchor.right + gap
-  if (x + POPUP_W > vw - margin) {
-    // Flip left
-    x = anchor.left - POPUP_W - gap
-  }
-  // Clamp to viewport
-  x = Math.max(margin, Math.min(x, vw - POPUP_W - margin))
-
-  // Align top of popup with top of cell
-  let y = anchor.top
-  // Shift up if it overflows the bottom
-  if (y + popupH > vh - margin) {
-    y = vh - popupH - margin
-  }
-  y = Math.max(margin, y)
-
-  return { x, y }
-}
-
+// ─── Main page ─────────────────────────────────────────────────────────────────
 export default function PinyinLabPage() {
   const [selectedTone, setSelectedTone] = useState(1)
-  const [popup,        setPopup]        = useState<PopupState | null>(null)
   const [activeSyl,    setActiveSyl]    = useState<string | null>(null)
   const [playingTone,  setPlayingTone]  = useState<number | null>(null)
   const [search,       setSearch]       = useState('')
-  const popupRef = useRef<HTMLDivElement>(null)
 
-  // Close on outside click
+  // Popover state (desktop/tablet)
+  const [popoverPos,   setPopoverPos]   = useState<{ x: number; y: number } | null>(null)
+  // Ref to the currently anchored button element
+  const anchorRef   = useRef<HTMLButtonElement | null>(null)
+  const popoverRef  = useRef<HTMLDivElement>(null)
+  const popoverH    = useRef(360) // updated after first render
+
+  // Mobile bottom-sheet
+  const [isMobile,    setIsMobile]    = useState(false)
+  const [sheetOpen,   setSheetOpen]   = useState(false)
+
+  // Track mobile breakpoint
   useEffect(() => {
-    function onPointerDown(e: PointerEvent) {
-      if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
-        setPopup(null)
-        setActiveSyl(null)
-      }
+    function check() { setIsMobile(window.innerWidth < MOBILE_BP) }
+    check()
+    window.addEventListener('resize', check, { passive: true })
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  const closeAll = useCallback(() => {
+    setActiveSyl(null)
+    setPopoverPos(null)
+    setSheetOpen(false)
+    anchorRef.current = null
+  }, [])
+
+  /** Recompute popover position from stored anchor element. */
+  const reposition = useCallback(() => {
+    if (!anchorRef.current || isMobile) return
+    const rect = anchorRef.current.getBoundingClientRect()
+    // If anchor is completely off-screen (scrolled away), close
+    if (rect.bottom < 0 || rect.top > window.innerHeight
+      || rect.right < 0 || rect.left > window.innerWidth) {
+      closeAll()
+      return
     }
-    if (popup) document.addEventListener('pointerdown', onPointerDown)
-    return () => document.removeEventListener('pointerdown', onPointerDown)
-  }, [popup])
+    setPopoverPos(calcPos(rect, popoverH.current))
+  }, [isMobile, closeAll])
 
-  // Close on Escape
+  // Re-anchor on window resize
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') { setPopup(null); setActiveSyl(null) }
-    }
-    if (popup) document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [popup])
+    if (!anchorRef.current) return
+    window.addEventListener('resize', reposition, { passive: true })
+    return () => window.removeEventListener('resize', reposition)
+  }, [reposition])
 
-  // Close on scroll (popup is fixed so it stays, but anchor has moved — close cleanly)
+  // Close on scroll (anchor moves; close cleanly rather than chasing)
   useEffect(() => {
-    if (!popup) return
-    function onScroll() { setPopup(null); setActiveSyl(null) }
+    if (!activeSyl) return
+    function onScroll() { closeAll() }
     window.addEventListener('scroll', onScroll, { passive: true, capture: true })
     return () => window.removeEventListener('scroll', onScroll, { capture: true })
-  }, [popup])
+  }, [activeSyl, closeAll])
+
+  // Outside pointer-down closes the desktop popover
+  useEffect(() => {
+    if (!popoverPos) return
+    function onPointerDown(e: PointerEvent) {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)
+        && !(e.target as Element).closest('[data-pinyin-cell]')) {
+        closeAll()
+      }
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => document.removeEventListener('pointerdown', onPointerDown)
+  }, [popoverPos, closeAll])
+
+  // Escape key
+  useEffect(() => {
+    if (!activeSyl) return
+    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') closeAll() }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [activeSyl, closeAll])
+
+  // After popover renders, measure its actual height and reposition if needed
+  useEffect(() => {
+    if (popoverRef.current) {
+      const h = popoverRef.current.offsetHeight
+      if (h && h !== popoverH.current) {
+        popoverH.current = h
+        reposition()
+      }
+    }
+  })
 
   const handleCellClick = useCallback((syllable: string, e: React.MouseEvent<HTMLButtonElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const pos  = calcPopupPos(rect)
-    setActiveSyl(syllable)
-    setPopup({ syllable, ...pos })
-    speak(syllable, selectedTone)
-    setPlayingTone(selectedTone)
-  }, [selectedTone])
+    const btn = e.currentTarget
+    anchorRef.current = btn
 
-  function handlePopupTone(syllable: string, tone: number) {
+    if (isMobile) {
+      setActiveSyl(syllable)
+      setSheetOpen(true)
+      setPlayingTone(selectedTone)
+      speak(syllable, selectedTone)
+      return
+    }
+
+    const rect = btn.getBoundingClientRect()
+    setActiveSyl(syllable)
+    setPopoverPos(calcPos(rect, popoverH.current))
+    setPlayingTone(selectedTone)
+    speak(syllable, selectedTone)
+  }, [isMobile, selectedTone])
+
+  function handleTone(syllable: string, tone: number) {
     speak(syllable, tone)
     setPlayingTone(tone)
   }
@@ -246,27 +371,24 @@ export default function PinyinLabPage() {
           </div>
         </div>
 
-        {/* Chart */}
+        {/* Chart table */}
         <div className="overflow-x-auto rounded-xl border border-lingo-border shadow-sm">
           <table className="border-collapse text-sm" style={{ minWidth: '980px' }}>
             <thead>
               <tr>
-                {/* Corner header — label column content as INITIALS */}
                 <th
                   className="px-3 py-3 text-center sticky left-0 z-20 min-w-[72px] text-[11px] font-bold tracking-widest"
                   style={{ backgroundColor: TEAL, color: 'white' }}
                 >
                   INITIALS
                 </th>
-                {/* Initial consonant headers */}
                 {INITIALS.map(initial => (
                   <th
                     key={initial || 'zero'}
                     className="px-2 py-3 text-center font-bold min-w-[54px] text-sm"
                     style={{ backgroundColor: TEAL, color: 'white' }}
                   >
-                    {/* zero-initial column: show blank — data logic intact */}
-                    {initial}
+                    {initial /* zero-initial: renders empty string — column data intact */}
                   </th>
                 ))}
               </tr>
@@ -274,7 +396,6 @@ export default function PinyinLabPage() {
             <tbody>
               {FINAL_GROUPS.map((group, gi) => (
                 <>
-                  {/* Section label row — solid Orange, white text */}
                   <tr key={`group-${gi}`}>
                     <td
                       colSpan={INITIALS.length + 1}
@@ -287,8 +408,6 @@ export default function PinyinLabPage() {
 
                   {group.finals.map((final, fi) => (
                     <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
-
-                      {/* Final row header — always teal */}
                       <td
                         className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px]"
                         style={{ backgroundColor: TEAL, color: 'white' }}
@@ -296,34 +415,34 @@ export default function PinyinLabPage() {
                         {final}
                       </td>
 
-                      {/* Syllable cells */}
                       {INITIALS.map(initial => {
                         const syllable = getSyllable(initial, final)
+                        // Selected state has visual priority over search-match
                         const isActive = activeSyl === syllable && syllable !== null
-                        const isMatch  = search.length > 0 && syllable !== null
+                        const isMatch  = !isActive && search.length > 0 && syllable !== null
                           && syllable.toLowerCase().startsWith(search.toLowerCase())
 
                         return (
                           <td key={initial || 'zero'} className="px-0.5 py-0.5 text-center">
                             {syllable ? (
                               <button
+                                data-pinyin-cell
                                 onClick={e => handleCellClick(syllable, e)}
                                 aria-label={`${syllable}, click to hear tones`}
                                 aria-pressed={isActive}
                                 className={
                                   'w-full px-1 py-2 rounded-lg text-xs font-semibold '
                                   + 'transition-colors duration-150 ease-out '
-                                  + 'focus-visible:outline-none focus-visible:ring-2 '
+                                  + 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F766E]/40 '
                                   + (isActive
-                                      ? ''
-                                      : isMatch
-                                      ? 'bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400 '
-                                      : 'bg-lingo-surface text-lingo-text hover:bg-[#F0FDFA] ')
+                                    ? ''
+                                    : isMatch
+                                    ? 'bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400 '
+                                    : 'bg-lingo-surface text-lingo-text hover:bg-[#F0FDFA] ')
                                 }
                                 style={isActive
                                   ? { backgroundColor: TEAL, color: '#ffffff', fontWeight: 600,
-                                      boxShadow: '0 0 0 2px rgba(15,118,110,0.20)' }
-                                  : isMatch ? undefined
+                                      boxShadow: `0 0 0 2px rgba(15,118,110,0.25)` }
                                   : undefined
                                 }
                               >
@@ -351,7 +470,7 @@ export default function PinyinLabPage() {
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: TEAL }} />
-            <span>Selected</span>
+            Selected
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-4 h-4 rounded bg-yellow-100 border-2 border-yellow-400" />
@@ -368,9 +487,6 @@ export default function PinyinLabPage() {
               className={`p-4 rounded-xl border-2 text-left transition-all hover:shadow-md ${
                 selectedTone === tone ? light + ' shadow-md scale-105' : 'bg-white border-lingo-border'
               }`}
-              style={selectedTone === tone
-                ? undefined
-                : { ['--tw-border-opacity' as string]: 1 }}
             >
               <div className="text-2xl font-bold mb-1 text-lingo-text">{mark}</div>
               <div className="text-sm font-semibold text-lingo-text">{name}</div>
@@ -380,62 +496,59 @@ export default function PinyinLabPage() {
         </div>
       </div>
 
-      {/* Anchored tone popup — fixed position, computed from clicked cell */}
-      {popup && (
+      {/* ── Desktop / tablet anchored popover ───────────────────────────────────────── */}
+      {!isMobile && popoverPos && activeSyl && (
         <div
-          ref={popupRef}
+          ref={popoverRef}
           role="dialog"
-          aria-label={`Tones for ${popup.syllable}`}
+          aria-label={`Tones for ${activeSyl}`}
           aria-modal="false"
-          className="z-[9999] bg-white rounded-2xl shadow-2xl border border-gray-200 p-5"
+          className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-5"
           style={{
             position: 'fixed',
-            top: popup.y,
-            left: popup.x,
+            top: popoverPos.y,
+            left: popoverPos.x,
             width: POPUP_W,
-            maxWidth: 'calc(100vw - 24px)',
+            maxWidth: `calc(100vw - ${MARGIN * 2}px)`,
+            zIndex: 9999,
           }}
         >
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <div className="text-3xl font-bold" style={{ color: TEAL }}>{popup.syllable}</div>
-              <div className="text-xs text-gray-400 mt-0.5">Tap a tone to hear it</div>
-            </div>
-            <button
-              onClick={() => { setPopup(null); setActiveSyl(null) }}
-              aria-label="Close tone panel"
-              className="text-gray-400 hover:text-gray-700 text-lg leading-none p-1 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              ✕
-            </button>
-          </div>
-          <div className="space-y-1.5">
-            {TONE_INFO.map(({ tone, name, desc, symbol, light }) => {
-              const withTone  = addTone(popup.syllable, tone)
-              const isPlaying = playingTone === tone
-              return (
-                <button
-                  key={tone}
-                  onClick={() => handlePopupTone(popup.syllable, tone)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 transition-all hover:scale-[1.01] ${
-                    isPlaying ? light + ' shadow-md' : 'border-gray-200 bg-gray-50 hover:border-[#0F766E]/40 hover:bg-[#F0FDFA]'
-                  }`}
-                >
-                  <span className="text-base w-6 text-center shrink-0">{symbol}</span>
-                  <span className="text-xl font-bold flex-1 text-left" style={{ color: isPlaying ? undefined : TEAL }}>{withTone}</span>
-                  <div className="text-right">
-                    <div className="text-xs font-semibold text-gray-700">{name}</div>
-                    <div className="text-[10px] text-gray-400">{desc}</div>
-                  </div>
-                  <span className="text-base">{isPlaying ? '🔊' : '▶️'}</span>
-                </button>
-              )
-            })}
-          </div>
-          <div className="mt-3 pt-3 border-t border-gray-100 text-[10px] text-gray-400 text-center">
-            Audio via browser TTS (zh-CN)
-          </div>
+          <TonePanel
+            syllable={activeSyl}
+            playingTone={playingTone}
+            onTone={tone => handleTone(activeSyl, tone)}
+            onClose={closeAll}
+          />
         </div>
+      )}
+
+      {/* ── Mobile bottom sheet ────────────────────────────────────────────────── */}
+      {isMobile && sheetOpen && activeSyl && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/30 z-[9998]"
+            aria-hidden="true"
+            onClick={closeAll}
+          />
+          {/* Sheet */}
+          <div
+            role="dialog"
+            aria-label={`Tones for ${activeSyl}`}
+            aria-modal="true"
+            className="fixed bottom-0 left-0 right-0 z-[9999] bg-white rounded-t-2xl shadow-2xl px-4 pt-4 pb-8"
+            style={{ maxHeight: '85vh', overflowY: 'auto' }}
+          >
+            {/* Drag handle */}
+            <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" aria-hidden="true" />
+            <TonePanel
+              syllable={activeSyl}
+              playingTone={playingTone}
+              onTone={tone => handleTone(activeSyl, tone)}
+              onClose={closeAll}
+            />
+          </div>
+        </>
       )}
 
       <WaveDivider variant="white-to-soft-teal" shape="slope" />
@@ -458,7 +571,6 @@ export default function PinyinLabPage() {
       <WaveDivider variant="soft-teal-to-white" shape="valley" />
       <WaveDivider variant="white-to-orange" shape="arch" />
 
-      {/* CTA */}
       <section className="py-16 px-4 text-center" style={{ backgroundColor: ORANGE }}>
         <h2 className="text-3xl font-bold text-white mb-4">Practice what you just learned</h2>
         <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
