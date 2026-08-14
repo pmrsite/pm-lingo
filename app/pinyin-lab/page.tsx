@@ -13,13 +13,18 @@ const MOBILE_BP = 640  // px — below this use bottom-sheet
 
 const INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's']
 
-// Flat ordered list of all finals — no section banners
+// Flat ordered list of all finals — no section banners beyond the single FINALS stripe
 const ALL_FINALS = [
   'a', 'o', 'e', 'ai', 'ei', 'ao', 'ou', 'an', 'en', 'ang', 'eng', 'er',
   'i', 'ia', 'iao', 'ie', 'iu', 'ian', 'in', 'iang', 'ing', 'iong',
   'u', 'ua', 'uo', 'uai', 'ui', 'uan', 'un', 'uang',
   'ü', 'üe', 'üan', 'ün',
 ]
+
+// Table geometry — used for both the table element and the wrapper min-width
+const FINALS_COL_W  = 88   // px  — left sticky finals label column
+const INITIAL_COL_MIN = 48 // px  — minimum width per initial column
+const TABLE_MIN_W   = FINALS_COL_W + INITIALS.length * INITIAL_COL_MIN
 
 const STANDALONE: Record<string, string> = {
   'i': 'yi', 'ia': 'ya', 'iao': 'yao', 'ie': 'ye', 'iu': 'you',
@@ -341,23 +346,34 @@ export default function PinyinLabPage() {
           </div>
         </div>
 
-        {/* Pinyin matrix */}
+        {/* Pinyin matrix
+            - overflow-x: auto on wrapper allows horizontal scrolling on narrow viewports
+            - table: width 100% fills container; table-layout fixed gives equal-width initial columns
+            - minWidth on table prevents cells becoming unreadably narrow before scroll kicks in
+        */}
         <div className="overflow-x-auto rounded-xl border border-lingo-border shadow-sm">
-          <table className="border-collapse text-sm" style={{ minWidth: '980px' }}>
+          <table
+            className="border-collapse text-sm"
+            style={{
+              width: '100%',
+              minWidth: `${TABLE_MIN_W}px`,
+              tableLayout: 'fixed',
+            }}
+          >
             <thead>
               <tr>
-                {/* Corner: INITIALS label */}
+                {/* Corner: INITIALS label — explicit width drives the fixed-layout finals column */}
                 <th
-                  className="px-3 py-3 text-center sticky left-0 z-20 min-w-[72px] text-[11px] font-bold tracking-widest"
-                  style={{ backgroundColor: TEAL, color: '#ffffff' }}
+                  className="px-3 py-3 text-center sticky left-0 z-20 text-[11px] font-bold tracking-widest"
+                  style={{ backgroundColor: TEAL, color: '#ffffff', width: `${FINALS_COL_W}px` }}
                 >
                   INITIALS
                 </th>
-                {/* Initial consonant headers — zero-initial renders blank */}
+                {/* Initial consonant headers — all share remaining width equally in fixed layout */}
                 {INITIALS.map(initial => (
                   <th
                     key={initial || 'zero'}
-                    className="px-2 py-3 text-center font-bold min-w-[54px] text-sm"
+                    className="px-2 py-3 text-center font-bold text-sm"
                     style={{ backgroundColor: TEAL, color: '#ffffff' }}
                   >
                     {initial}
@@ -366,12 +382,24 @@ export default function PinyinLabPage() {
               </tr>
             </thead>
             <tbody>
+              {/* FINALS stripe — single full-width orange banner below the Initials header */}
+              <tr>
+                <td
+                  colSpan={INITIALS.length + 1}
+                  className="px-4 py-2 text-center font-bold text-sm tracking-widest"
+                  style={{ backgroundColor: ORANGE, color: '#ffffff' }}
+                >
+                  FINALS
+                </td>
+              </tr>
+
+              {/* Finals rows — continuous, no i/u/ü section banners */}
               {ALL_FINALS.map((final, fi) => (
                 <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
 
-                  {/* Finals label — Orange */}
+                  {/* Finals label — Orange sticky column */}
                   <td
-                    className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px]"
+                    className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs"
                     style={{ backgroundColor: ORANGE, color: '#ffffff' }}
                   >
                     {final}
@@ -380,7 +408,6 @@ export default function PinyinLabPage() {
                   {/* Syllable cells */}
                   {INITIALS.map(initial => {
                     const syllable = getSyllable(initial, final)
-                    // Selected takes priority over search match
                     const isActive = activeSyl === syllable && syllable !== null
                     const isMatch  = !isActive && search.length > 0 && syllable !== null
                       && syllable.toLowerCase().startsWith(search.toLowerCase())
