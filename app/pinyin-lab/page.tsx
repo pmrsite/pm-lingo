@@ -13,11 +13,12 @@ const MOBILE_BP = 640  // px — below this use bottom-sheet
 
 const INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's']
 
-const FINAL_GROUPS = [
-  { label: 'FINALS', finals: ['a', 'o', 'e', 'ai', 'ei', 'ao', 'ou', 'an', 'en', 'ang', 'eng', 'er'] },
-  { label: 'i',      finals: ['i', 'ia', 'iao', 'ie', 'iu', 'ian', 'in', 'iang', 'ing', 'iong'] },
-  { label: 'u',      finals: ['u', 'ua', 'uo', 'uai', 'ui', 'uan', 'un', 'uang'] },
-  { label: 'ü',     finals: ['ü', 'üe', 'üan', 'ün'] },
+// Flat ordered list of all finals — no section banners
+const ALL_FINALS = [
+  'a', 'o', 'e', 'ai', 'ei', 'ao', 'ou', 'an', 'en', 'ang', 'eng', 'er',
+  'i', 'ia', 'iao', 'ie', 'iu', 'ian', 'in', 'iang', 'ing', 'iong',
+  'u', 'ua', 'uo', 'uai', 'ui', 'uan', 'un', 'uang',
+  'ü', 'üe', 'üan', 'ün',
 ]
 
 const STANDALONE: Record<string, string> = {
@@ -61,6 +62,12 @@ function getSyllable(initial: string, final: string): string | null {
     const standalone = STANDALONE[final] ?? final
     return VALID.has(standalone) ? standalone : null
   }
+  // j/q/x do not combine with plain 'uan' or 'un' in this chart —
+  // those syllables (juan/quan/xuan, jun/qun/xun) belong pedagogically
+  // to the üan/ün rows where the ü→u spelling convention is explained.
+  if (['j', 'q', 'x'].includes(initial) && (final === 'uan' || final === 'un')) {
+    return null
+  }
   let f = final
   if (['j', 'q', 'x'].includes(initial)) f = f.replace('ü', 'u')
   const syllable = initial + f
@@ -99,32 +106,16 @@ function speak(syllable: string, tone: number) {
   window.speechSynthesis.speak(utter)
 }
 
-/**
- * Given the anchor's bounding rect, compute a collision-safe {x, y} for the
- * popup panel (fixed position).
- *
- * Preferred: right of cell.
- * Fallback: left of cell.
- * Then clamp vertically so the popup stays within the viewport.
- */
+/** Compute a collision-safe fixed-position coordinate for the popup. */
 function calcPos(anchor: DOMRect, popupH: number): { x: number; y: number } {
   const vw = window.innerWidth
   const vh = window.innerHeight
-
-  // Try right first
   let x = anchor.right + GAP
-  if (x + POPUP_W > vw - MARGIN) {
-    // Flip to left
-    x = anchor.left - POPUP_W - GAP
-  }
-  // Hard clamp
+  if (x + POPUP_W > vw - MARGIN) x = anchor.left - POPUP_W - GAP
   x = Math.max(MARGIN, Math.min(x, vw - POPUP_W - MARGIN))
-
-  // Align top with anchor top, then clamp
   let y = anchor.top
   if (y + popupH > vh - MARGIN) y = vh - popupH - MARGIN
   y = Math.max(MARGIN, y)
-
   return { x, y }
 }
 
@@ -136,7 +127,7 @@ const TONE_INFO = [
   { tone: 0, mark: 'a',      name: 'Neutral',  desc: 'Short & light', symbol: '·', light: 'bg-gray-50 border-gray-300 text-gray-600' },
 ]
 
-// ─── Tone panel (shared between desktop popover and mobile sheet) ─────────────
+// ── Tone panel shared between desktop popover and mobile bottom sheet ────────
 function TonePanel({
   syllable, playingTone, onTone, onClose,
 }: {
@@ -176,10 +167,7 @@ function TonePanel({
               ].join(' ')}
             >
               <span className="text-base w-6 text-center shrink-0">{symbol}</span>
-              <span
-                className="text-xl font-bold flex-1 text-left"
-                style={{ color: isPlaying ? undefined : TEAL }}
-              >
+              <span className="text-xl font-bold flex-1 text-left" style={{ color: isPlaying ? undefined : TEAL }}>
                 {withTone}
               </span>
               <div className="text-right">
@@ -198,25 +186,21 @@ function TonePanel({
   )
 }
 
-// ─── Main page ─────────────────────────────────────────────────────────────────
+// ── Main page ─────────────────────────────────────────────────────────────────
 export default function PinyinLabPage() {
   const [selectedTone, setSelectedTone] = useState(1)
   const [activeSyl,    setActiveSyl]    = useState<string | null>(null)
   const [playingTone,  setPlayingTone]  = useState<number | null>(null)
   const [search,       setSearch]       = useState('')
 
-  // Popover state (desktop/tablet)
-  const [popoverPos,   setPopoverPos]   = useState<{ x: number; y: number } | null>(null)
-  // Ref to the currently anchored button element
-  const anchorRef   = useRef<HTMLButtonElement | null>(null)
-  const popoverRef  = useRef<HTMLDivElement>(null)
-  const popoverH    = useRef(360) // updated after first render
+  const [popoverPos,  setPopoverPos]  = useState<{ x: number; y: number } | null>(null)
+  const anchorRef  = useRef<HTMLButtonElement | null>(null)
+  const popoverRef = useRef<HTMLDivElement>(null)
+  const popoverH   = useRef(360)
 
-  // Mobile bottom-sheet
-  const [isMobile,    setIsMobile]    = useState(false)
-  const [sheetOpen,   setSheetOpen]   = useState(false)
+  const [isMobile,  setIsMobile]  = useState(false)
+  const [sheetOpen, setSheetOpen] = useState(false)
 
-  // Track mobile breakpoint
   useEffect(() => {
     function check() { setIsMobile(window.innerWidth < MOBILE_BP) }
     check()
@@ -231,27 +215,22 @@ export default function PinyinLabPage() {
     anchorRef.current = null
   }, [])
 
-  /** Recompute popover position from stored anchor element. */
   const reposition = useCallback(() => {
     if (!anchorRef.current || isMobile) return
     const rect = anchorRef.current.getBoundingClientRect()
-    // If anchor is completely off-screen (scrolled away), close
     if (rect.bottom < 0 || rect.top > window.innerHeight
       || rect.right < 0 || rect.left > window.innerWidth) {
-      closeAll()
-      return
+      closeAll(); return
     }
     setPopoverPos(calcPos(rect, popoverH.current))
   }, [isMobile, closeAll])
 
-  // Re-anchor on window resize
   useEffect(() => {
     if (!anchorRef.current) return
     window.addEventListener('resize', reposition, { passive: true })
     return () => window.removeEventListener('resize', reposition)
   }, [reposition])
 
-  // Close on scroll (anchor moves; close cleanly rather than chasing)
   useEffect(() => {
     if (!activeSyl) return
     function onScroll() { closeAll() }
@@ -259,7 +238,6 @@ export default function PinyinLabPage() {
     return () => window.removeEventListener('scroll', onScroll, { capture: true })
   }, [activeSyl, closeAll])
 
-  // Outside pointer-down closes the desktop popover
   useEffect(() => {
     if (!popoverPos) return
     function onPointerDown(e: PointerEvent) {
@@ -272,7 +250,6 @@ export default function PinyinLabPage() {
     return () => document.removeEventListener('pointerdown', onPointerDown)
   }, [popoverPos, closeAll])
 
-  // Escape key
   useEffect(() => {
     if (!activeSyl) return
     function onKey(e: KeyboardEvent) { if (e.key === 'Escape') closeAll() }
@@ -280,29 +257,22 @@ export default function PinyinLabPage() {
     return () => document.removeEventListener('keydown', onKey)
   }, [activeSyl, closeAll])
 
-  // After popover renders, measure its actual height and reposition if needed
+  // Measure rendered popup height and correct position
   useEffect(() => {
     if (popoverRef.current) {
       const h = popoverRef.current.offsetHeight
-      if (h && h !== popoverH.current) {
-        popoverH.current = h
-        reposition()
-      }
+      if (h && h !== popoverH.current) { popoverH.current = h; reposition() }
     }
   })
 
   const handleCellClick = useCallback((syllable: string, e: React.MouseEvent<HTMLButtonElement>) => {
     const btn = e.currentTarget
     anchorRef.current = btn
-
     if (isMobile) {
-      setActiveSyl(syllable)
-      setSheetOpen(true)
-      setPlayingTone(selectedTone)
-      speak(syllable, selectedTone)
+      setActiveSyl(syllable); setSheetOpen(true)
+      setPlayingTone(selectedTone); speak(syllable, selectedTone)
       return
     }
-
     const rect = btn.getBoundingClientRect()
     setActiveSyl(syllable)
     setPopoverPos(calcPos(rect, popoverH.current))
@@ -335,7 +305,7 @@ export default function PinyinLabPage() {
 
       <div className="max-w-[1400px] mx-auto px-4 py-8">
 
-        {/* Search + tone selector */}
+        {/* Search + default tone selector */}
         <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-lingo-surface rounded-xl border border-lingo-border">
           <div className="flex items-center gap-2 flex-1 min-w-[200px]">
             <svg className="w-4 h-4 text-lingo-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -371,92 +341,83 @@ export default function PinyinLabPage() {
           </div>
         </div>
 
-        {/* Chart table */}
+        {/* Pinyin matrix */}
         <div className="overflow-x-auto rounded-xl border border-lingo-border shadow-sm">
           <table className="border-collapse text-sm" style={{ minWidth: '980px' }}>
             <thead>
               <tr>
+                {/* Corner: INITIALS label */}
                 <th
                   className="px-3 py-3 text-center sticky left-0 z-20 min-w-[72px] text-[11px] font-bold tracking-widest"
-                  style={{ backgroundColor: TEAL, color: 'white' }}
+                  style={{ backgroundColor: TEAL, color: '#ffffff' }}
                 >
                   INITIALS
                 </th>
+                {/* Initial consonant headers — zero-initial renders blank */}
                 {INITIALS.map(initial => (
                   <th
                     key={initial || 'zero'}
                     className="px-2 py-3 text-center font-bold min-w-[54px] text-sm"
-                    style={{ backgroundColor: TEAL, color: 'white' }}
+                    style={{ backgroundColor: TEAL, color: '#ffffff' }}
                   >
-                    {initial /* zero-initial: renders empty string — column data intact */}
+                    {initial}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {FINAL_GROUPS.map((group, gi) => (
-                <>
-                  <tr key={`group-${gi}`}>
-                    <td
-                      colSpan={INITIALS.length + 1}
-                      className="px-4 py-1.5 font-bold text-[11px] tracking-wider"
-                      style={{ backgroundColor: ORANGE, color: '#ffffff' }}
-                    >
-                      {group.label}
-                    </td>
-                  </tr>
+              {ALL_FINALS.map((final, fi) => (
+                <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
 
-                  {group.finals.map((final, fi) => (
-                    <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
-                      <td
-                        className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px]"
-                        style={{ backgroundColor: TEAL, color: 'white' }}
-                      >
-                        {final}
+                  {/* Finals label — Orange */}
+                  <td
+                    className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px]"
+                    style={{ backgroundColor: ORANGE, color: '#ffffff' }}
+                  >
+                    {final}
+                  </td>
+
+                  {/* Syllable cells */}
+                  {INITIALS.map(initial => {
+                    const syllable = getSyllable(initial, final)
+                    // Selected takes priority over search match
+                    const isActive = activeSyl === syllable && syllable !== null
+                    const isMatch  = !isActive && search.length > 0 && syllable !== null
+                      && syllable.toLowerCase().startsWith(search.toLowerCase())
+
+                    return (
+                      <td key={initial || 'zero'} className="px-0.5 py-0.5 text-center">
+                        {syllable ? (
+                          <button
+                            data-pinyin-cell
+                            onClick={e => handleCellClick(syllable, e)}
+                            aria-label={`${syllable}, click to hear tones`}
+                            aria-pressed={isActive}
+                            className={
+                              'w-full px-1 py-2 rounded-lg text-xs font-semibold '
+                              + 'transition-colors duration-150 ease-out '
+                              + 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F766E]/40 '
+                              + (isActive
+                                ? ''
+                                : isMatch
+                                ? 'bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400 '
+                                : 'bg-lingo-surface text-lingo-text hover:bg-[#F0FDFA] ')
+                            }
+                            style={isActive
+                              ? { backgroundColor: TEAL, color: '#ffffff', fontWeight: 600,
+                                  boxShadow: '0 0 0 2px rgba(15,118,110,0.25)' }
+                              : undefined
+                            }
+                          >
+                            {syllable}
+                          </button>
+                        ) : (
+                          <span className="block py-2 text-xs text-gray-200">—</span>
+                        )}
                       </td>
-
-                      {INITIALS.map(initial => {
-                        const syllable = getSyllable(initial, final)
-                        // Selected state has visual priority over search-match
-                        const isActive = activeSyl === syllable && syllable !== null
-                        const isMatch  = !isActive && search.length > 0 && syllable !== null
-                          && syllable.toLowerCase().startsWith(search.toLowerCase())
-
-                        return (
-                          <td key={initial || 'zero'} className="px-0.5 py-0.5 text-center">
-                            {syllable ? (
-                              <button
-                                data-pinyin-cell
-                                onClick={e => handleCellClick(syllable, e)}
-                                aria-label={`${syllable}, click to hear tones`}
-                                aria-pressed={isActive}
-                                className={
-                                  'w-full px-1 py-2 rounded-lg text-xs font-semibold '
-                                  + 'transition-colors duration-150 ease-out '
-                                  + 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F766E]/40 '
-                                  + (isActive
-                                    ? ''
-                                    : isMatch
-                                    ? 'bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400 '
-                                    : 'bg-lingo-surface text-lingo-text hover:bg-[#F0FDFA] ')
-                                }
-                                style={isActive
-                                  ? { backgroundColor: TEAL, color: '#ffffff', fontWeight: 600,
-                                      boxShadow: `0 0 0 2px rgba(15,118,110,0.25)` }
-                                  : undefined
-                                }
-                              >
-                                {syllable}
-                              </button>
-                            ) : (
-                              <span className="block py-2 text-xs text-gray-200">—</span>
-                            )}
-                          </td>
-                        )
-                      })}
-                    </tr>
-                  ))}
-                </>
+                    )
+                  })}
+                </tr>
               ))}
             </tbody>
           </table>
@@ -496,7 +457,7 @@ export default function PinyinLabPage() {
         </div>
       </div>
 
-      {/* ── Desktop / tablet anchored popover ───────────────────────────────────────── */}
+      {/* Desktop / tablet anchored popover */}
       {!isMobile && popoverPos && activeSyl && (
         <div
           ref={popoverRef}
@@ -522,16 +483,10 @@ export default function PinyinLabPage() {
         </div>
       )}
 
-      {/* ── Mobile bottom sheet ────────────────────────────────────────────────── */}
+      {/* Mobile bottom sheet */}
       {isMobile && sheetOpen && activeSyl && (
         <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black/30 z-[9998]"
-            aria-hidden="true"
-            onClick={closeAll}
-          />
-          {/* Sheet */}
+          <div className="fixed inset-0 bg-black/30 z-[9998]" aria-hidden="true" onClick={closeAll} />
           <div
             role="dialog"
             aria-label={`Tones for ${activeSyl}`}
@@ -539,7 +494,6 @@ export default function PinyinLabPage() {
             className="fixed bottom-0 left-0 right-0 z-[9999] bg-white rounded-t-2xl shadow-2xl px-4 pt-4 pb-8"
             style={{ maxHeight: '85vh', overflowY: 'auto' }}
           >
-            {/* Drag handle */}
             <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" aria-hidden="true" />
             <TonePanel
               syllable={activeSyl}
@@ -553,7 +507,6 @@ export default function PinyinLabPage() {
 
       <WaveDivider variant="white-to-soft-teal" shape="slope" />
 
-      {/* Explainer */}
       <section className="py-20 px-4" style={{ backgroundColor: '#F0FDFA' }}>
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold mb-2" style={{ color: TEAL }}>What is Pinyin?</h2>
