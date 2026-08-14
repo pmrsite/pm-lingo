@@ -20,7 +20,7 @@
 // ── Path resolver ─────────────────────────────────────────────────────────────
 
 export function getPinyinAudioPath(syllable: string, tone: number): string {
-  return `/audio/pinyin/${syllable}/${syllable}${tone}.mp3`
+  return `/audio/pinyin/${syllable}${tone}.mp3`
 }
 
 // ── Managed singleton player ──────────────────────────────────────────────────
