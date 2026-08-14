@@ -13,8 +13,6 @@ const FINAL_GROUPS = [
   { label: 'ü- Finals', finals: ['ü', 'üe', 'üan', 'ün'] },
 ]
 
-const ALL_FINALS = FINAL_GROUPS.flatMap(g => g.finals)
-
 const STANDALONE: Record<string, string> = {
   'i': 'yi', 'ia': 'ya', 'iao': 'yao', 'ie': 'ye', 'iu': 'you',
   'ian': 'yan', 'in': 'yin', 'iang': 'yang', 'ing': 'ying', 'iong': 'yong',
@@ -189,16 +187,19 @@ export default function PinyinLabPage() {
             <table className="border-collapse text-sm" style={{ minWidth: '980px' }}>
               <thead>
                 <tr>
-                  <th className="px-3 py-3 text-center sticky left-0 z-20 min-w-[72px]" style={{ backgroundColor: '#0F766E', color: 'white' }}>
+                  <th
+                    className="px-3 py-3 text-center sticky left-0 z-20 min-w-[72px]"
+                    style={{ backgroundColor: '#0F766E', color: 'white' }}
+                  >
                     <span className="block text-gray-200 text-[10px]">final ↓</span>
                     <span className="block text-gray-200 text-[10px]">initial →</span>
                   </th>
                   {INITIALS.map(initial => (
                     <th
                       key={initial || 'zero'}
-                      className={`px-2 py-3 text-center font-bold min-w-[54px] text-sm transition-colors duration-75`}
+                      className="px-2 py-3 text-center font-bold min-w-[54px] text-sm transition-colors duration-75"
                       style={{
-                        backgroundColor: hoverInitial === initial ? 'rgba(255,107,0,0.25)' : '#0F766E',
+                        backgroundColor: hoverInitial === initial ? 'rgba(255,107,0,0.35)' : '#0F766E',
                         color: 'white',
                       }}
                     >
@@ -211,16 +212,20 @@ export default function PinyinLabPage() {
                 {FINAL_GROUPS.map((group, gi) => (
                   <>
                     <tr key={`group-${gi}`}>
-                      <td colSpan={INITIALS.length + 1} className="text-[11px] font-bold px-4 py-1.5 uppercase tracking-widest" style={{ backgroundColor: 'rgba(255,107,0,0.1)', color: '#FF6B00' }}>
+                      <td
+                        colSpan={INITIALS.length + 1}
+                        className="text-[11px] font-bold px-4 py-1.5 uppercase tracking-widest"
+                        style={{ backgroundColor: 'rgba(255,107,0,0.1)', color: '#FF6B00' }}
+                      >
                         {group.label}
                       </td>
                     </tr>
                     {group.finals.map((final, fi) => (
                       <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
                         <td
-                          className={`sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px] transition-colors duration-75`}
+                          className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px] transition-colors duration-75"
                           style={{
-                            backgroundColor: hoverFinal === final ? 'rgba(255,107,0,0.25)' : '#0F766E',
+                            backgroundColor: hoverFinal === final ? 'rgba(255,107,0,0.35)' : '#0F766E',
                             color: 'white',
                           }}
                         >
@@ -244,31 +249,12 @@ export default function PinyinLabPage() {
                                   onClick={() => handleCellClick(syllable)}
                                   className={`w-full px-1 py-2 rounded-lg text-xs font-semibold transition-all duration-100 hover:scale-105 active:scale-95 ${
                                     isActive
-                                      ? 'text-white shadow-lg ring-2'
+                                      ? 'text-white shadow-lg'
                                       : isMatch
                                       ? 'bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400'
-                                      : 'bg-lingo-surface text-lingo-text'
+                                      : 'bg-lingo-surface text-lingo-text hover:bg-lingo-teal hover:text-white'
                                   }`}
-                                  style={isActive
-                                    ? { backgroundColor: '#FF6B00', boxShadow: '0 4px 12px rgba(255,107,0,0.35)', outline: '2px solid rgba(255,107,0,0.4)' }
-                                    : (!isMatch ? { } : {})
-                                  }
-                                  onMouseEnter={(e) => {
-                                    setHoverFinal(final); setHoverInitial(initial)
-                                    if (!isActive && !isMatch) {
-                                      const btn = e.currentTarget
-                                      btn.style.backgroundColor = '#0F766E'
-                                      btn.style.color = 'white'
-                                    }
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    setHoverFinal(null); setHoverInitial(null)
-                                    if (!isActive && !isMatch) {
-                                      const btn = e.currentTarget
-                                      btn.style.backgroundColor = ''
-                                      btn.style.color = ''
-                                    }
-                                  }}
+                                  style={isActive ? { backgroundColor: '#FF6B00' } : undefined}
                                 >
                                   {syllable}
                                 </button>
@@ -377,8 +363,14 @@ export default function PinyinLabPage() {
       {/* CTA */}
       <section className="py-16 px-4 text-center" style={{ backgroundColor: '#FF6B00' }}>
         <h2 className="text-3xl font-bold text-white mb-4">Practice what you just learned</h2>
-        <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">Put your pinyin to work in real-life <span style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>Mandarin</span> missions. 14 days free.</p>
-        <Link href="/auth/signup" className="inline-block bg-white font-bold px-8 py-3 rounded-xl hover:bg-gray-50 transition-colors" style={{ color: '#FF6B00' }}>
+        <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
+          Put your pinyin to work in real-life <strong>Mandarin</strong> missions. 14 days free.
+        </p>
+        <Link
+          href="/auth/signup"
+          className="inline-block bg-white font-bold px-8 py-3 rounded-xl hover:bg-gray-50 transition-colors"
+          style={{ color: '#FF6B00' }}
+        >
           Start your free trial →
         </Link>
       </section>
