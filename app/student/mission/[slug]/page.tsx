@@ -349,7 +349,16 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
             </div>
             <div className="space-y-3">
               {mission.vocabulary.slice(0, 5).map((v, i) => (
-                <div key={i} className="flex items-center justify-between gap-3 p-3 bg-lingo-surface rounded-xl flex-wrap">
+                <div
+                  key={i}
+                  className="p-3 bg-lingo-surface rounded-xl grid items-center gap-x-4 gap-y-1"
+                  style={{
+                    gridTemplateColumns: prefs.showEnglish
+                      ? 'minmax(0,1fr) minmax(0,1.25fr) 40px'
+                      : 'minmax(0,1fr) 40px',
+                  }}
+                >
+                  {/* Chinese / Pinyin cell */}
                   <div className="flex items-baseline gap-2 flex-wrap min-w-0">
                     {prefs.showSimplified && prefs.showTraditional ? (
                       <span className="font-chinese text-xl font-medium">
@@ -367,11 +376,15 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                       <span className="font-pinyin font-medium text-base text-lingo-muted">{v.pinyin}</span>
                     )}
                   </div>
+
+                  {/* English cell — only rendered when visible; left-aligned */}
                   {prefs.showEnglish && (
-                    <span className="text-base text-lingo-body shrink-0">{v.english}</span>
+                    <span className="text-base text-lingo-body text-left">{v.english}</span>
                   )}
+
+                  {/* Audio cell — centred within its 40px column */}
                   <button
-                    className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg shrink-0"
+                    className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg justify-self-center"
                     aria-label={`Play audio for ${v.simplified}`}
                   >
                     🔊
