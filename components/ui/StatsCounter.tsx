@@ -39,7 +39,7 @@ function Counter({ value, prefix = '', suffix = '' }: { value: number; prefix?: 
   }, [started, value])
 
   return (
-    <span ref={ref} className="text-2xl font-bold" style={{ color: '#0F766E' }}>
+    <span ref={ref} className="text-2xl font-bold text-lingo-teal">
       {prefix}{count}{suffix}
     </span>
   )

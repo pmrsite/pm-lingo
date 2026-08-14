@@ -2,8 +2,44 @@
 import { useState, use } from 'react'
 import { missions } from '@/data/missions'
 import { notFound } from 'next/navigation'
+import type { QuizQuestion, QuizOption, QuizPrompt } from '@/types'
+import { useLanguagePreferences } from '@/hooks/useLanguagePreferences'
+import StudyViewControls from '@/components/ui/StudyViewControls'
+import GrammarAccordion from '@/components/ui/GrammarAccordion'
+import ExplanationRenderer from '@/components/ui/ExplanationRenderer'
 
 type Tab = 'learn' | 'practice' | 'review' | 'assess'
+type ReviewRep = 'simplified' | 'traditional' | 'pinyin'
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+function chineseColHeader(showSimplified: boolean, showTraditional: boolean): string {
+  if (showSimplified && showTraditional) return 'Chinese'
+  if (showSimplified) return 'Simplified'
+  return 'Traditional'
+}
+
+function getPromptDisplay(prompt: QuizPrompt, rep: ReviewRep): string {
+  if (rep === 'simplified') return prompt.simplified ?? prompt.english ?? ''
+  if (rep === 'traditional') return prompt.traditional ?? prompt.simplified ?? prompt.english ?? ''
+  if (rep === 'pinyin') return prompt.pinyin ?? prompt.simplified ?? prompt.english ?? ''
+  return prompt.english ?? ''
+}
+
+function getOptionDisplay(opt: QuizOption, rep: ReviewRep): string {
+  // English-only options always show English regardless of rep
+  if (!opt.simplified && !opt.traditional && !opt.pinyin) return opt.english ?? ''
+  if (rep === 'simplified') return opt.simplified ?? opt.english ?? ''
+  if (rep === 'traditional') return opt.traditional ?? opt.simplified ?? opt.english ?? ''
+  if (rep === 'pinyin') return opt.pinyin ?? opt.simplified ?? opt.english ?? ''
+  return opt.english ?? opt.simplified ?? ''
+}
+
+function isEnglishOnlyOption(opt: QuizOption): boolean {
+  return !opt.simplified && !opt.traditional && !opt.pinyin && !!opt.english
+}
+
+// ── Component ────────────────────────────────────────────────────────────────
 
 export default function MissionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
@@ -12,9 +48,24 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
   const m = mission!
 
   const [activeTab, setActiveTab] = useState<Tab>('learn')
+  // answers stores q.id → selected option.id (representation-agnostic)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
   const [activeRegion, setActiveRegion] = useState<string>('mainland')
+  // null = follow Study View; non-null = manually chosen, ignore prefs changes
+  const [reviewRepOverride, setReviewRepOverride] = useState<ReviewRep | null>(null)
+
+  const { prefs, toggle, resetAll } = useLanguagePreferences()
+
+  const showChineseCol = prefs.showSimplified || prefs.showTraditional
+
+  // Derive review representation from Study View unless manually overridden
+  const reviewRep: ReviewRep = reviewRepOverride ?? (
+    prefs.showSimplified ? 'simplified' :
+    prefs.showTraditional ? 'traditional' :
+    prefs.showPinyin ? 'pinyin' :
+    'simplified'
+  )
 
   const regionLabels: Record<string, string> = {
     mainland: 'Mainland China',
@@ -23,17 +74,17 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
     international: 'International',
   }
 
-  function handleAnswer(qId: string, value: string) {
-    if (!submitted) setAnswers((prev) => ({ ...prev, [qId]: value }))
+  function handleAnswer(qId: string, optionId: string) {
+    if (!submitted) setAnswers((prev: Record<string, string>) => ({ ...prev, [qId]: optionId }))
+  }
+
+  function isQuestionCorrect(q: QuizQuestion): boolean {
+    return answers[q.id] === q.correctOptionId
   }
 
   function calculateScore() {
     let correct = 0
-    m.quiz.forEach((q) => {
-      const userAnswer = answers[q.id]?.trim().toLowerCase()
-      const correctAnswer = Array.isArray(q.answer) ? q.answer[0].toLowerCase() : q.answer.toLowerCase()
-      if (userAnswer === correctAnswer) correct++
-    })
+    m.quiz.forEach((q) => { if (isQuestionCorrect(q)) correct++ })
     return Math.round((correct / m.quiz.length) * 100)
   }
 
@@ -45,6 +96,39 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
   ]
 
   const score = submitted ? calculateScore() : null
+
+  // Shared Chinese cell content for vocabulary table
+  function VocabChineseCell({ v }: { v: typeof m.vocabulary[0] }) {
+    if (prefs.showSimplified && prefs.showTraditional) {
+      return (
+        <div className="flex flex-col gap-0.5">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[10px] font-semibold text-lingo-muted select-none w-4">简</span>
+            <span className="font-chinese text-xl font-medium">{v.simplified}</span>
+          </div>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[10px] font-semibold text-lingo-muted select-none w-4">繁</span>
+            <span className="font-chinese text-xl font-medium">
+              {v.traditional ?? <em className="text-xs not-italic text-lingo-muted">pending</em>}
+            </span>
+          </div>
+        </div>
+      )
+    }
+    if (prefs.showSimplified) return <span className="font-chinese text-2xl font-medium">{v.simplified}</span>
+    return (
+      <span className="font-chinese text-2xl font-medium">
+        {v.traditional ?? <em className="text-xs not-italic text-lingo-muted">Traditional pending review</em>}
+      </span>
+    )
+  }
+
+  // Review tab representation selector
+  const REP_OPTIONS: { rep: ReviewRep; chineseLabel: string; label: string }[] = [
+    { rep: 'simplified',  chineseLabel: '简', label: 'Simplified' },
+    { rep: 'traditional', chineseLabel: '繁', label: 'Traditional' },
+    { rep: 'pinyin',      chineseLabel: '',   label: 'Pinyin' },
+  ]
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
@@ -80,7 +164,7 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
         </div>
       </div>
 
-      {/* LEARN TAB */}
+      {/* ── LEARN TAB ─────────────────────────────────────────────────────── */}
       {activeTab === 'learn' && (
         <div className="space-y-10">
           <div className="bg-lingo-surface rounded-2xl p-6 border border-lingo-border">
@@ -88,26 +172,57 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
             <p className="text-lingo-body text-lg">{mission.objective}</p>
           </div>
 
+          {/* Vocabulary */}
           <div>
-            <h2 className="font-bold text-lingo-navy text-xl mb-4">Vocabulary</h2>
+            <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+              <h2 className="font-bold text-lingo-navy text-xl">Vocabulary</h2>
+              <StudyViewControls prefs={prefs} onToggle={toggle} onReset={resetAll} />
+            </div>
             <div className="overflow-x-auto rounded-2xl border border-lingo-border">
-              <table className="w-full">
+              <table className="w-full" aria-label="Vocabulary list">
                 <thead className="bg-lingo-surface">
                   <tr>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">Chinese</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">Pinyin</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">English</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">Audio</th>
+                    {showChineseCol && (
+                      <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">
+                        {chineseColHeader(prefs.showSimplified, prefs.showTraditional)}
+                      </th>
+                    )}
+                    {prefs.showPinyin && (
+                      <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">
+                        Pinyin
+                      </th>
+                    )}
+                    {prefs.showEnglish && (
+                      <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">
+                        English
+                      </th>
+                    )}
+                    <th scope="col" className="px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider text-center">
+                      Audio
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-lingo-border">
                   {mission.vocabulary.map((v, i) => (
                     <tr key={i} className="hover:bg-lingo-teal-soft transition-colors">
-                      <td className="px-4 py-3 text-2xl font-medium">{v.chinese}</td>
-                      <td className="px-4 py-3 text-base text-lingo-body font-mono">{v.pinyin}</td>
-                      <td className="px-4 py-3 text-base text-lingo-text">{v.english}</td>
+                      {showChineseCol && (
+                        <td className="px-4 py-3">
+                          <VocabChineseCell v={v} />
+                        </td>
+                      )}
+                      {prefs.showPinyin && (
+                        <td className="font-pinyin font-medium px-4 py-3 text-base text-lingo-body">{v.pinyin}</td>
+                      )}
+                      {prefs.showEnglish && (
+                        <td className="px-4 py-3 text-base text-lingo-text">{v.english}</td>
+                      )}
                       <td className="px-4 py-3 text-center">
-                        <button className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg" aria-label="Play audio">🔊</button>
+                        <button
+                          className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg"
+                          aria-label={`Play audio for ${v.simplified}`}
+                        >
+                          🔊
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -116,8 +231,12 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
             </div>
           </div>
 
+          {/* Dialogue */}
           <div>
-            <h2 className="font-bold text-lingo-navy text-xl mb-4">Dialogue</h2>
+            <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+              <h2 className="font-bold text-lingo-navy text-xl">Dialogue</h2>
+              <StudyViewControls prefs={prefs} onToggle={toggle} onReset={resetAll} />
+            </div>
             <div className="space-y-3">
               {mission.dialogue.map((line, i) => (
                 <div key={i} className={`flex gap-4 ${i % 2 === 0 ? '' : 'flex-row-reverse'}`}>
@@ -126,27 +245,45 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                   </div>
                   <div className={`bg-white border border-lingo-border rounded-2xl px-5 py-4 max-w-lg shadow-sm ${i % 2 !== 0 ? 'text-right' : ''}`}>
                     <div className="text-xs text-lingo-muted mb-1">{line.speaker}</div>
-                    <div className="text-xl font-medium text-lingo-navy mb-1">{line.chinese}</div>
-                    <div className="text-base text-lingo-body font-mono">{line.pinyin}</div>
-                    <div className="text-base text-lingo-body mt-1">{line.english}</div>
+                    {prefs.showSimplified && prefs.showTraditional ? (
+                      <div className="mb-1 space-y-0.5">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-[10px] font-semibold text-lingo-muted select-none">简</span>
+                          <span className="font-chinese text-xl font-medium text-lingo-navy">{line.simplified}</span>
+                        </div>
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-[10px] font-semibold text-lingo-muted select-none">繁</span>
+                          <span className="font-chinese text-xl font-medium text-lingo-navy">
+                            {line.traditional ?? <em className="text-xs not-italic text-lingo-muted">pending</em>}
+                          </span>
+                        </div>
+                      </div>
+                    ) : prefs.showSimplified ? (
+                      <div className="font-chinese text-xl font-medium text-lingo-navy mb-1">{line.simplified}</div>
+                    ) : prefs.showTraditional ? (
+                      <div className="font-chinese text-xl font-medium text-lingo-navy mb-1">
+                        {line.traditional ?? <em className="text-xs not-italic text-lingo-muted">Traditional pending review</em>}
+                      </div>
+                    ) : null}
+                    {prefs.showPinyin && (
+                      <div className="font-pinyin font-medium text-base text-lingo-body">{line.pinyin}</div>
+                    )}
+                    {prefs.showEnglish && (
+                      <div className="text-base text-lingo-body mt-1">{line.english}</div>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* Grammar Notes — accordion */}
           <div>
             <h2 className="font-bold text-lingo-navy text-xl mb-4">Grammar Notes</h2>
-            <div className="space-y-3">
-              {mission.grammarNotes.map((note, i) => (
-                <div key={i} className="flex gap-3">
-                  <span className="w-6 h-6 bg-lingo-teal-soft text-lingo-navy text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
-                  <p className="text-base text-lingo-body leading-relaxed">{note}</p>
-                </div>
-              ))}
-            </div>
+            <GrammarAccordion notes={mission.grammarNotes} prefs={prefs} />
           </div>
 
+          {/* Regional Notes */}
           <div>
             <h2 className="font-bold text-lingo-navy text-xl mb-4">Regional Notes</h2>
             <div className="flex gap-2 mb-4 flex-wrap">
@@ -165,8 +302,8 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
               ))}
             </div>
             {mission.regionalNotes.filter((r) => r.region === activeRegion).map((r, i) => (
-              <div key={i} className="bg-lingo-surface rounded-xl p-5 border border-lingo-border text-base text-lingo-body">
-                {r.note}
+              <div key={i} className="bg-lingo-surface rounded-xl p-5 border border-lingo-border">
+                <ExplanationRenderer segments={r.content} prefs={prefs} />
               </div>
             ))}
           </div>
@@ -185,12 +322,12 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
         </div>
       )}
 
-      {/* PRACTICE TAB */}
+      {/* ── PRACTICE TAB ──────────────────────────────────────────────────── */}
       {activeTab === 'practice' && (
         <div className="space-y-6">
           {[
             { title: 'Repeat After Me', desc: 'Listen to each phrase and repeat it aloud. Focus on tones.', icon: '🎤', status: 'Coming soon' },
-            { title: 'Pronunciation Practice', desc: 'Record yourself and get AI feedback on your pronunciation.', icon: '🎙️', status: 'Coming soon' },
+            { title: 'Pronunciation Practice', desc: 'Record yourself and get AI feedback on your pronunciation.', icon: '🎩', status: 'Coming soon' },
             { title: 'AI Roleplay', desc: 'Practice a real conversation with your AI teacher.', icon: '🤖', status: 'Coming soon' },
           ].map((p) => (
             <div key={p.title} className="bg-white border border-lingo-border rounded-2xl p-6 shadow-sm">
@@ -206,15 +343,52 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
           ))}
 
           <div className="bg-white border border-lingo-border rounded-2xl p-6 shadow-sm">
-            <h3 className="font-bold text-lingo-navy text-lg mb-4">Sentence Drills</h3>
+            <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+              <h3 className="font-bold text-lingo-navy text-lg">Sentence Drills</h3>
+              <StudyViewControls prefs={prefs} onToggle={toggle} onReset={resetAll} />
+            </div>
             <div className="space-y-3">
               {mission.vocabulary.slice(0, 5).map((v, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-lingo-surface rounded-xl">
-                  <div>
-                    <span className="text-xl font-medium">{v.chinese}</span>
-                    <span className="text-base text-lingo-muted ml-3 font-mono">{v.pinyin}</span>
+                <div
+                  key={i}
+                  className="p-3 bg-lingo-surface rounded-xl grid items-center gap-x-4 gap-y-1"
+                  style={{
+                    gridTemplateColumns: prefs.showEnglish
+                      ? 'minmax(0,1fr) minmax(0,1.25fr) 40px'
+                      : 'minmax(0,1fr) 40px',
+                  }}
+                >
+                  {/* Chinese / Pinyin cell */}
+                  <div className="flex items-baseline gap-2 flex-wrap min-w-0">
+                    {prefs.showSimplified && prefs.showTraditional ? (
+                      <span className="font-chinese text-xl font-medium">
+                        {v.simplified}
+                        {v.traditional && v.traditional !== v.simplified && (
+                          <span className="text-lingo-muted"> / {v.traditional}</span>
+                        )}
+                      </span>
+                    ) : prefs.showSimplified ? (
+                      <span className="font-chinese text-xl font-medium">{v.simplified}</span>
+                    ) : prefs.showTraditional ? (
+                      <span className="font-chinese text-xl font-medium">{v.traditional ?? v.simplified}</span>
+                    ) : null}
+                    {prefs.showPinyin && (
+                      <span className="font-pinyin font-medium text-base text-lingo-muted">{v.pinyin}</span>
+                    )}
                   </div>
-                  <span className="text-base text-lingo-body">{v.english}</span>
+
+                  {/* English cell — only rendered when visible; left-aligned */}
+                  {prefs.showEnglish && (
+                    <span className="text-base text-lingo-body text-left">{v.english}</span>
+                  )}
+
+                  {/* Audio cell — centred within its 40px column */}
+                  <button
+                    className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg justify-self-center"
+                    aria-label={`Play audio for ${v.simplified}`}
+                  >
+                    🔊
+                  </button>
                 </div>
               ))}
             </div>
@@ -226,72 +400,107 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
         </div>
       )}
 
-      {/* REVIEW / QUIZ TAB */}
+      {/* ── REVIEW / QUIZ TAB ─────────────────────────────────────────────── */}
       {activeTab === 'review' && (
         <div className="space-y-8">
-          <div>
-            <h2 className="font-bold text-lingo-navy text-2xl mb-2">Mission Quiz</h2>
-            <p className="text-base text-lingo-body">Answer all questions, then submit for your score.</p>
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h2 className="font-bold text-lingo-navy text-2xl mb-2">Mission Quiz</h2>
+              <p className="text-base text-lingo-body">Answer all questions, then submit for your score.</p>
+            </div>
+
+            {/* Representation selector */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-xs font-semibold text-lingo-muted uppercase tracking-wider select-none">
+                Show as
+              </span>
+              <div className="flex rounded-lg overflow-hidden border border-lingo-border">
+                {REP_OPTIONS.map(({ rep, chineseLabel, label }, i) => {
+                  const isActive = reviewRep === rep
+                  return (
+                    <button
+                      key={rep}
+                      type="button"
+                      onClick={() => setReviewRepOverride(rep)}
+                      aria-pressed={isActive}
+                      className={`px-3 py-1.5 text-xs font-semibold transition-colors flex items-center gap-1
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lingo-teal focus-visible:ring-inset
+                        ${i > 0 ? 'border-l border-lingo-border' : ''}
+                        ${isActive
+                          ? 'bg-lingo-teal text-white'
+                          : 'bg-white text-lingo-muted hover:bg-lingo-teal-soft hover:text-lingo-teal'
+                        }`}
+                    >
+                      {chineseLabel && (
+                        <span className="font-chinese text-sm leading-none" aria-hidden="true">{chineseLabel}</span>
+                      )}
+                      {label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
           </div>
 
           {mission.quiz.map((q, qi) => {
-            const userAnswer = answers[q.id]
-            const correct = Array.isArray(q.answer) ? q.answer[0] : q.answer
-            const isCorrect = submitted && userAnswer?.toLowerCase() === correct.toLowerCase()
-            const isWrong = submitted && userAnswer?.toLowerCase() !== correct.toLowerCase()
+            const isQCorrect = submitted && isQuestionCorrect(q)
+            const isQWrong = submitted && !isQCorrect
+
+            // For the correct option highlight after submit
+            const correctOpt = q.options?.find((o) => o.id === q.correctOptionId)
 
             return (
               <div key={q.id} className="bg-white border border-lingo-border rounded-2xl p-6 shadow-sm">
                 <div className="flex items-start gap-3 mb-4">
                   <span className="w-7 h-7 bg-lingo-navy text-white text-sm font-bold rounded-lg flex items-center justify-center flex-shrink-0">{qi + 1}</span>
-                  <p className="font-medium text-lingo-navy text-base">{q.question}</p>
+                  <p className="font-medium text-lingo-navy text-base">{getPromptDisplay(q.prompt, reviewRep)}</p>
                 </div>
 
-                {q.type === 'multiple-choice' && q.options && (
+                {/* Multiple-choice options */}
+                {q.options && (
                   <div className="space-y-2 ml-10">
                     {q.options.map((opt) => {
-                      const selected = answers[q.id] === opt
-                      const isCorrectOpt = submitted && opt === correct
-                      const isWrongSelected = submitted && selected && opt !== correct
+                      const selected = answers[q.id] === opt.id
+                      const isCorrectOpt = submitted && opt.id === q.correctOptionId
+                      const isWrongSelected = submitted && selected && opt.id !== q.correctOptionId
+                      const displayText = isEnglishOnlyOption(opt)
+                        ? (opt.english ?? '')
+                        : getOptionDisplay(opt, reviewRep)
+                      const useChineseFont = !isEnglishOnlyOption(opt) && reviewRep !== 'pinyin'
+                      const usePinyinFont = !isEnglishOnlyOption(opt) && reviewRep === 'pinyin'
                       return (
                         <button
-                          key={opt}
-                          onClick={() => handleAnswer(q.id, opt)}
+                          key={opt.id}
+                          onClick={() => handleAnswer(q.id, opt.id)}
                           className={`w-full text-left px-4 py-3 rounded-xl border-2 text-base font-medium transition-all ${
-                            isCorrectOpt ? 'border-lingo-success bg-lingo-success-soft text-lingo-success' :
-                            isWrongSelected ? 'border-lingo-error bg-red-50 text-lingo-error' :
-                            selected ? 'border-lingo-navy bg-lingo-teal-soft text-lingo-navy' :
-                            'border-lingo-border text-lingo-body hover:border-lingo-border-hover'
+                            isCorrectOpt
+                              ? 'border-lingo-success bg-lingo-success-soft text-lingo-success'
+                              : isWrongSelected
+                              ? 'border-lingo-error bg-red-50 text-lingo-error'
+                              : selected
+                              ? 'border-lingo-navy bg-lingo-teal-soft text-lingo-navy'
+                              : 'border-lingo-border text-lingo-body hover:border-lingo-border-hover'
                           }`}
                         >
-                          {opt}
+                          <span className={useChineseFont ? 'font-chinese' : usePinyinFont ? 'font-pinyin' : undefined}>
+                            {displayText}
+                          </span>
                         </button>
                       )
                     })}
                   </div>
                 )}
 
-                {q.type === 'fill-blank' && (
-                  <div className="ml-10">
-                    <input
-                      type="text"
-                      value={answers[q.id] || ''}
-                      onChange={(e) => handleAnswer(q.id, e.target.value)}
-                      placeholder="Type your answer in Chinese..."
-                      className={`w-full border-2 rounded-xl px-4 py-3 text-base outline-none transition-colors ${
-                        submitted
-                          ? isCorrect ? 'border-lingo-success bg-lingo-success-soft' : 'border-lingo-error bg-red-50'
-                          : 'border-lingo-border focus:border-lingo-navy'
-                      }`}
-                    />
-                  </div>
-                )}
-
+                {/* Feedback after submit */}
                 {submitted && (
                   <div className={`ml-10 mt-3 text-base px-4 py-2 rounded-xl ${
-                    isCorrect ? 'bg-lingo-success-soft text-lingo-success' : 'bg-red-50 text-lingo-error'
+                    isQCorrect ? 'bg-lingo-success-soft text-lingo-success' : 'bg-red-50 text-lingo-error'
                   }`}>
-                    {isCorrect ? '✓ Correct!' : `✗ Correct answer: ${correct}`} — {q.explanation}
+                    {isQCorrect
+                      ? '✓ Correct!'
+                      : `✗ Correct answer: ${correctOpt ? getOptionDisplay(correctOpt, reviewRep) : ''}`
+                    }
+                    {' '}— {q.explanation}
                   </div>
                 )}
               </div>
@@ -320,7 +529,7 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
         </div>
       )}
 
-      {/* ASSESS TAB */}
+      {/* ── ASSESS TAB ────────────────────────────────────────────────────── */}
       {activeTab === 'assess' && (
         <div className="space-y-8">
           <div>

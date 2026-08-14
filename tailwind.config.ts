@@ -18,62 +18,89 @@ const config: Config = {
         'lingo-caption': ['14px', { lineHeight: '1.5',  fontWeight: '400' }],
       },
       colors: {
-        // ── Primary Brand: Corporate Blue ─────────────────────────────
+        // ── Primary Brand: Teal ───────────────────────────────────
+        'lingo-teal':          '#0F766E',
+        'lingo-teal-dark':     '#0C4A45',
+        'lingo-teal-soft':     '#F0FDFA',
+        'lingo-teal-50':       '#F0FDFA',   // explicit hover surface alias
+        'lingo-secondary':     '#64C4B9',
+        'lingo-secondary-hover': '#F0FDFA',
+
+        // ── Primary Action: Orange ────────────────────────────────
+        // lingo-orange* are the canonical semantic names;
+        // lingo-red* kept as aliases so existing code does not break.
+        'lingo-orange':        '#FF6B00',
+        'lingo-orange-dark':   '#E85D04',
+        'lingo-orange-light':  '#FF8C38',
+        'lingo-red':           '#FF6B00',   // legacy alias — prefer lingo-orange
+        'lingo-red-dark':      '#E85D04',   // legacy alias
+        'lingo-red-light':     '#FF8C38',   // legacy alias
+
+        // ── Supporting: Navy ──────────────────────────────────────
         'lingo-navy':          '#2B2E63',
         'lingo-navy-dark':     '#1E2147',
         'lingo-navy-light':    '#3B3F8C',
 
-        // ── Corporate Pink ────────────────────────────────────────────
+        // ── Accent: Pink ──────────────────────────────────────────
         'lingo-pink':          '#E0006A',
         'lingo-pink-dark':     '#C2005C',
         'lingo-pink-soft':     '#FFE5F0',
 
-        // ── CTA: Orange ───────────────────────────────────────────────
-        'lingo-red':           '#FF6B00',
-        'lingo-red-dark':      '#E85D04',
-        'lingo-red-light':     '#FF8C38',
+        // ── Energy: Yellow / Gold ─────────────────────────────────
+        'lingo-yellow':        '#FFD24A',
+        'lingo-yellow-soft':   '#FFF5C7',
+        'lingo-gold':          '#F6C453',
+        'lingo-gold-bg':       '#FFF8E1',
+        'lingo-gold-text':     '#8A6415',
 
-        // ── Supporting: Teal ──────────────────────────────────────────
-        'lingo-secondary':       '#64C4B9',
-        'lingo-secondary-hover': '#F0FDFA',
-        'lingo-teal':            '#0F766E',
-        'lingo-teal-soft':       '#F0FDFA',
+        // ── Soft section surfaces ─────────────────────────────────
+        'lingo-surface-teal':   '#F0FDFA',  // Soft Teal surface
+        'lingo-surface-orange': '#FFF4EC',  // Soft Orange surface
+        'lingo-soft-orange':    '#FFF4EC',  // corrected from #FFF7ED
+        'lingo-soft-pink':      '#FDF2F8',
+        'lingo-soft-lavender':  '#F5F3FF',
+        'lingo-soft-aqua':      '#E6F7F5',
 
-        // ── Energy: Yellow / Gold ─────────────────────────────────────
-        'lingo-yellow':      '#FFD24A',
-        'lingo-yellow-soft': '#FFF5C7',
-        'lingo-gold':        '#F6C453',
-        'lingo-gold-bg':     '#FFF8E1',
-        'lingo-gold-text':   '#8A6415',
+        // ── Semantic status colours ───────────────────────────────
+        // These are separate from brand colours — do not use brand
+        // colours (teal/orange/navy/pink) for system states.
+        'lingo-success':       '#22C55E',
+        'lingo-success-soft':  '#ECFDF5',
+        'lingo-warning':       '#F59E0B',
+        'lingo-error':         '#EF4444',
 
-        // ── Status ────────────────────────────────────────────────────
-        'lingo-success':      '#22C55E',
-        'lingo-success-soft': '#ECFDF5',
-        'lingo-warning':      '#F59E0B',
-        'lingo-error':        '#EF4444',
+        // ── Backgrounds ───────────────────────────────────────────
+        'lingo-surface':       '#FCFBF8',
+        'lingo-card':          '#FFFFFF',
+        'lingo-bg-alt':        '#F5F7F8',
 
-        // ── Backgrounds ───────────────────────────────────────────────
-        'lingo-surface':   '#FCFBF8',
-        'lingo-card':      '#FFFFFF',
-        'lingo-bg-alt':    '#F5F7F8',
+        // ── Typography ────────────────────────────────────────────
+        'lingo-text':          '#111827',
+        'lingo-heading-2':     '#252525',
+        'lingo-body':          '#596273',
+        'lingo-muted':         '#70798A',
+        'lingo-disabled':      '#9AA1AE',
 
-        // ── Typography ────────────────────────────────────────────────
-        'lingo-text':      '#171717',
-        'lingo-heading-2': '#252525',
-        'lingo-body':      '#596273',
-        'lingo-muted':     '#70798A',
-        'lingo-disabled':  '#9AA1AE',
-
-        // ── Borders ───────────────────────────────────────────────────
-        'lingo-border':       '#E7E5EA',
-        'lingo-border-hover': '#D1CDD8',
+        // ── Borders ───────────────────────────────────────────────
+        'lingo-border':        '#E7E5EA',
+        'lingo-border-hover':  '#D1CDD8',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        // Base — font-sans; CJK fallbacks ensure incidental Chinese renders
+        // correctly even without an explicit font-chinese class on every element.
+        sans: ['var(--font-inter)', 'system-ui', "'PingFang SC'", "'Microsoft YaHei'", "'Noto Sans SC'", 'sans-serif'],
+
+        // ── Semantic typography tokens ──────────────────────────────────────
+        // font-ui      → English / general UI    (Inter)
+        // font-pinyin  → Pinyin notation          (Noto Sans)
+        // font-chinese → Chinese learning content (KaiTi, system-only)
+        ui:      ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        pinyin:  ['var(--font-noto-sans)', "'Noto Sans'", 'var(--font-inter)', 'system-ui', 'sans-serif'],
+        chinese: ['"KaiTi"', '"STKaiti"', '"Kaiti SC"', '"楷体"', '"PingFang SC"', '"Microsoft YaHei"', '"Noto Sans SC"', 'serif'],
       },
       backgroundImage: {
-        'lingo-hero':     'linear-gradient(160deg, #2B2E63 0%, #1E2147 55%, #1A1D40 100%)',
-        'lingo-progress': 'linear-gradient(90deg, #2B2E63 0%, #64C4B9 100%)',
+        'lingo-hero':     'linear-gradient(160deg, #0F766E 0%, #0C4A45 55%, #0A3D38 100%)',
+        'lingo-progress': 'linear-gradient(90deg, #FF6B00 0%, #0F766E 100%)',
       },
       borderRadius: {
         'lingo-sm': '8px',
