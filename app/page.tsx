@@ -4,6 +4,7 @@ import { pricingPlans } from '@/data/pricing'
 import { aiTeachers } from '@/data/aiTeachers'
 import SectionLabel from '@/components/ui/SectionLabel'
 import StatsCounter from '@/components/ui/StatsCounter'
+import WaveDivider from '@/components/ui/WaveDivider'
 
 type BubbleVariant = 'teal' | 'orange' | 'gold' | 'white'
 const bubbleStyles: Record<BubbleVariant, { bg: string; text: string; sub: string; border?: string }> = {
@@ -16,7 +17,7 @@ const bubbleStyles: Record<BubbleVariant, { bg: string; text: string; sub: strin
 function ChineseBubble({
   hanzi, pinyin, english, variant = 'teal', style, animClass,
 }: {
-  hanzi: string; pinyin: string; english: string;
+  hanzi: string; pinyin: string; english: string
   variant?: BubbleVariant; style?: React.CSSProperties; animClass?: string
 }) {
   const s = bubbleStyles[variant]
@@ -34,7 +35,7 @@ function ChineseBubble({
 const teacherAccents: Record<string, { accent: string; textColor: string; emoji: string }> = {
   mei: { accent: '#0F766E', textColor: '#0F766E', emoji: '🧘' },
   lin: { accent: '#E0006A', textColor: '#C2005C', emoji: '✨' },
-  jun: { accent: '#0C4A45', textColor: '#0C4A45', emoji: '📚' },
+  jun: { accent: '#2B2E63', textColor: '#2B2E63', emoji: '📚' },
   kai: { accent: '#FF6B00', textColor: '#E85D04', emoji: '🎯' },
 }
 
@@ -58,14 +59,14 @@ const testimonials = [
     role: 'HR Director',
     quote: 'My team uses PM-Lingo before client meetings in China. The business Mandarin missions are practical and straight to the point.',
     initial: 'P',
-    color: '#0C4A45',
+    color: '#2B2E63',
   },
 ]
 
 const upcomingSessions = [
-  { month: 'AUG', day: '5',  title: 'Live Pronunciation Clinic',            teacher: 'with Teacher Mei', color: '#0F766E' },
+  { month: 'AUG', day: '5',  title: 'Live Pronunciation Clinic',              teacher: 'with Teacher Mei', color: '#0F766E' },
   { month: 'AUG', day: '12', title: 'Conversational Practice: Ordering Food', teacher: 'with Teacher Lin', color: '#FF6B00' },
-  { month: 'AUG', day: '19', title: 'Business Mandarin: Introductions',       teacher: 'with Teacher Jun', color: '#0C4A45' },
+  { month: 'AUG', day: '19', title: 'Business Mandarin: Introductions',        teacher: 'with Teacher Jun', color: '#2B2E63' },
 ]
 
 const homeStats = [
@@ -79,7 +80,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
 
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      {/* ── Hero ────────────────────────────────────────────────────── */}
       <section className="bg-white pt-14 sm:pt-20 pb-12 px-4">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div>
@@ -117,19 +118,19 @@ export default function HomePage() {
           </div>
 
           <div className="relative flex items-center justify-center" style={{ minHeight: 380 }}>
-            <div className="rounded-full bg-gray-100" style={{ width: 260, height: 260 }} />
+            <div className="rounded-full bg-lingo-teal-soft" style={{ width: 260, height: 260 }} />
             <div className="absolute flex flex-col items-center text-center">
-              <span className="font-bold" style={{ fontSize: 72, lineHeight: 1, color: '#0F766E' }}>普</span>
+              <span className="font-bold" style={{ fontSize: 72, lineHeight: 1, color: '#0F766E', fontFamily: "'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" }}>普</span>
               <span className="text-xs text-lingo-muted mt-2 font-medium tracking-wider uppercase">Mandarin Chinese</span>
             </div>
-            <ChineseBubble hanzi="你好！" pinyin="Nǐ hǎo"   english="Hello"      variant="teal"   animClass="bubble-float-1" style={{ top: 24,   left: 0   }} />
-            <ChineseBubble hanzi="谢谢"   pinyin="Xièxie"  english="Thank you" variant="orange" animClass="bubble-float-2" style={{ top: 48,   right: -8 }} />
-            <ChineseBubble hanzi="再见"   pinyin="Zàijiàn" english="Goodbye"   variant="white"  animClass="bubble-float-3" style={{ bottom: 56, left: -8  }} />
-            <ChineseBubble hanzi="对不起" pinyin="Duìbu qǐ" english="Sorry"    variant="gold"   animClass="bubble-float-4" style={{ bottom: 24, right: 0  }} />
+            <ChineseBubble hanzi="你好！" pinyin="Nǐ hǎo"    english="Hello"      variant="teal"   animClass="bubble-float-1" style={{ top: 24,   left: 0   }} />
+            <ChineseBubble hanzi="谢谢"   pinyin="Xièxie"   english="Thank you"  variant="orange" animClass="bubble-float-2" style={{ top: 48,   right: -8 }} />
+            <ChineseBubble hanzi="再见"   pinyin="Zàijiàn"  english="Goodbye"    variant="white"  animClass="bubble-float-3" style={{ bottom: 56, left: -8  }} />
+            <ChineseBubble hanzi="对不起" pinyin="Duìbu qǐ" english="Sorry"      variant="gold"   animClass="bubble-float-4" style={{ bottom: 24, right: 0  }} />
           </div>
         </div>
 
-        {/* Stats bar */}
+        {/* Stats */}
         <div className="max-w-6xl mx-auto mt-14">
           <div className="rounded-2xl p-5 border border-gray-200">
             <StatsCounter stats={homeStats} />
@@ -137,16 +138,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="border-t border-gray-100" />
-
-      {/* ── Value Pillars ────────────────────────────────────────────────── */}
+      {/* ── Value Pillars ─────────────────────────────────────────────── */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8 mb-16 items-end">
             <div>
               <SectionLabel>Why PM-Lingo</SectionLabel>
               <h2 className="font-bold text-lingo-text" style={{ fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 1.15 }}>
-                A smarter way<br />to learn Mandarin
+                A smarter way<br />to learn <span style={{ color: '#FF6B00' }}>Mandarin</span>
               </h2>
             </div>
             <p className="text-lingo-body text-xl leading-relaxed self-end">
@@ -158,10 +157,10 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { icon: '🎯', title: 'Mission-Based Learning',  description: 'Every mission is a real-world scenario — greetings, ordering food, taking a taxi. No filler, no fluff.', accent: '#FF6B00' },
-              { icon: '🤖', title: 'AI Tutor Practice',        description: 'Practise with four distinct AI teachers, each with a unique personality. Get instant feedback, 24/7.',     accent: '#0F766E' },
-              { icon: '👩‍🏫', title: 'Human Teacher Sessions', description: 'Book live sessions with certified coaches to fix pronunciation and build the confidence AI alone cannot give.', accent: '#0C4A45' },
+              { icon: '🤖', title: 'AI Tutor Practice',        description: 'Practise with four distinct AI teachers, each with a unique personality. Get instant feedback, 24/7.',     accent: '#E0006A' },
+              { icon: '👩‍🏫', title: 'Human Teacher Sessions', description: 'Book live sessions with certified coaches to fix pronunciation and build the confidence AI alone cannot give.', accent: '#0F766E' },
             ].map((p) => (
-              <div key={p.title} className="border border-gray-200 rounded-2xl p-8 relative overflow-hidden">
+              <div key={p.title} className="border border-gray-200 rounded-2xl p-8 relative overflow-hidden hover:shadow-sm transition-shadow">
                 <div className="absolute top-0 left-0 right-0 h-1" style={{ background: p.accent }} />
                 <div className="text-3xl mb-5 mt-2">{p.icon}</div>
                 <h3 className="text-xl font-bold text-lingo-text mb-3">{p.title}</h3>
@@ -172,15 +171,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Find Your Level ─────────────────────────────────────────────── */}
+      {/* Wave: white → teal */}
+      <WaveDivider variant="white-to-teal" shape="arch" />
+
+      {/* ── Placement Quiz Band ──────────────────────────────────────── */}
       <section style={{ background: '#0F766E' }} className="py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#64C4B9' }}>Free Placement Quiz</p>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.6)' }}>Free Placement Quiz</p>
           <h2 className="font-bold text-white mb-4" style={{ fontSize: 'clamp(24px, 4vw, 38px)', lineHeight: 1.2 }}>
-            Not sure where to start?<br />Find your Mandarin level.
+            Not sure where to start?<br />Find your <span style={{ color: '#FF6B00' }}>Mandarin</span> level.
           </h2>
           <p className="mb-8 text-lg" style={{ color: 'rgba(255,255,255,0.8)' }}>
-            Answer 10 quick questions and we’ll recommend the right mission to begin with.
+            Answer 10 quick questions and we will recommend the right mission to begin with.
           </p>
           <Link
             href="/placement-test"
@@ -191,9 +193,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="border-t border-gray-100" />
+      {/* Wave: teal → white */}
+      <WaveDivider variant="teal-to-white" shape="arch" flip />
 
-      {/* ── How It Works ────────────────────────────────────────────────── */}
+      {/* ── How It Works ─────────────────────────────────────────────── */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -206,11 +209,11 @@ export default function HomePage() {
             {[
               { step: '1', title: 'Choose a mission',   description: 'Pick a real-world scenario that matches your goal — from greetings to business meetings.', color: '#FF6B00' },
               { step: '2', title: 'Learn and practise', description: 'Study vocabulary, practise with AI tutors, and get instant feedback on every response.',   color: '#0F766E' },
-              { step: '3', title: 'Build confidence',   description: 'Book a live session with a certified teacher to speak real Mandarin with confidence.',       color: '#0C4A45' },
+              { step: '3', title: 'Build confidence',   description: 'Book a live session with a certified teacher to speak real Mandarin with confidence.',       color: '#2B2E63' },
             ].map((s) => (
               <div key={s.step} className="flex flex-col items-center text-center">
                 <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold mb-6 shrink-0 text-lg"
+                  className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold mb-6 shrink-0 text-xl shadow-md"
                   style={{ background: s.color }}
                 >
                   {s.step}
@@ -223,10 +226,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="border-t border-gray-100" />
+      {/* Wave: white → soft-teal */}
+      <WaveDivider variant="white-to-soft-teal" shape="slope" />
 
-      {/* ── AI Teachers ────────────────────────────────────────────────── */}
-      <section className="py-24 px-4 bg-white">
+      {/* ── AI Teachers ──────────────────────────────────────────────── */}
+      <section className="py-24 px-4" style={{ background: '#F0FDFA' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <SectionLabel center>Your AI Teachers</SectionLabel>
@@ -242,9 +246,9 @@ export default function HomePage() {
             {aiTeachers.map((t) => {
               const a = teacherAccents[t.id] ?? teacherAccents.mei
               return (
-                <div key={t.id} className="rounded-2xl overflow-hidden border border-gray-200">
+                <div key={t.id} className="rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
                   <div className="h-1.5" style={{ background: a.accent }} />
-                  <div className="p-6 bg-white">
+                  <div className="p-6">
                     <div className="text-2xl mb-4">{a.emoji}</div>
                     <h3 className="font-bold mb-0.5" style={{ color: a.textColor, fontSize: 17 }}>{t.name}</h3>
                     <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: a.textColor, opacity: 0.7 }}>{t.speciality}</p>
@@ -263,9 +267,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="border-t border-gray-100" />
+      {/* Wave: soft-teal → white */}
+      <WaveDivider variant="soft-teal-to-white" shape="valley" />
 
-      {/* ── Upcoming Live Sessions ───────────────────────────────────────── */}
+      {/* ── Upcoming Sessions ─────────────────────────────────────────── */}
       <section className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
@@ -298,9 +303,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="border-t border-gray-100" />
-
-      {/* ── Mission Preview ───────────────────────────────────────────────── */}
+      {/* ── Mission Preview ─────────────────────────────────────────────── */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -318,7 +321,7 @@ export default function HomePage() {
               >
                 <div className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-lingo-teal" />
                 <div className="flex items-start justify-between mb-4">
-                  <span className="text-2xl font-bold tabular-nums text-gray-200">{String(mission.number).padStart(2, '0')}</span>
+                  <span className="text-2xl font-bold tabular-nums" style={{ color: '#FF6B00', opacity: 0.35 }}>{String(mission.number).padStart(2, '0')}</span>
                   <span className="xp-badge">+{mission.xpReward} XP</span>
                 </div>
                 <h3 className="text-base font-bold text-lingo-text mb-1 leading-snug">{mission.title}</h3>
@@ -340,10 +343,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="border-t border-gray-100" />
+      {/* Wave: white → soft-teal */}
+      <WaveDivider variant="white-to-soft-teal" shape="ripple" />
 
-      {/* ── Testimonials ────────────────────────────────────────────────── */}
-      <section className="py-24 px-4 bg-white">
+      {/* ── Testimonials ──────────────────────────────────────────────── */}
+      <section className="py-24 px-4" style={{ background: '#F0FDFA' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <SectionLabel center>What Learners Say</SectionLabel>
@@ -354,7 +358,7 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((t) => (
-              <div key={t.name} className="border border-gray-200 rounded-2xl p-7 flex flex-col relative overflow-hidden">
+              <div key={t.name} className="bg-white rounded-2xl p-7 flex flex-col relative overflow-hidden shadow-sm">
                 <div className="absolute top-0 left-0 right-0 h-1" style={{ background: t.color }} />
                 <div className="flex gap-0.5 mb-5 mt-2">
                   {[1,2,3,4,5].map((i) => (
@@ -380,9 +384,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="border-t border-gray-100" />
+      {/* Wave: soft-teal → white */}
+      <WaveDivider variant="soft-teal-to-white" shape="arch" flip />
 
-      {/* ── Pricing Teaser ───────────────────────────────────────────────── */}
+      {/* ── Pricing Teaser ─────────────────────────────────────────────── */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
@@ -444,19 +449,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── CTA Banner ─────────────────────────────────────────────────── */}
+      {/* Wave: white → orange */}
+      <WaveDivider variant="white-to-orange" shape="arch" />
+
+      {/* ── CTA Banner ──────────────────────────────────────────────── */}
       <section className="py-20 px-4" style={{ background: '#FF6B00' }}>
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-3">Ready to speak real Mandarin?</h2>
+          <h2 className="text-4xl font-bold text-white mb-3">Ready to speak real <span style={{ color: 'rgba(255,255,255,0.92)' }}>Mandarin</span>?</h2>
           <p className="text-white/80 mb-8 text-lg">Start your free 14-day trial — no credit card required.</p>
           <Link
             href="/auth/signup"
-            className="inline-block bg-white text-lingo-red font-bold px-8 py-3.5 rounded-xl text-base hover:bg-gray-50 transition-colors"
+            className="inline-block bg-white font-bold px-8 py-3.5 rounded-xl text-base hover:bg-gray-50 transition-colors"
+            style={{ color: '#FF6B00' }}
           >
             Start Free Trial
           </Link>
         </div>
       </section>
+
+      {/* Wave: orange → teal (into footer) */}
+      <WaveDivider variant="orange-to-teal" shape="valley" />
 
     </div>
   )
