@@ -4,13 +4,16 @@ import { useState, useEffect, useRef } from 'react'
 import WaveDivider from '@/components/ui/WaveDivider'
 import Link from 'next/link'
 
+const TEAL   = '#0F766E'
+const ORANGE = '#FF6B00'
+
 const INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's']
 
 const FINAL_GROUPS = [
   { label: 'Simple Finals', finals: ['a', 'o', 'e', 'ai', 'ei', 'ao', 'ou', 'an', 'en', 'ang', 'eng', 'er'] },
-  { label: 'i- Finals', finals: ['i', 'ia', 'iao', 'ie', 'iu', 'ian', 'in', 'iang', 'ing', 'iong'] },
-  { label: 'u- Finals', finals: ['u', 'ua', 'uo', 'uai', 'ui', 'uan', 'un', 'uang'] },
-  { label: 'ü- Finals', finals: ['ü', 'üe', 'üan', 'ün'] },
+  { label: 'i- Finals',     finals: ['i', 'ia', 'iao', 'ie', 'iu', 'ian', 'in', 'iang', 'ing', 'iong'] },
+  { label: 'u- Finals',     finals: ['u', 'ua', 'uo', 'uai', 'ui', 'uan', 'un', 'uang'] },
+  { label: 'ü- Finals',    finals: ['ü', 'üe', 'üan', 'ün'] },
 ]
 
 const STANDALONE: Record<string, string> = {
@@ -93,22 +96,22 @@ function speak(syllable: string, tone: number) {
 }
 
 const TONE_INFO = [
-  { tone: 1, mark: 'ā', name: '1st Tone', desc: 'High & flat', symbol: '—', light: 'bg-blue-50 border-blue-300 text-blue-700' },
-  { tone: 2, mark: 'á', name: '2nd Tone', desc: 'Rising', symbol: '↗', light: 'bg-green-50 border-green-300 text-green-700' },
-  { tone: 3, mark: 'ǎ', name: '3rd Tone', desc: 'Dip & rise', symbol: '↘↗', light: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
-  { tone: 4, mark: 'à', name: '4th Tone', desc: 'Sharp fall', symbol: '↘', light: 'bg-red-50 border-red-300 text-red-700' },
-  { tone: 0, mark: 'a', name: 'Neutral', desc: 'Short & light', symbol: '·', light: 'bg-gray-50 border-gray-300 text-gray-600' },
+  { tone: 1, mark: 'ā', name: '1st Tone', desc: 'High & flat',  symbol: '—',  light: 'bg-blue-50 border-blue-300 text-blue-700' },
+  { tone: 2, mark: 'á', name: '2nd Tone', desc: 'Rising',       symbol: '↗',  light: 'bg-green-50 border-green-300 text-green-700' },
+  { tone: 3, mark: 'ǎ', name: '3rd Tone', desc: 'Dip & rise',   symbol: '↘↗', light: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
+  { tone: 4, mark: 'à', name: '4th Tone', desc: 'Sharp fall',   symbol: '↘',  light: 'bg-red-50 border-red-300 text-red-700' },
+  { tone: 0, mark: 'a',      name: 'Neutral',  desc: 'Short & light', symbol: '·', light: 'bg-gray-50 border-gray-300 text-gray-600' },
 ]
 
 interface PopupState { syllable: string }
 
 export default function PinyinLabPage() {
   const [selectedTone, setSelectedTone] = useState(1)
-  const [hoverFinal, setHoverFinal] = useState<string | null>(null)
+  const [hoverFinal,   setHoverFinal]   = useState<string | null>(null)
   const [hoverInitial, setHoverInitial] = useState<string | null>(null)
-  const [popup, setPopup] = useState<PopupState | null>(null)
-  const [playingTone, setPlayingTone] = useState<number | null>(null)
-  const [search, setSearch] = useState('')
+  const [popup,        setPopup]        = useState<PopupState | null>(null)
+  const [playingTone,  setPlayingTone]  = useState<number | null>(null)
+  const [search,       setSearch]       = useState('')
   const popupRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -130,16 +133,54 @@ export default function PinyinLabPage() {
     setPlayingTone(tone)
   }
 
+  // ── Colour helpers ────────────────────────────────────────────────────────
+  // header: teal by default; orange when it is part of the active cross
+  function headerBg(key: string, activeKey: string | null) {
+    return key === activeKey ? ORANGE : TEAL
+  }
+
+  // td background for empty (—) cells that fall in the cross
+  function tdBg(final: string, initial: string): string | undefined {
+    const isIntersection = hoverFinal === final && hoverInitial === initial
+    const isCross        = hoverFinal === final || hoverInitial === initial
+    if (isIntersection) return TEAL
+    if (isCross)        return ORANGE
+    return undefined
+  }
+
+  // button style object for a valid syllable cell
+  function btnStyle(final: string, initial: string, syllable: string, isMatch: boolean) {
+    const isIntersection = hoverFinal === final && hoverInitial === initial
+    const isCross        = hoverFinal === final || hoverInitial === initial
+    const isActive       = popup?.syllable === syllable
+
+    if (isIntersection) return { backgroundColor: TEAL,   color: '#ffffff' }
+    if (isCross)        return { backgroundColor: ORANGE, color: '#ffffff' }
+    if (isActive)       return { backgroundColor: TEAL,   color: '#ffffff' }
+    if (isMatch)        return {} // handled by className
+    return {}
+  }
+
+  function btnClass(final: string, initial: string, syllable: string, isMatch: boolean) {
+    const isIntersection = hoverFinal === final && hoverInitial === initial
+    const isCross        = hoverFinal === final || hoverInitial === initial
+    const isActive       = popup?.syllable === syllable
+    const base = 'w-full px-1 py-2 rounded-lg text-xs font-semibold transition-all duration-150 ease-out hover:scale-105 active:scale-95'
+    if (isIntersection || isCross || isActive) return base
+    if (isMatch) return base + ' bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400'
+    return base + ' bg-lingo-surface text-lingo-text hover:bg-lingo-teal hover:text-white'
+  }
+
   return (
     <div className="min-h-screen bg-white">
 
       {/* Hero */}
-      <section className="pt-20 pb-12 px-4 text-center" style={{ backgroundColor: '#0F766E' }}>
+      <section className="pt-20 pb-12 px-4 text-center" style={{ backgroundColor: TEAL }}>
         <div className="inline-flex items-center gap-2 bg-white/20 border border-white/30 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
           🎵 Interactive Audio Chart
         </div>
         <h1 className="text-4xl font-bold text-white mb-3">
-          <span style={{ color: '#FF6B00' }}>Mandarin</span> Pinyin Chart
+          <span style={{ color: ORANGE }}>Mandarin</span> Pinyin Chart
         </h1>
         <p className="text-white/80 max-w-xl mx-auto text-sm leading-relaxed">
           Hover any cell to highlight its row and column. Click to hear all 4 tones.
@@ -149,6 +190,8 @@ export default function PinyinLabPage() {
       <WaveDivider variant="teal-to-white" shape="arch" />
 
       <div className="max-w-[1400px] mx-auto px-4 py-8">
+
+        {/* Search + tone selector */}
         <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-lingo-surface rounded-xl border border-lingo-border">
           <div className="flex items-center gap-2 flex-1 min-w-[200px]">
             <svg className="w-4 h-4 text-lingo-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,9 +215,10 @@ export default function PinyinLabPage() {
                 title={name}
                 className={`w-9 h-9 rounded-full text-sm font-bold transition-all ${
                   selectedTone === tone
-                    ? 'bg-lingo-red text-white shadow-md scale-110'
+                    ? 'text-white shadow-md scale-110'
                     : 'bg-white border border-lingo-border text-lingo-muted hover:border-lingo-red hover:text-lingo-red'
                 }`}
+                style={selectedTone === tone ? { backgroundColor: ORANGE } : undefined}
               >
                 {mark}
               </button>
@@ -182,25 +226,29 @@ export default function PinyinLabPage() {
           </div>
         </div>
 
+        {/* Chart */}
         <div className="relative">
           <div className="overflow-x-auto rounded-xl border border-lingo-border shadow-sm">
             <table className="border-collapse text-sm" style={{ minWidth: '980px' }}>
               <thead>
                 <tr>
+                  {/* corner cell */}
                   <th
                     className="px-3 py-3 text-center sticky left-0 z-20 min-w-[72px]"
-                    style={{ backgroundColor: '#0F766E', color: 'white' }}
+                    style={{ backgroundColor: TEAL, color: 'white' }}
                   >
                     <span className="block text-gray-200 text-[10px]">final ↓</span>
                     <span className="block text-gray-200 text-[10px]">initial →</span>
                   </th>
+                  {/* initial column headers */}
                   {INITIALS.map(initial => (
                     <th
                       key={initial || 'zero'}
-                      className="px-2 py-3 text-center font-bold min-w-[54px] text-sm transition-colors duration-75"
+                      className="px-2 py-3 text-center font-bold min-w-[54px] text-sm"
                       style={{
-                        backgroundColor: hoverInitial === initial ? 'rgba(255,107,0,0.35)' : '#0F766E',
+                        backgroundColor: headerBg(initial, hoverInitial),
                         color: 'white',
+                        transition: 'background-color 150ms ease-out',
                       }}
                     >
                       {initial || '∅'}
@@ -211,55 +259,60 @@ export default function PinyinLabPage() {
               <tbody>
                 {FINAL_GROUPS.map((group, gi) => (
                   <>
+                    {/* section label row */}
                     <tr key={`group-${gi}`}>
                       <td
                         colSpan={INITIALS.length + 1}
                         className="text-[11px] font-bold px-4 py-1.5 uppercase tracking-widest"
-                        style={{ backgroundColor: 'rgba(255,107,0,0.1)', color: '#FF6B00' }}
+                        style={{ backgroundColor: 'rgba(255,107,0,0.1)', color: ORANGE }}
                       >
                         {group.label}
                       </td>
                     </tr>
+
                     {group.finals.map((final, fi) => (
                       <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
+
+                        {/* final row header */}
                         <td
-                          className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px] transition-colors duration-75"
+                          className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px]"
                           style={{
-                            backgroundColor: hoverFinal === final ? 'rgba(255,107,0,0.35)' : '#0F766E',
+                            backgroundColor: headerBg(final, hoverFinal),
                             color: 'white',
+                            transition: 'background-color 150ms ease-out',
                           }}
                         >
                           {final}
                         </td>
+
+                        {/* syllable cells */}
                         {INITIALS.map(initial => {
                           const syllable = getSyllable(initial, final)
-                          const isCrossed = hoverFinal === final || hoverInitial === initial
-                          const isActive = popup?.syllable === syllable && syllable !== null
-                          const isMatch = search.length > 0 && syllable !== null && syllable.toLowerCase().startsWith(search.toLowerCase())
+                          const isMatch  = search.length > 0 && syllable !== null
+                            && syllable.toLowerCase().startsWith(search.toLowerCase())
+                          const bg = tdBg(final, initial)
+
                           return (
                             <td
                               key={initial || 'zero'}
-                              className="px-0.5 py-0.5 text-center transition-colors duration-75"
-                              style={isCrossed ? { backgroundColor: 'rgba(255,107,0,0.07)' } : undefined}
+                              className="px-0.5 py-0.5 text-center"
+                              style={{
+                                backgroundColor: bg,
+                                transition: 'background-color 150ms ease-out',
+                              }}
                             >
                               {syllable ? (
                                 <button
                                   onMouseEnter={() => { setHoverFinal(final); setHoverInitial(initial) }}
-                                  onMouseLeave={() => { setHoverFinal(null); setHoverInitial(null) }}
+                                  onMouseLeave={() => { setHoverFinal(null);  setHoverInitial(null) }}
                                   onClick={() => handleCellClick(syllable)}
-                                  className={`w-full px-1 py-2 rounded-lg text-xs font-semibold transition-all duration-100 hover:scale-105 active:scale-95 ${
-                                    isActive
-                                      ? 'text-white shadow-lg'
-                                      : isMatch
-                                      ? 'bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400'
-                                      : 'bg-lingo-surface text-lingo-text hover:bg-lingo-teal hover:text-white'
-                                  }`}
-                                  style={isActive ? { backgroundColor: '#FF6B00' } : undefined}
+                                  className={btnClass(final, initial, syllable, isMatch)}
+                                  style={btnStyle(final, initial, syllable, isMatch)}
                                 >
                                   {syllable}
                                 </button>
                               ) : (
-                                <span className="block py-2 text-xs text-gray-200">—</span>
+                                <span className="block py-2 text-xs" style={{ color: bg ? 'rgba(255,255,255,0.4)' : '#e5e7eb' }}>—</span>
                               )}
                             </td>
                           )
@@ -272,6 +325,7 @@ export default function PinyinLabPage() {
             </table>
           </div>
 
+          {/* Tone popup */}
           {popup && (
             <div
               ref={popupRef}
@@ -315,13 +369,15 @@ export default function PinyinLabPage() {
           )}
         </div>
 
+        {/* Legend */}
         <div className="mt-4 flex flex-wrap gap-6 text-xs text-lingo-muted">
           <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-lingo-surface border border-lingo-border"></span>Valid — click for all tones</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{backgroundColor:'rgba(255,107,0,0.07)',border:'1px solid rgba(255,107,0,0.3)'}}></span>Cross-highlight on hover</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{backgroundColor:'#FF6B00'}}></span>Selected</span>
+          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: ORANGE }}></span><span className="text-white" style={{ backgroundColor: ORANGE, padding: '0 2px', borderRadius: 2 }}>Orange</span> row &amp; column</span>
+          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: TEAL }}></span><span className="text-white" style={{ backgroundColor: TEAL, padding: '0 2px', borderRadius: 2 }}>Teal</span> intersection</span>
           <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-yellow-100 border-2 border-yellow-400"></span>Search match</span>
         </div>
 
+        {/* Tone reference cards */}
         <div className="mt-12 grid grid-cols-2 sm:grid-cols-5 gap-4">
           {TONE_INFO.map(({ tone, mark, name, desc, light }) => (
             <button
@@ -341,13 +397,13 @@ export default function PinyinLabPage() {
 
       <WaveDivider variant="white-to-soft-teal" shape="slope" />
 
-      {/* What is Pinyin explainer */}
+      {/* Explainer */}
       <section className="py-20 px-4" style={{ backgroundColor: '#F0FDFA' }}>
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-2" style={{ color: '#0F766E' }}>What is Pinyin?</h2>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: TEAL }}>What is Pinyin?</h2>
           <p className="text-lingo-muted leading-relaxed mb-4">
             Pīyīn (拼音) literally means &ldquo;spell-sounds&rdquo; in Chinese. It&apos;s the standard system for
-            transcribing <span style={{ color: '#FF6B00', fontWeight: 600 }}>Mandarin</span> Chinese sounds using the Latin alphabet.
+            transcribing <span style={{ color: ORANGE, fontWeight: 600 }}>Mandarin</span> Chinese sounds using the Latin alphabet.
           </p>
           <p className="text-lingo-muted leading-relaxed">
             Every sound in Mandarin fits into this chart. Master these ~400 combinations plus the four tones,
@@ -357,11 +413,10 @@ export default function PinyinLabPage() {
       </section>
 
       <WaveDivider variant="soft-teal-to-white" shape="valley" />
-
       <WaveDivider variant="white-to-orange" shape="arch" />
 
       {/* CTA */}
-      <section className="py-16 px-4 text-center" style={{ backgroundColor: '#FF6B00' }}>
+      <section className="py-16 px-4 text-center" style={{ backgroundColor: ORANGE }}>
         <h2 className="text-3xl font-bold text-white mb-4">Practice what you just learned</h2>
         <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
           Put your pinyin to work in real-life <strong>Mandarin</strong> missions. 14 days free.
@@ -369,7 +424,7 @@ export default function PinyinLabPage() {
         <Link
           href="/auth/signup"
           className="inline-block bg-white font-bold px-8 py-3 rounded-xl hover:bg-gray-50 transition-colors"
-          style={{ color: '#FF6B00' }}
+          style={{ color: ORANGE }}
         >
           Start your free trial →
         </Link>
