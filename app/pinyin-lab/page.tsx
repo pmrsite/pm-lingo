@@ -1,19 +1,20 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import WaveDivider from '@/components/ui/WaveDivider'
 import Link from 'next/link'
 
 const TEAL   = '#0F766E'
 const ORANGE = '#FF6B00'
+const POPUP_W = 316
 
 const INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's']
 
 const FINAL_GROUPS = [
-  { label: 'Simple Finals', finals: ['a', 'o', 'e', 'ai', 'ei', 'ao', 'ou', 'an', 'en', 'ang', 'eng', 'er'] },
-  { label: 'i- Finals',     finals: ['i', 'ia', 'iao', 'ie', 'iu', 'ian', 'in', 'iang', 'ing', 'iong'] },
-  { label: 'u- Finals',     finals: ['u', 'ua', 'uo', 'uai', 'ui', 'uan', 'un', 'uang'] },
-  { label: 'ü- Finals',    finals: ['ü', 'üe', 'üan', 'ün'] },
+  { label: 'FINALS', finals: ['a', 'o', 'e', 'ai', 'ei', 'ao', 'ou', 'an', 'en', 'ang', 'eng', 'er'] },
+  { label: 'i',      finals: ['i', 'ia', 'iao', 'ie', 'iu', 'ian', 'in', 'iang', 'ing', 'iong'] },
+  { label: 'u',      finals: ['u', 'ua', 'uo', 'uai', 'ui', 'uan', 'un', 'uang'] },
+  { label: 'ü', finals: ['ü', 'üe', 'üan', 'ün'] },
 ]
 
 const STANDALONE: Record<string, string> = {
@@ -96,79 +97,97 @@ function speak(syllable: string, tone: number) {
 }
 
 const TONE_INFO = [
-  { tone: 1, mark: 'ā', name: '1st Tone', desc: 'High & flat',  symbol: '—',  light: 'bg-blue-50 border-blue-300 text-blue-700' },
-  { tone: 2, mark: 'á', name: '2nd Tone', desc: 'Rising',       symbol: '↗',  light: 'bg-green-50 border-green-300 text-green-700' },
-  { tone: 3, mark: 'ǎ', name: '3rd Tone', desc: 'Dip & rise',   symbol: '↘↗', light: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
-  { tone: 4, mark: 'à', name: '4th Tone', desc: 'Sharp fall',   symbol: '↘',  light: 'bg-red-50 border-red-300 text-red-700' },
+  { tone: 1, mark: 'ā', name: '1st Tone', desc: 'High & flat',   symbol: '—',  light: 'bg-blue-50 border-blue-300 text-blue-700' },
+  { tone: 2, mark: 'á', name: '2nd Tone', desc: 'Rising',        symbol: '↗',  light: 'bg-green-50 border-green-300 text-green-700' },
+  { tone: 3, mark: 'ǎ', name: '3rd Tone', desc: 'Dip & rise',    symbol: '↘↗', light: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
+  { tone: 4, mark: 'à', name: '4th Tone', desc: 'Sharp fall',    symbol: '↘',  light: 'bg-red-50 border-red-300 text-red-700' },
   { tone: 0, mark: 'a',      name: 'Neutral',  desc: 'Short & light', symbol: '·', light: 'bg-gray-50 border-gray-300 text-gray-600' },
 ]
 
-interface PopupState { syllable: string }
+interface PopupState {
+  syllable: string
+  // fixed-position coords of the popup panel itself (already collision-resolved)
+  x: number
+  y: number
+}
+
+/** Compute a collision-safe fixed position for the popup adjacent to the anchor rect. */
+function calcPopupPos(anchor: DOMRect): { x: number; y: number } {
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+  const popupH = 360 // estimated
+  const gap = 12
+  const margin = 12
+
+  // Prefer right of cell
+  let x = anchor.right + gap
+  if (x + POPUP_W > vw - margin) {
+    // Flip left
+    x = anchor.left - POPUP_W - gap
+  }
+  // Clamp to viewport
+  x = Math.max(margin, Math.min(x, vw - POPUP_W - margin))
+
+  // Align top of popup with top of cell
+  let y = anchor.top
+  // Shift up if it overflows the bottom
+  if (y + popupH > vh - margin) {
+    y = vh - popupH - margin
+  }
+  y = Math.max(margin, y)
+
+  return { x, y }
+}
 
 export default function PinyinLabPage() {
   const [selectedTone, setSelectedTone] = useState(1)
-  const [hoverFinal,   setHoverFinal]   = useState<string | null>(null)
-  const [hoverInitial, setHoverInitial] = useState<string | null>(null)
   const [popup,        setPopup]        = useState<PopupState | null>(null)
+  const [activeSyl,    setActiveSyl]    = useState<string | null>(null)
   const [playingTone,  setPlayingTone]  = useState<number | null>(null)
   const [search,       setSearch]       = useState('')
   const popupRef = useRef<HTMLDivElement>(null)
 
+  // Close on outside click
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (popupRef.current && !popupRef.current.contains(e.target as Node)) setPopup(null)
+    function onPointerDown(e: PointerEvent) {
+      if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
+        setPopup(null)
+        setActiveSyl(null)
+      }
     }
-    if (popup) document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
+    if (popup) document.addEventListener('pointerdown', onPointerDown)
+    return () => document.removeEventListener('pointerdown', onPointerDown)
   }, [popup])
 
-  function handleCellClick(syllable: string) {
-    setPopup({ syllable })
+  // Close on Escape
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') { setPopup(null); setActiveSyl(null) }
+    }
+    if (popup) document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [popup])
+
+  // Close on scroll (popup is fixed so it stays, but anchor has moved — close cleanly)
+  useEffect(() => {
+    if (!popup) return
+    function onScroll() { setPopup(null); setActiveSyl(null) }
+    window.addEventListener('scroll', onScroll, { passive: true, capture: true })
+    return () => window.removeEventListener('scroll', onScroll, { capture: true })
+  }, [popup])
+
+  const handleCellClick = useCallback((syllable: string, e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const pos  = calcPopupPos(rect)
+    setActiveSyl(syllable)
+    setPopup({ syllable, ...pos })
     speak(syllable, selectedTone)
     setPlayingTone(selectedTone)
-  }
+  }, [selectedTone])
 
   function handlePopupTone(syllable: string, tone: number) {
     speak(syllable, tone)
     setPlayingTone(tone)
-  }
-
-  // ── Colour helpers ────────────────────────────────────────────────────────
-  // header: teal by default; orange when it is part of the active cross
-  function headerBg(key: string, activeKey: string | null) {
-    return key === activeKey ? ORANGE : TEAL
-  }
-
-  // td background for empty (—) cells that fall in the cross
-  function tdBg(final: string, initial: string): string | undefined {
-    const isIntersection = hoverFinal === final && hoverInitial === initial
-    const isCross        = hoverFinal === final || hoverInitial === initial
-    if (isIntersection) return TEAL
-    if (isCross)        return ORANGE
-    return undefined
-  }
-
-  // button style object for a valid syllable cell
-  function btnStyle(final: string, initial: string, syllable: string, isMatch: boolean) {
-    const isIntersection = hoverFinal === final && hoverInitial === initial
-    const isCross        = hoverFinal === final || hoverInitial === initial
-    const isActive       = popup?.syllable === syllable
-
-    if (isIntersection) return { backgroundColor: TEAL,   color: '#ffffff' }
-    if (isCross)        return { backgroundColor: ORANGE, color: '#ffffff' }
-    if (isActive)       return { backgroundColor: TEAL,   color: '#ffffff' }
-    if (isMatch)        return {} // handled by className
-    return {}
-  }
-
-  function btnClass(final: string, initial: string, syllable: string, isMatch: boolean) {
-    const isIntersection = hoverFinal === final && hoverInitial === initial
-    const isCross        = hoverFinal === final || hoverInitial === initial
-    const isActive       = popup?.syllable === syllable
-    const base = 'w-full px-1 py-2 rounded-lg text-xs font-semibold transition-all duration-150 ease-out hover:scale-105 active:scale-95'
-    if (isIntersection || isCross || isActive) return base
-    if (isMatch) return base + ' bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400'
-    return base + ' bg-lingo-surface text-lingo-text hover:bg-lingo-teal hover:text-white'
   }
 
   return (
@@ -183,7 +202,7 @@ export default function PinyinLabPage() {
           <span style={{ color: ORANGE }}>Mandarin</span> Pinyin Chart
         </h1>
         <p className="text-white/80 max-w-xl mx-auto text-sm leading-relaxed">
-          Hover any cell to highlight its row and column. Click to hear all 4 tones.
+          Click any valid cell to see all 4 tones and hear the pronunciation.
         </p>
       </section>
 
@@ -213,12 +232,13 @@ export default function PinyinLabPage() {
                 key={tone}
                 onClick={() => setSelectedTone(tone)}
                 title={name}
+                aria-label={name}
                 className={`w-9 h-9 rounded-full text-sm font-bold transition-all ${
                   selectedTone === tone
                     ? 'text-white shadow-md scale-110'
-                    : 'bg-white border border-lingo-border text-lingo-muted hover:border-lingo-red hover:text-lingo-red'
+                    : 'bg-white border border-lingo-border text-lingo-muted hover:border-lingo-teal hover:text-lingo-teal'
                 }`}
-                style={selectedTone === tone ? { backgroundColor: ORANGE } : undefined}
+                style={selectedTone === tone ? { backgroundColor: TEAL } : undefined}
               >
                 {mark}
               </button>
@@ -227,154 +247,116 @@ export default function PinyinLabPage() {
         </div>
 
         {/* Chart */}
-        <div className="relative">
-          <div className="overflow-x-auto rounded-xl border border-lingo-border shadow-sm">
-            <table className="border-collapse text-sm" style={{ minWidth: '980px' }}>
-              <thead>
-                <tr>
-                  {/* corner cell */}
+        <div className="overflow-x-auto rounded-xl border border-lingo-border shadow-sm">
+          <table className="border-collapse text-sm" style={{ minWidth: '980px' }}>
+            <thead>
+              <tr>
+                {/* Corner header — label column content as INITIALS */}
+                <th
+                  className="px-3 py-3 text-center sticky left-0 z-20 min-w-[72px] text-[11px] font-bold tracking-widest"
+                  style={{ backgroundColor: TEAL, color: 'white' }}
+                >
+                  INITIALS
+                </th>
+                {/* Initial consonant headers */}
+                {INITIALS.map(initial => (
                   <th
-                    className="px-3 py-3 text-center sticky left-0 z-20 min-w-[72px]"
+                    key={initial || 'zero'}
+                    className="px-2 py-3 text-center font-bold min-w-[54px] text-sm"
                     style={{ backgroundColor: TEAL, color: 'white' }}
                   >
-                    <span className="block text-gray-200 text-[10px]">final ↓</span>
-                    <span className="block text-gray-200 text-[10px]">initial →</span>
+                    {/* zero-initial column: show blank — data logic intact */}
+                    {initial}
                   </th>
-                  {/* initial column headers */}
-                  {INITIALS.map(initial => (
-                    <th
-                      key={initial || 'zero'}
-                      className="px-2 py-3 text-center font-bold min-w-[54px] text-sm"
-                      style={{
-                        backgroundColor: headerBg(initial, hoverInitial),
-                        color: 'white',
-                        transition: 'background-color 150ms ease-out',
-                      }}
-                    >
-                      {initial || '∅'}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {FINAL_GROUPS.map((group, gi) => (
-                  <>
-                    {/* section label row */}
-                    <tr key={`group-${gi}`}>
-                      <td
-                        colSpan={INITIALS.length + 1}
-                        className="text-[11px] font-bold px-4 py-1.5 uppercase tracking-widest"
-                        style={{ backgroundColor: 'rgba(255,107,0,0.1)', color: ORANGE }}
-                      >
-                        {group.label}
-                      </td>
-                    </tr>
-
-                    {group.finals.map((final, fi) => (
-                      <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
-
-                        {/* final row header */}
-                        <td
-                          className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px]"
-                          style={{
-                            backgroundColor: headerBg(final, hoverFinal),
-                            color: 'white',
-                            transition: 'background-color 150ms ease-out',
-                          }}
-                        >
-                          {final}
-                        </td>
-
-                        {/* syllable cells */}
-                        {INITIALS.map(initial => {
-                          const syllable = getSyllable(initial, final)
-                          const isMatch  = search.length > 0 && syllable !== null
-                            && syllable.toLowerCase().startsWith(search.toLowerCase())
-                          const bg = tdBg(final, initial)
-
-                          return (
-                            <td
-                              key={initial || 'zero'}
-                              className="px-0.5 py-0.5 text-center"
-                              style={{
-                                backgroundColor: bg,
-                                transition: 'background-color 150ms ease-out',
-                              }}
-                            >
-                              {syllable ? (
-                                <button
-                                  onMouseEnter={() => { setHoverFinal(final); setHoverInitial(initial) }}
-                                  onMouseLeave={() => { setHoverFinal(null);  setHoverInitial(null) }}
-                                  onClick={() => handleCellClick(syllable)}
-                                  className={btnClass(final, initial, syllable, isMatch)}
-                                  style={btnStyle(final, initial, syllable, isMatch)}
-                                >
-                                  {syllable}
-                                </button>
-                              ) : (
-                                <span className="block py-2 text-xs" style={{ color: bg ? 'rgba(255,255,255,0.4)' : '#e5e7eb' }}>—</span>
-                              )}
-                            </td>
-                          )
-                        })}
-                      </tr>
-                    ))}
-                  </>
                 ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Tone popup */}
-          {popup && (
-            <div
-              ref={popupRef}
-              className="absolute z-50 bg-white rounded-2xl shadow-2xl border border-lingo-border p-6 w-80"
-              style={{ top: 16, right: 16 }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="text-3xl font-bold text-lingo-text">{popup.syllable}</div>
-                  <div className="text-xs text-lingo-muted mt-0.5">Click a tone to hear it</div>
-                </div>
-                <button onClick={() => setPopup(null)} className="text-lingo-muted hover:text-lingo-text text-lg leading-none p-1">✕</button>
-              </div>
-              <div className="space-y-2">
-                {TONE_INFO.map(({ tone, name, desc, symbol, light }) => {
-                  const withTone = addTone(popup.syllable, tone)
-                  const isPlaying = playingTone === tone
-                  return (
-                    <button
-                      key={tone}
-                      onClick={() => handlePopupTone(popup.syllable, tone)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all hover:scale-[1.02] ${
-                        isPlaying ? light + ' shadow-md' : 'border-lingo-border bg-lingo-surface hover:border-lingo-red/40'
-                      }`}
+              </tr>
+            </thead>
+            <tbody>
+              {FINAL_GROUPS.map((group, gi) => (
+                <>
+                  {/* Section label row — solid Orange, white text */}
+                  <tr key={`group-${gi}`}>
+                    <td
+                      colSpan={INITIALS.length + 1}
+                      className="px-4 py-1.5 font-bold text-[11px] tracking-wider"
+                      style={{ backgroundColor: ORANGE, color: '#ffffff' }}
                     >
-                      <span className="text-lg w-6 text-center shrink-0">{symbol}</span>
-                      <span className="text-2xl font-bold flex-1 text-left">{withTone}</span>
-                      <div className="text-right">
-                        <div className="text-xs font-semibold text-lingo-text">{name}</div>
-                        <div className="text-[10px] text-lingo-muted">{desc}</div>
-                      </div>
-                      <span>{isPlaying ? '🔊' : '▶️'}</span>
-                    </button>
-                  )
-                })}
-              </div>
-              <div className="mt-4 pt-4 border-t border-lingo-border text-[11px] text-lingo-muted text-center">
-                Audio via browser Chinese TTS (zh-CN)
-              </div>
-            </div>
-          )}
+                      {group.label}
+                    </td>
+                  </tr>
+
+                  {group.finals.map((final, fi) => (
+                    <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
+
+                      {/* Final row header — always teal */}
+                      <td
+                        className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px]"
+                        style={{ backgroundColor: TEAL, color: 'white' }}
+                      >
+                        {final}
+                      </td>
+
+                      {/* Syllable cells */}
+                      {INITIALS.map(initial => {
+                        const syllable = getSyllable(initial, final)
+                        const isActive = activeSyl === syllable && syllable !== null
+                        const isMatch  = search.length > 0 && syllable !== null
+                          && syllable.toLowerCase().startsWith(search.toLowerCase())
+
+                        return (
+                          <td key={initial || 'zero'} className="px-0.5 py-0.5 text-center">
+                            {syllable ? (
+                              <button
+                                onClick={e => handleCellClick(syllable, e)}
+                                aria-label={`${syllable}, click to hear tones`}
+                                aria-pressed={isActive}
+                                className={
+                                  'w-full px-1 py-2 rounded-lg text-xs font-semibold '
+                                  + 'transition-colors duration-150 ease-out '
+                                  + 'focus-visible:outline-none focus-visible:ring-2 '
+                                  + (isActive
+                                      ? ''
+                                      : isMatch
+                                      ? 'bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400 '
+                                      : 'bg-lingo-surface text-lingo-text hover:bg-[#F0FDFA] ')
+                                }
+                                style={isActive
+                                  ? { backgroundColor: TEAL, color: '#ffffff', fontWeight: 600,
+                                      boxShadow: '0 0 0 2px rgba(15,118,110,0.20)' }
+                                  : isMatch ? undefined
+                                  : undefined
+                                }
+                              >
+                                {syllable}
+                              </button>
+                            ) : (
+                              <span className="block py-2 text-xs text-gray-200">—</span>
+                            )}
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  ))}
+                </>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         {/* Legend */}
         <div className="mt-4 flex flex-wrap gap-6 text-xs text-lingo-muted">
-          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-lingo-surface border border-lingo-border"></span>Valid — click for all tones</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: ORANGE }}></span><span className="text-white" style={{ backgroundColor: ORANGE, padding: '0 2px', borderRadius: 2 }}>Orange</span> row &amp; column</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: TEAL }}></span><span className="text-white" style={{ backgroundColor: TEAL, padding: '0 2px', borderRadius: 2 }}>Teal</span> intersection</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-yellow-100 border-2 border-yellow-400"></span>Search match</span>
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block w-4 h-4 rounded bg-lingo-surface border border-lingo-border" />
+            Valid — click for all tones
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: TEAL }} />
+            <span>Selected</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block w-4 h-4 rounded bg-yellow-100 border-2 border-yellow-400" />
+            Search match
+          </span>
         </div>
 
         {/* Tone reference cards */}
@@ -384,8 +366,11 @@ export default function PinyinLabPage() {
               key={tone}
               onClick={() => setSelectedTone(tone)}
               className={`p-4 rounded-xl border-2 text-left transition-all hover:shadow-md ${
-                selectedTone === tone ? light + ' shadow-md scale-105' : 'bg-white border-lingo-border hover:border-lingo-red'
+                selectedTone === tone ? light + ' shadow-md scale-105' : 'bg-white border-lingo-border'
               }`}
+              style={selectedTone === tone
+                ? undefined
+                : { ['--tw-border-opacity' as string]: 1 }}
             >
               <div className="text-2xl font-bold mb-1 text-lingo-text">{mark}</div>
               <div className="text-sm font-semibold text-lingo-text">{name}</div>
@@ -394,6 +379,64 @@ export default function PinyinLabPage() {
           ))}
         </div>
       </div>
+
+      {/* Anchored tone popup — fixed position, computed from clicked cell */}
+      {popup && (
+        <div
+          ref={popupRef}
+          role="dialog"
+          aria-label={`Tones for ${popup.syllable}`}
+          aria-modal="false"
+          className="z-[9999] bg-white rounded-2xl shadow-2xl border border-gray-200 p-5"
+          style={{
+            position: 'fixed',
+            top: popup.y,
+            left: popup.x,
+            width: POPUP_W,
+            maxWidth: 'calc(100vw - 24px)',
+          }}
+        >
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <div className="text-3xl font-bold" style={{ color: TEAL }}>{popup.syllable}</div>
+              <div className="text-xs text-gray-400 mt-0.5">Tap a tone to hear it</div>
+            </div>
+            <button
+              onClick={() => { setPopup(null); setActiveSyl(null) }}
+              aria-label="Close tone panel"
+              className="text-gray-400 hover:text-gray-700 text-lg leading-none p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="space-y-1.5">
+            {TONE_INFO.map(({ tone, name, desc, symbol, light }) => {
+              const withTone  = addTone(popup.syllable, tone)
+              const isPlaying = playingTone === tone
+              return (
+                <button
+                  key={tone}
+                  onClick={() => handlePopupTone(popup.syllable, tone)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 transition-all hover:scale-[1.01] ${
+                    isPlaying ? light + ' shadow-md' : 'border-gray-200 bg-gray-50 hover:border-[#0F766E]/40 hover:bg-[#F0FDFA]'
+                  }`}
+                >
+                  <span className="text-base w-6 text-center shrink-0">{symbol}</span>
+                  <span className="text-xl font-bold flex-1 text-left" style={{ color: isPlaying ? undefined : TEAL }}>{withTone}</span>
+                  <div className="text-right">
+                    <div className="text-xs font-semibold text-gray-700">{name}</div>
+                    <div className="text-[10px] text-gray-400">{desc}</div>
+                  </div>
+                  <span className="text-base">{isPlaying ? '🔊' : '▶️'}</span>
+                </button>
+              )
+            })}
+          </div>
+          <div className="mt-3 pt-3 border-t border-gray-100 text-[10px] text-gray-400 text-center">
+            Audio via browser TTS (zh-CN)
+          </div>
+        </div>
+      )}
 
       <WaveDivider variant="white-to-soft-teal" shape="slope" />
 
