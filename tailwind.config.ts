@@ -18,56 +18,62 @@ const config: Config = {
         'lingo-caption': ['14px', { lineHeight: '1.5',  fontWeight: '400' }],
       },
       colors: {
-        // ── Primary Brand: Teal ─────────────────────────────────────
+        // Primary Brand: Teal
         'lingo-teal':          '#0F766E',
         'lingo-teal-dark':     '#0C4A45',
         'lingo-teal-soft':     '#F0FDFA',
         'lingo-secondary':     '#64C4B9',
         'lingo-secondary-hover': '#F0FDFA',
 
-        // ── Primary Action: Orange ──────────────────────────────
+        // Primary Action: Orange
         'lingo-red':           '#FF6B00',
         'lingo-red-dark':      '#E85D04',
         'lingo-red-light':     '#FF8C38',
 
-        // ── Deep Contrast: Navy (use sparingly) ──────────────────
+        // Deep Contrast: Navy
         'lingo-navy':          '#2B2E63',
         'lingo-navy-dark':     '#1E2147',
         'lingo-navy-light':    '#3B3F8C',
 
-        // ── Minor Accent: Pink ──────────────────────────────────
+        // Minor Accent: Pink
         'lingo-pink':          '#E0006A',
         'lingo-pink-dark':     '#C2005C',
         'lingo-pink-soft':     '#FFE5F0',
 
-        // ── Energy: Yellow / Gold ────────────────────────────
-        'lingo-yellow':      '#FFD24A',
-        'lingo-yellow-soft': '#FFF5C7',
-        'lingo-gold':        '#F6C453',
-        'lingo-gold-bg':     '#FFF8E1',
-        'lingo-gold-text':   '#8A6415',
+        // Energy: Yellow / Gold
+        'lingo-yellow':        '#FFD24A',
+        'lingo-yellow-soft':   '#FFF5C7',
+        'lingo-gold':          '#F6C453',
+        'lingo-gold-bg':       '#FFF8E1',
+        'lingo-gold-text':     '#8A6415',
 
-        // ── Status ──────────────────────────────────────────────
-        'lingo-success':      '#22C55E',
-        'lingo-success-soft': '#ECFDF5',
-        'lingo-warning':      '#F59E0B',
-        'lingo-error':        '#EF4444',
+        // Soft section backgrounds
+        'lingo-soft-orange':   '#FFF7ED',
+        'lingo-soft-pink':     '#FDF2F8',
+        'lingo-soft-lavender': '#F5F3FF',
+        'lingo-soft-aqua':     '#E6F7F5',
 
-        // ── Backgrounds ───────────────────────────────────────
-        'lingo-surface':   '#FCFBF8',
-        'lingo-card':      '#FFFFFF',
-        'lingo-bg-alt':    '#F5F7F8',
+        // Status
+        'lingo-success':       '#22C55E',
+        'lingo-success-soft':  '#ECFDF5',
+        'lingo-warning':       '#F59E0B',
+        'lingo-error':         '#EF4444',
 
-        // ── Typography ──────────────────────────────────────
-        'lingo-text':      '#171717',
-        'lingo-heading-2': '#252525',
-        'lingo-body':      '#596273',
-        'lingo-muted':     '#70798A',
-        'lingo-disabled':  '#9AA1AE',
+        // Backgrounds
+        'lingo-surface':       '#FCFBF8',
+        'lingo-card':          '#FFFFFF',
+        'lingo-bg-alt':        '#F5F7F8',
 
-        // ── Borders ──────────────────────────────────────────
-        'lingo-border':       '#E7E5EA',
-        'lingo-border-hover': '#D1CDD8',
+        // Typography
+        'lingo-text':          '#111827',
+        'lingo-heading-2':     '#252525',
+        'lingo-body':          '#596273',
+        'lingo-muted':         '#70798A',
+        'lingo-disabled':      '#9AA1AE',
+
+        // Borders
+        'lingo-border':        '#E7E5EA',
+        'lingo-border-hover':  '#D1CDD8',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
