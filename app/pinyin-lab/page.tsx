@@ -169,6 +169,8 @@ function TonePanel({
             <button
               key={tone}
               onClick={() => onTone(tone)}
+              aria-label={`${name}: ${withTone}, ${desc}`}
+              aria-pressed={isPlaying}
               className={[
                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 transition-all',
                 isPlaying
@@ -176,7 +178,7 @@ function TonePanel({
                   : 'border-gray-200 bg-gray-50 hover:border-[#0F766E]/40 hover:bg-[#F0FDFA]',
               ].join(' ')}
             >
-              <span className="text-base w-6 text-center shrink-0">{symbol}</span>
+              <span className="text-base w-6 text-center shrink-0" aria-hidden="true">{symbol}</span>
               <span className="text-xl font-bold flex-1 text-left" style={{ color: isPlaying ? undefined : TEAL }}>
                 {withTone}
               </span>
@@ -184,7 +186,7 @@ function TonePanel({
                 <div className="text-xs font-semibold text-gray-700">{name}</div>
                 <div className="text-[10px] text-gray-400">{desc}</div>
               </div>
-              <span className="text-base">{isPlaying ? '🔊' : '▶️'}</span>
+              <span className="text-base" aria-hidden="true">{isPlaying ? '🔊' : '▶️'}</span>
             </button>
           )
         })}
@@ -219,10 +221,13 @@ export default function PinyinLabPage() {
   }, [])
 
   const closeAll = useCallback(() => {
+    // Return focus to the cell that opened the dialog before clearing the ref
+    const trigger = anchorRef.current
     setActiveSyl(null)
     setPopoverPos(null)
     setSheetOpen(false)
     anchorRef.current = null
+    requestAnimationFrame(() => trigger?.focus())
   }, [])
 
   const reposition = useCallback(() => {
@@ -275,6 +280,13 @@ export default function PinyinLabPage() {
     }
   })
 
+  // Move focus into dialog when it opens so keyboard/screen-reader users can interact
+  useEffect(() => {
+    if (popoverRef.current && (popoverPos || sheetOpen)) {
+      popoverRef.current.focus()
+    }
+  }, [popoverPos, sheetOpen])
+
   const handleCellClick = useCallback((syllable: string, e: React.MouseEvent<HTMLButtonElement>) => {
     const btn = e.currentTarget
     anchorRef.current = btn
@@ -318,26 +330,35 @@ export default function PinyinLabPage() {
         {/* Search + default tone selector */}
         <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-lingo-surface rounded-xl border border-lingo-border">
           <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-            <svg className="w-4 h-4 text-lingo-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-lingo-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
               type="text"
+              aria-label="Search pinyin syllables"
               placeholder="Search pinyin (e.g. ma, zhi, juan)..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="flex-1 bg-transparent text-sm text-lingo-text placeholder-lingo-muted focus:outline-none"
             />
-            {search && <button onClick={() => setSearch('')} className="text-lingo-muted hover:text-lingo-text text-xs">✕</button>}
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                aria-label="Clear search"
+                className="text-lingo-muted hover:text-lingo-text text-xs"
+              >
+                ✕
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-lingo-muted font-medium">Default tone:</span>
+            <span className="text-xs text-lingo-muted font-medium" id="tone-selector-label">Default tone:</span>
             {TONE_INFO.map(({ tone, mark, name }) => (
               <button
                 key={tone}
                 onClick={() => setSelectedTone(tone)}
-                title={name}
                 aria-label={name}
+                aria-pressed={selectedTone === tone}
                 className={`w-9 h-9 rounded-full text-sm font-bold transition-all ${
                   selectedTone === tone
                     ? 'text-white shadow-md scale-110'
@@ -358,6 +379,7 @@ export default function PinyinLabPage() {
         */}
         <div className="overflow-x-auto rounded-xl border border-lingo-border shadow-sm">
           <table
+            aria-label="Mandarin Pinyin Chart"
             className="border-collapse"
             style={{
               width: '100%',
@@ -369,6 +391,7 @@ export default function PinyinLabPage() {
               <tr>
                 {/* Corner: INITIALS label — explicit width drives the fixed-layout finals column */}
                 <th
+                  scope="col"
                   className={`${AXIS_CLS} px-3 py-3 text-center sticky left-0 z-20 tracking-widest`}
                   style={{ backgroundColor: TEAL, color: '#ffffff', width: `${FINALS_COL_W}px` }}
                 >
@@ -378,6 +401,8 @@ export default function PinyinLabPage() {
                 {INITIALS.map(initial => (
                   <th
                     key={initial || 'zero'}
+                    scope="col"
+                    aria-label={initial === '' ? 'Standalone syllables' : initial}
                     className={`${AXIS_CLS} px-2 py-3 text-center`}
                     style={{ backgroundColor: TEAL, color: '#ffffff' }}
                   >
@@ -393,6 +418,7 @@ export default function PinyinLabPage() {
                   colSpan={INITIALS.length + 1}
                   className={`${AXIS_CLS} px-4 py-2 text-center tracking-widest`}
                   style={{ backgroundColor: ORANGE, color: '#ffffff' }}
+                  aria-hidden="true"
                 >
                   FINALS
                 </td>
@@ -402,13 +428,14 @@ export default function PinyinLabPage() {
               {ALL_FINALS.map((final, fi) => (
                 <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
 
-                  {/* Finals label — Orange sticky column, same font size as FINALS stripe */}
-                  <td
+                  {/* Finals label — semantic row header for screen readers */}
+                  <th
+                    scope="row"
                     className={`${AXIS_CLS} sticky left-0 z-10 px-2 py-1.5 text-center`}
                     style={{ backgroundColor: ORANGE, color: '#ffffff' }}
                   >
                     {final}
-                  </td>
+                  </th>
 
                   {/* Syllable cells */}
                   {INITIALS.map(initial => {
@@ -444,7 +471,7 @@ export default function PinyinLabPage() {
                             {syllable}
                           </button>
                         ) : (
-                          <span className="block py-2 text-xs text-gray-200">—</span>
+                          <span className="block py-2 text-xs text-gray-200" aria-hidden="true">—</span>
                         )}
                       </td>
                     )
@@ -456,17 +483,17 @@ export default function PinyinLabPage() {
         </div>
 
         {/* Legend */}
-        <div className="mt-4 flex flex-wrap gap-6 text-xs text-lingo-muted">
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block w-4 h-4 rounded bg-lingo-surface border border-lingo-border" />
+        <div className="mt-4 flex flex-wrap gap-6 text-xs text-lingo-muted" role="list" aria-label="Chart legend">
+          <span className="flex items-center gap-1.5" role="listitem">
+            <span className="inline-block w-4 h-4 rounded bg-lingo-surface border border-lingo-border" aria-hidden="true" />
             Valid — click for all tones
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: TEAL }} />
+          <span className="flex items-center gap-1.5" role="listitem">
+            <span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: TEAL }} aria-hidden="true" />
             Selected
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block w-4 h-4 rounded bg-yellow-100 border-2 border-yellow-400" />
+          <span className="flex items-center gap-1.5" role="listitem">
+            <span className="inline-block w-4 h-4 rounded bg-yellow-100 border-2 border-yellow-400" aria-hidden="true" />
             Search match
           </span>
         </div>
@@ -477,11 +504,13 @@ export default function PinyinLabPage() {
             <button
               key={tone}
               onClick={() => setSelectedTone(tone)}
+              aria-pressed={selectedTone === tone}
+              aria-label={`${name}: ${desc}`}
               className={`p-4 rounded-xl border-2 text-left transition-all hover:shadow-md ${
                 selectedTone === tone ? light + ' shadow-md scale-105' : 'bg-white border-lingo-border'
               }`}
             >
-              <div className="text-2xl font-bold mb-1 text-lingo-text">{mark}</div>
+              <div className="text-2xl font-bold mb-1 text-lingo-text" aria-hidden="true">{mark}</div>
               <div className="text-sm font-semibold text-lingo-text">{name}</div>
               <div className="text-xs mt-0.5 text-lingo-muted">{desc}</div>
             </button>
@@ -496,7 +525,8 @@ export default function PinyinLabPage() {
           role="dialog"
           aria-label={`Tones for ${activeSyl}`}
           aria-modal="false"
-          className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-5"
+          tabIndex={-1}
+          className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 focus:outline-none"
           style={{
             position: 'fixed',
             top: popoverPos.y,
@@ -520,10 +550,12 @@ export default function PinyinLabPage() {
         <>
           <div className="fixed inset-0 bg-black/30 z-[9998]" aria-hidden="true" onClick={closeAll} />
           <div
+            ref={popoverRef}
             role="dialog"
             aria-label={`Tones for ${activeSyl}`}
             aria-modal="true"
-            className="fixed bottom-0 left-0 right-0 z-[9999] bg-white rounded-t-2xl shadow-2xl px-4 pt-4 pb-8"
+            tabIndex={-1}
+            className="fixed bottom-0 left-0 right-0 z-[9999] bg-white rounded-t-2xl shadow-2xl px-4 pt-4 pb-8 focus:outline-none"
             style={{ maxHeight: '85vh', overflowY: 'auto' }}
           >
             <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" aria-hidden="true" />
