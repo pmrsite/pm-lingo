@@ -7,6 +7,13 @@ import StudyViewControls from '@/components/ui/StudyViewControls'
 
 type Tab = 'learn' | 'practice' | 'review' | 'assess'
 
+// Returns the Chinese column header label based on which scripts are visible
+function chineseColHeader(showSimplified: boolean, showTraditional: boolean): string {
+  if (showSimplified && showTraditional) return 'Chinese'
+  if (showSimplified) return 'Simplified'
+  return 'Traditional'
+}
+
 export default function MissionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
   const mission = missions.find((m) => m.slug === slug)
@@ -19,6 +26,8 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
   const [activeRegion, setActiveRegion] = useState<string>('mainland')
 
   const { prefs, toggle, resetAll } = useLanguagePreferences()
+
+  const showChineseCol = prefs.showSimplified || prefs.showTraditional
 
   const regionLabels: Record<string, string> = {
     mainland: 'Mainland China',
@@ -102,9 +111,9 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
               <table className="w-full" aria-label="Vocabulary list">
                 <thead className="bg-lingo-surface">
                   <tr>
-                    {prefs.showChinese && (
+                    {showChineseCol && (
                       <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">
-                        Chinese
+                        {chineseColHeader(prefs.showSimplified, prefs.showTraditional)}
                       </th>
                     )}
                     {prefs.showPinyin && (
@@ -125,8 +134,30 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                 <tbody className="divide-y divide-lingo-border">
                   {mission.vocabulary.map((v, i) => (
                     <tr key={i} className="hover:bg-lingo-teal-soft transition-colors">
-                      {prefs.showChinese && (
-                        <td className="font-chinese px-4 py-3 text-2xl font-medium">{v.chinese}</td>
+                      {showChineseCol && (
+                        <td className="px-4 py-3">
+                          {prefs.showSimplified && prefs.showTraditional ? (
+                            // Stacked view: simplified on top, traditional below with script labels
+                            <div className="flex flex-col gap-0.5">
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="text-[10px] font-semibold text-lingo-muted select-none w-4">简</span>
+                                <span className="font-chinese text-xl font-medium">{v.simplified}</span>
+                              </div>
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="text-[10px] font-semibold text-lingo-muted select-none w-4">繁</span>
+                                <span className="font-chinese text-xl font-medium">
+                                  {v.traditional ?? <em className="text-xs text-lingo-muted not-italic">pending</em>}
+                                </span>
+                              </div>
+                            </div>
+                          ) : prefs.showSimplified ? (
+                            <span className="font-chinese text-2xl font-medium">{v.simplified}</span>
+                          ) : (
+                            <span className="font-chinese text-2xl font-medium">
+                              {v.traditional ?? <em className="text-xs text-lingo-muted not-italic">Traditional pending review</em>}
+                            </span>
+                          )}
+                        </td>
                       )}
                       {prefs.showPinyin && (
                         <td className="font-pinyin font-medium px-4 py-3 text-base text-lingo-body">{v.pinyin}</td>
@@ -138,7 +169,7 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                       <td className="px-4 py-3 text-center">
                         <button
                           className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg"
-                          aria-label={`Play audio for ${v.chinese}`}
+                          aria-label={`Play audio for ${v.simplified}`}
                         >
                           🔊
                         </button>
@@ -164,9 +195,27 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                   </div>
                   <div className={`bg-white border border-lingo-border rounded-2xl px-5 py-4 max-w-lg shadow-sm ${i % 2 !== 0 ? 'text-right' : ''}`}>
                     <div className="text-xs text-lingo-muted mb-1">{line.speaker}</div>
-                    {prefs.showChinese && (
-                      <div className="font-chinese text-xl font-medium text-lingo-navy mb-1">{line.chinese}</div>
-                    )}
+                    {prefs.showSimplified && prefs.showTraditional ? (
+                      // Stacked: simplified + traditional in one block
+                      <div className="mb-1 space-y-0.5">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-[10px] font-semibold text-lingo-muted select-none">简</span>
+                          <span className="font-chinese text-xl font-medium text-lingo-navy">{line.simplified}</span>
+                        </div>
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-[10px] font-semibold text-lingo-muted select-none">繁</span>
+                          <span className="font-chinese text-xl font-medium text-lingo-navy">
+                            {line.traditional ?? <em className="text-xs text-lingo-muted not-italic">pending</em>}
+                          </span>
+                        </div>
+                      </div>
+                    ) : prefs.showSimplified ? (
+                      <div className="font-chinese text-xl font-medium text-lingo-navy mb-1">{line.simplified}</div>
+                    ) : prefs.showTraditional ? (
+                      <div className="font-chinese text-xl font-medium text-lingo-navy mb-1">
+                        {line.traditional ?? <em className="text-xs text-lingo-muted not-italic">Traditional pending review</em>}
+                      </div>
+                    ) : null}
                     {prefs.showPinyin && (
                       <div className="font-pinyin font-medium text-base text-lingo-body">{line.pinyin}</div>
                     )}
@@ -258,9 +307,20 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
               {mission.vocabulary.slice(0, 5).map((v, i) => (
                 <div key={i} className="flex items-center justify-between gap-3 p-3 bg-lingo-surface rounded-xl flex-wrap">
                   <div className="flex items-baseline gap-2 flex-wrap min-w-0">
-                    {prefs.showChinese && (
-                      <span className="font-chinese text-xl font-medium">{v.chinese}</span>
-                    )}
+                    {prefs.showSimplified && prefs.showTraditional ? (
+                      <span className="font-chinese text-xl font-medium">
+                        {v.simplified}
+                        {v.traditional && (
+                          <span className="text-lingo-muted"> / {v.traditional}</span>
+                        )}
+                      </span>
+                    ) : prefs.showSimplified ? (
+                      <span className="font-chinese text-xl font-medium">{v.simplified}</span>
+                    ) : prefs.showTraditional ? (
+                      <span className="font-chinese text-xl font-medium">
+                        {v.traditional ?? v.simplified}
+                      </span>
+                    ) : null}
                     {prefs.showPinyin && (
                       <span className="font-pinyin font-medium text-base text-lingo-muted">{v.pinyin}</span>
                     )}
@@ -271,7 +331,7 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                   {/* Audio remains accessible regardless of text layer visibility */}
                   <button
                     className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg shrink-0"
-                    aria-label={`Play audio for ${v.chinese}`}
+                    aria-label={`Play audio for ${v.simplified}`}
                   >
                     🔊
                   </button>

@@ -39,7 +39,8 @@ export interface AITeacher {
 }
 
 export interface VocabItem {
-  chinese: string
+  simplified: string
+  traditional: string | null  // null = pending content review
   pinyin: string
   english: string
   audioPlaceholder?: string
@@ -48,7 +49,8 @@ export interface VocabItem {
 
 export interface DialogueLine {
   speaker: string
-  chinese: string
+  simplified: string
+  traditional: string | null  // null = pending content review
   pinyin: string
   english: string
 }

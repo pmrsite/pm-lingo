@@ -8,14 +8,17 @@ interface Props {
 }
 
 const TOGGLES: { key: keyof LanguagePreferences; label: string }[] = [
-  { key: 'showChinese', label: 'Chinese' },
+  { key: 'showSimplified', label: 'Simplified' },
+  { key: 'showTraditional', label: 'Traditional' },
   { key: 'showPinyin', label: 'Pinyin' },
   { key: 'showEnglish', label: 'English' },
 ]
 
-export default function StudyViewControls({ prefs, onToggle, onReset }: Props) {
-  const isDefault = prefs.showChinese && prefs.showPinyin && prefs.showEnglish
+// Default = Simplified ON, Traditional OFF, Pinyin ON, English ON
+const isDefault = (p: LanguagePreferences) =>
+  p.showSimplified && !p.showTraditional && p.showPinyin && p.showEnglish
 
+export default function StudyViewControls({ prefs, onToggle, onReset }: Props) {
   return (
     <div className="flex items-center gap-3 flex-wrap">
       <span className="text-xs font-semibold text-lingo-muted uppercase tracking-wider select-none">
@@ -37,20 +40,20 @@ export default function StudyViewControls({ prefs, onToggle, onReset }: Props) {
                   : 'bg-white border-lingo-border text-lingo-muted hover:border-lingo-border-hover hover:text-lingo-body'
                 }`}
             >
-              {/* Text indicator so state is never colour-only */}
+              {/* Text indicator — state is never communicated by colour alone */}
               <span className="text-sm leading-none" aria-hidden="true">{active ? '✓' : '○'}</span>
               {label}
             </button>
           )
         })}
       </div>
-      {!isDefault && (
+      {!isDefault(prefs) && (
         <button
           type="button"
           onClick={onReset}
           className="text-xs text-lingo-muted hover:text-lingo-body transition-colors underline underline-offset-2"
         >
-          Show all
+          Reset
         </button>
       )}
     </div>
