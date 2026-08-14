@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import WaveDivider from '@/components/ui/WaveDivider'
 import Link from 'next/link'
+import { playPinyinAudio } from '@/lib/pinyinAudio'
 
 const TEAL      = '#0F766E'
 const ORANGE    = '#FF6B00'
@@ -107,14 +108,13 @@ function addTone(syllable: string, tone: number): string {
   return syllable
 }
 
-function speak(syllable: string, tone: number) {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return
-  const withTone = addTone(syllable, tone)
-  const utter = new SpeechSynthesisUtterance(withTone)
-  utter.lang = 'zh-CN'
-  utter.rate = 0.7
-  window.speechSynthesis.cancel()
-  window.speechSynthesis.speak(utter)
+// Human-friendly tone labels for aria-label attributes
+const TONE_LABELS: Record<number, string> = {
+  1: 'first tone',
+  2: 'second tone',
+  3: 'third tone',
+  4: 'fourth tone',
+  0: 'neutral tone',
 }
 
 /** Compute a collision-safe fixed-position coordinate for the popup. */
@@ -171,7 +171,7 @@ function TonePanel({
             <button
               key={tone}
               onClick={() => onTone(tone)}
-              aria-label={`${name}: ${withTone}, ${desc}`}
+              aria-label={`Play ${withTone} — ${TONE_LABELS[tone]}`}
               aria-pressed={isPlaying}
               className={[
                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 transition-all',
@@ -196,7 +196,7 @@ function TonePanel({
         })}
       </div>
       <div className="mt-3 pt-3 border-t border-gray-100 text-[10px] text-gray-400 text-center">
-        Audio via browser TTS (zh-CN)
+        Human audio · TTS fallback (zh-CN)
       </div>
     </>
   )
@@ -296,18 +296,19 @@ export default function PinyinLabPage() {
     anchorRef.current = btn
     if (isMobile) {
       setActiveSyl(syllable); setSheetOpen(true)
-      setPlayingTone(selectedTone); speak(syllable, selectedTone)
+      setPlayingTone(selectedTone)
+      playPinyinAudio(syllable, selectedTone, addTone(syllable, selectedTone))
       return
     }
     const rect = btn.getBoundingClientRect()
     setActiveSyl(syllable)
     setPopoverPos(calcPos(rect, popoverH.current))
     setPlayingTone(selectedTone)
-    speak(syllable, selectedTone)
+    playPinyinAudio(syllable, selectedTone, addTone(syllable, selectedTone))
   }, [isMobile, selectedTone])
 
   function handleTone(syllable: string, tone: number) {
-    speak(syllable, tone)
+    playPinyinAudio(syllable, tone, addTone(syllable, tone))
     setPlayingTone(tone)
   }
 
