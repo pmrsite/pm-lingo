@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import WaveDivider from '@/components/ui/WaveDivider'
+import Link from 'next/link'
 
 const INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's']
 
@@ -132,15 +134,21 @@ export default function PinyinLabPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="bg-lingo-navy text-white py-14 px-4 text-center">
-        <div className="inline-flex items-center gap-2 bg-lingo-red/20 border border-lingo-red/30 text-lingo-red text-xs font-semibold px-3 py-1 rounded-full mb-4">
+
+      {/* Hero */}
+      <section className="pt-20 pb-12 px-4 text-center" style={{ backgroundColor: '#0F766E' }}>
+        <div className="inline-flex items-center gap-2 bg-white/20 border border-white/30 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
           🎵 Interactive Audio Chart
         </div>
-        <h1 className="text-4xl font-bold mb-3">Pinyin Chart</h1>
-        <p className="text-gray-300 max-w-xl mx-auto text-sm leading-relaxed">
+        <h1 className="text-4xl font-bold text-white mb-3">
+          <span style={{ color: '#FF6B00' }}>Mandarin</span> Pinyin Chart
+        </h1>
+        <p className="text-white/80 max-w-xl mx-auto text-sm leading-relaxed">
           Hover any cell to highlight its row and column. Click to hear all 4 tones.
         </p>
-      </div>
+      </section>
+
+      <WaveDivider variant="teal-to-white" shape="arch" />
 
       <div className="max-w-[1400px] mx-auto px-4 py-8">
         <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-lingo-surface rounded-xl border border-lingo-border">
@@ -181,16 +189,18 @@ export default function PinyinLabPage() {
             <table className="border-collapse text-sm" style={{ minWidth: '980px' }}>
               <thead>
                 <tr>
-                  <th className="bg-lingo-navy text-white px-3 py-3 text-center sticky left-0 z-20 min-w-[72px]">
-                    <span className="block text-gray-400 text-[10px]">final ↓</span>
-                    <span className="block text-gray-400 text-[10px]">initial →</span>
+                  <th className="px-3 py-3 text-center sticky left-0 z-20 min-w-[72px]" style={{ backgroundColor: '#0F766E', color: 'white' }}>
+                    <span className="block text-gray-200 text-[10px]">final ↓</span>
+                    <span className="block text-gray-200 text-[10px]">initial →</span>
                   </th>
                   {INITIALS.map(initial => (
                     <th
                       key={initial || 'zero'}
-                      className={`px-2 py-3 text-center font-bold min-w-[54px] text-sm transition-colors duration-75 ${
-                        hoverInitial === initial ? 'bg-lingo-red/20 text-white' : 'bg-lingo-navy text-white'
-                      }`}
+                      className={`px-2 py-3 text-center font-bold min-w-[54px] text-sm transition-colors duration-75`}
+                      style={{
+                        backgroundColor: hoverInitial === initial ? 'rgba(255,107,0,0.25)' : '#0F766E',
+                        color: 'white',
+                      }}
                     >
                       {initial || '∅'}
                     </th>
@@ -201,16 +211,18 @@ export default function PinyinLabPage() {
                 {FINAL_GROUPS.map((group, gi) => (
                   <>
                     <tr key={`group-${gi}`}>
-                      <td colSpan={INITIALS.length + 1} className="bg-lingo-red/10 text-lingo-red text-[11px] font-bold px-4 py-1.5 uppercase tracking-widest">
+                      <td colSpan={INITIALS.length + 1} className="text-[11px] font-bold px-4 py-1.5 uppercase tracking-widest" style={{ backgroundColor: 'rgba(255,107,0,0.1)', color: '#FF6B00' }}>
                         {group.label}
                       </td>
                     </tr>
                     {group.finals.map((final, fi) => (
                       <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
                         <td
-                          className={`sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px] transition-colors duration-75 ${
-                            hoverFinal === final ? 'bg-lingo-red/20 text-white' : 'bg-lingo-navy text-white'
-                          }`}
+                          className={`sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs min-w-[72px] transition-colors duration-75`}
+                          style={{
+                            backgroundColor: hoverFinal === final ? 'rgba(255,107,0,0.25)' : '#0F766E',
+                            color: 'white',
+                          }}
                         >
                           {final}
                         </td>
@@ -223,7 +235,7 @@ export default function PinyinLabPage() {
                             <td
                               key={initial || 'zero'}
                               className="px-0.5 py-0.5 text-center transition-colors duration-75"
-                              style={isCrossed ? { backgroundColor: 'rgba(233,69,96,0.07)' } : undefined}
+                              style={isCrossed ? { backgroundColor: 'rgba(255,107,0,0.07)' } : undefined}
                             >
                               {syllable ? (
                                 <button
@@ -232,11 +244,31 @@ export default function PinyinLabPage() {
                                   onClick={() => handleCellClick(syllable)}
                                   className={`w-full px-1 py-2 rounded-lg text-xs font-semibold transition-all duration-100 hover:scale-105 active:scale-95 ${
                                     isActive
-                                      ? 'bg-lingo-red text-white shadow-lg ring-2 ring-lingo-red/40'
+                                      ? 'text-white shadow-lg ring-2'
                                       : isMatch
                                       ? 'bg-yellow-100 text-yellow-900 ring-2 ring-yellow-400'
-                                      : 'bg-lingo-surface text-lingo-text hover:bg-lingo-red hover:text-white'
+                                      : 'bg-lingo-surface text-lingo-text'
                                   }`}
+                                  style={isActive
+                                    ? { backgroundColor: '#FF6B00', boxShadow: '0 4px 12px rgba(255,107,0,0.35)', outline: '2px solid rgba(255,107,0,0.4)' }
+                                    : (!isMatch ? { } : {})
+                                  }
+                                  onMouseEnter={(e) => {
+                                    setHoverFinal(final); setHoverInitial(initial)
+                                    if (!isActive && !isMatch) {
+                                      const btn = e.currentTarget
+                                      btn.style.backgroundColor = '#0F766E'
+                                      btn.style.color = 'white'
+                                    }
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    setHoverFinal(null); setHoverInitial(null)
+                                    if (!isActive && !isMatch) {
+                                      const btn = e.currentTarget
+                                      btn.style.backgroundColor = ''
+                                      btn.style.color = ''
+                                    }
+                                  }}
                                 >
                                   {syllable}
                                 </button>
@@ -299,8 +331,8 @@ export default function PinyinLabPage() {
 
         <div className="mt-4 flex flex-wrap gap-6 text-xs text-lingo-muted">
           <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-lingo-surface border border-lingo-border"></span>Valid — click for all tones</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{backgroundColor:'rgba(233,69,96,0.07)',border:'1px solid rgba(233,69,96,0.3)'}}></span>Cross-highlight on hover</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-lingo-red"></span>Selected</span>
+          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{backgroundColor:'rgba(255,107,0,0.07)',border:'1px solid rgba(255,107,0,0.3)'}}></span>Cross-highlight on hover</span>
+          <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded" style={{backgroundColor:'#FF6B00'}}></span>Selected</span>
           <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-4 rounded bg-yellow-100 border-2 border-yellow-400"></span>Search match</span>
         </div>
 
@@ -319,19 +351,39 @@ export default function PinyinLabPage() {
             </button>
           ))}
         </div>
+      </div>
 
-        <div className="mt-16 max-w-3xl">
-          <h2 className="text-2xl font-bold text-lingo-text mb-2">What is Pinyin?</h2>
+      <WaveDivider variant="white-to-soft-teal" shape="slope" />
+
+      {/* What is Pinyin explainer */}
+      <section className="py-20 px-4" style={{ backgroundColor: '#F0FDFA' }}>
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold mb-2" style={{ color: '#0F766E' }}>What is Pinyin?</h2>
           <p className="text-lingo-muted leading-relaxed mb-4">
             Pīyīn (拼音) literally means &ldquo;spell-sounds&rdquo; in Chinese. It&apos;s the standard system for
-            transcribing Mandarin Chinese sounds using the Latin alphabet.
+            transcribing <span style={{ color: '#FF6B00', fontWeight: 600 }}>Mandarin</span> Chinese sounds using the Latin alphabet.
           </p>
           <p className="text-lingo-muted leading-relaxed">
             Every sound in Mandarin fits into this chart. Master these ~400 combinations plus the four tones,
             and you&apos;ve effectively mastered the pronunciation of every word in the Chinese language.
           </p>
         </div>
-      </div>
+      </section>
+
+      <WaveDivider variant="soft-teal-to-white" shape="valley" />
+
+      <WaveDivider variant="white-to-orange" shape="arch" />
+
+      {/* CTA */}
+      <section className="py-16 px-4 text-center" style={{ backgroundColor: '#FF6B00' }}>
+        <h2 className="text-3xl font-bold text-white mb-4">Practice what you just learned</h2>
+        <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">Put your pinyin to work in real-life <span style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>Mandarin</span> missions. 14 days free.</p>
+        <Link href="/auth/signup" className="inline-block bg-white font-bold px-8 py-3 rounded-xl hover:bg-gray-50 transition-colors" style={{ color: '#FF6B00' }}>
+          Start your free trial →
+        </Link>
+      </section>
+
+      <WaveDivider variant="orange-to-teal" shape="valley" />
     </div>
   )
 }
