@@ -7,9 +7,9 @@ interface Props {
   onReset: () => void
 }
 
-const TOGGLES: { key: keyof LanguagePreferences; label: string }[] = [
-  { key: 'showSimplified', label: 'Simplified' },
-  { key: 'showTraditional', label: 'Traditional' },
+const TOGGLES: { key: keyof LanguagePreferences; label: React.ReactNode }[] = [
+  { key: 'showSimplified', label: <><span className="font-chinese">简</span> Simplified</> },
+  { key: 'showTraditional', label: <><span className="font-chinese">繁</span> Traditional</> },
   { key: 'showPinyin', label: 'Pinyin' },
   { key: 'showEnglish', label: 'English' },
 ]

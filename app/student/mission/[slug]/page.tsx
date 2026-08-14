@@ -2,13 +2,13 @@
 import { useState, use } from 'react'
 import { missions } from '@/data/missions'
 import { notFound } from 'next/navigation'
-import type { QuizQuestion, QuizAnswers } from '@/types'
+import type { QuizQuestion, QuizOption, QuizPrompt } from '@/types'
 import { useLanguagePreferences } from '@/hooks/useLanguagePreferences'
 import StudyViewControls from '@/components/ui/StudyViewControls'
 import GrammarAccordion from '@/components/ui/GrammarAccordion'
 
 type Tab = 'learn' | 'practice' | 'review' | 'assess'
-type MandarinMode = 'simplified' | 'traditional' | 'pinyin'
+type ReviewRep = 'simplified' | 'traditional' | 'pinyin'
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -18,60 +18,24 @@ function chineseColHeader(showSimplified: boolean, showTraditional: boolean): st
   return 'Traditional'
 }
 
-// Derive which Mandarin answer modes are currently active from learner prefs
-function getActiveMandarin(prefs: ReturnType<typeof useLanguagePreferences>['prefs']): MandarinMode[] {
-  const modes: MandarinMode[] = []
-  if (prefs.showSimplified) modes.push('simplified')
-  if (prefs.showTraditional) modes.push('traditional')
-  if (prefs.showPinyin) modes.push('pinyin')
-  return modes
+function getPromptDisplay(prompt: QuizPrompt, rep: ReviewRep): string {
+  if (rep === 'simplified') return prompt.simplified ?? prompt.english ?? ''
+  if (rep === 'traditional') return prompt.traditional ?? prompt.simplified ?? prompt.english ?? ''
+  if (rep === 'pinyin') return prompt.pinyin ?? prompt.simplified ?? prompt.english ?? ''
+  return prompt.english ?? ''
 }
 
-// Conservative normalisation for answer comparison
-function normalise(s: string): string {
-  return s.trim().normalize('NFC').replace(/\s+/g, ' ').toLowerCase()
+function getOptionDisplay(opt: QuizOption, rep: ReviewRep): string {
+  // English-only options always show English regardless of rep
+  if (!opt.simplified && !opt.traditional && !opt.pinyin) return opt.english ?? ''
+  if (rep === 'simplified') return opt.simplified ?? opt.english ?? ''
+  if (rep === 'traditional') return opt.traditional ?? opt.simplified ?? opt.english ?? ''
+  if (rep === 'pinyin') return opt.pinyin ?? opt.simplified ?? opt.english ?? ''
+  return opt.english ?? opt.simplified ?? ''
 }
 
-// Check a fill-blank answer against the enabled Mandarin modes
-function checkFillBlank(
-  userAnswer: string,
-  q: QuizQuestion,
-  modes: MandarinMode[]
-): boolean {
-  const n = normalise(userAnswer)
-  if (!n) return false
-  if (q.answers) {
-    for (const mode of modes) {
-      const accepted = (q.answers[mode as keyof QuizAnswers] ?? []) as string[]
-      if (accepted.some((a) => normalise(a) === n)) return true
-    }
-    return false
-  }
-  // Fallback for questions without structured answers
-  const fallback = Array.isArray(q.answer) ? q.answer[0] : q.answer
-  return normalise(fallback) === n
-}
-
-// Dynamic placeholder text based on active modes
-function getPlaceholder(modes: MandarinMode[]): string {
-  if (modes.length === 0) return 'Type your answer...'
-  if (modes.length === 1) {
-    if (modes[0] === 'simplified') return 'Type your answer in Simplified Chinese...'
-    if (modes[0] === 'traditional') return 'Type your answer in Traditional Chinese...'
-    return 'Type your answer in Pinyin...'
-  }
-  const labels = modes.map((m) =>
-    m === 'simplified' ? 'Simplified' : m === 'traditional' ? 'Traditional' : 'Pinyin'
-  )
-  return `Type your answer in ${labels.join(', ')}...`
-}
-
-// Reference answer to show on wrong submission
-function getReferenceAnswer(q: QuizQuestion): string {
-  if (q.answers?.simplified?.[0]) return q.answers.simplified[0]
-  if (q.answers?.traditional?.[0]) return q.answers.traditional[0]
-  if (q.answers?.pinyin?.[0]) return q.answers.pinyin[0]
-  return Array.isArray(q.answer) ? q.answer[0] : q.answer
+function isEnglishOnlyOption(opt: QuizOption): boolean {
+  return !opt.simplified && !opt.traditional && !opt.pinyin && !!opt.english
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -83,16 +47,24 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
   const m = mission!
 
   const [activeTab, setActiveTab] = useState<Tab>('learn')
+  // answers stores q.id → selected option.id (representation-agnostic)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
   const [activeRegion, setActiveRegion] = useState<string>('mainland')
-  // Per-question mode override for English-only edge case
-  const [questionModeOverrides, setQuestionModeOverrides] = useState<Record<string, MandarinMode>>({})
+  // null = follow Study View; non-null = manually chosen, ignore prefs changes
+  const [reviewRepOverride, setReviewRepOverride] = useState<ReviewRep | null>(null)
 
   const { prefs, toggle, resetAll } = useLanguagePreferences()
 
   const showChineseCol = prefs.showSimplified || prefs.showTraditional
-  const activeMandarin = getActiveMandarin(prefs)
+
+  // Derive review representation from Study View unless manually overridden
+  const reviewRep: ReviewRep = reviewRepOverride ?? (
+    prefs.showSimplified ? 'simplified' :
+    prefs.showTraditional ? 'traditional' :
+    prefs.showPinyin ? 'pinyin' :
+    'simplified'
+  )
 
   const regionLabels: Record<string, string> = {
     mainland: 'Mainland China',
@@ -101,19 +73,12 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
     international: 'International',
   }
 
-  function handleAnswer(qId: string, value: string) {
-    if (!submitted) setAnswers((prev) => ({ ...prev, [qId]: value }))
+  function handleAnswer(qId: string, optionId: string) {
+    if (!submitted) setAnswers((prev: Record<string, string>) => ({ ...prev, [qId]: optionId }))
   }
 
   function isQuestionCorrect(q: QuizQuestion): boolean {
-    const userAns = answers[q.id] || ''
-    if (q.type === 'fill-blank') {
-      const override = questionModeOverrides[q.id]
-      const modes = override ? [override] : activeMandarin
-      return checkFillBlank(userAns, q, modes)
-    }
-    const primaryAnswer = Array.isArray(q.answer) ? q.answer[0] : q.answer
-    return normalise(userAns) === normalise(primaryAnswer)
+    return answers[q.id] === q.correctOptionId
   }
 
   function calculateScore() {
@@ -156,6 +121,13 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
       </span>
     )
   }
+
+  // Review tab representation selector
+  const REP_OPTIONS: { rep: ReviewRep; chineseLabel: string; label: string }[] = [
+    { rep: 'simplified',  chineseLabel: '简', label: 'Simplified' },
+    { rep: 'traditional', chineseLabel: '繁', label: 'Traditional' },
+    { rep: 'pinyin',      chineseLabel: '',   label: 'Pinyin' },
+  ]
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
@@ -328,11 +300,16 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                 </button>
               ))}
             </div>
-            {mission.regionalNotes.filter((r) => r.region === activeRegion).map((r, i) => (
-              <div key={i} className="bg-lingo-surface rounded-xl p-5 border border-lingo-border text-base text-lingo-body">
-                {r.note}
-              </div>
-            ))}
+            {mission.regionalNotes.filter((r) => r.region === activeRegion).map((r, i) => {
+              const noteText = prefs.showTraditional && !prefs.showSimplified && r.noteTraditional
+                ? r.noteTraditional
+                : r.note
+              return (
+                <div key={i} className="bg-lingo-surface rounded-xl p-5 border border-lingo-border text-base text-lingo-body">
+                  {noteText}
+                </div>
+              )
+            })}
           </div>
 
           <div className="flex gap-4">
@@ -417,41 +394,75 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
       {/* ── REVIEW / QUIZ TAB ─────────────────────────────────────────────── */}
       {activeTab === 'review' && (
         <div className="space-y-8">
-          <div>
-            <h2 className="font-bold text-lingo-navy text-2xl mb-2">Mission Quiz</h2>
-            <p className="text-base text-lingo-body">Answer all questions, then submit for your score.</p>
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h2 className="font-bold text-lingo-navy text-2xl mb-2">Mission Quiz</h2>
+              <p className="text-base text-lingo-body">Answer all questions, then submit for your score.</p>
+            </div>
+
+            {/* Representation selector */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-xs font-semibold text-lingo-muted uppercase tracking-wider select-none">
+                Show as
+              </span>
+              <div className="flex rounded-lg overflow-hidden border border-lingo-border">
+                {REP_OPTIONS.map(({ rep, chineseLabel, label }, i) => {
+                  const isActive = reviewRep === rep
+                  return (
+                    <button
+                      key={rep}
+                      type="button"
+                      onClick={() => setReviewRepOverride(rep)}
+                      aria-pressed={isActive}
+                      className={`px-3 py-1.5 text-xs font-semibold transition-colors flex items-center gap-1
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lingo-teal focus-visible:ring-inset
+                        ${i > 0 ? 'border-l border-lingo-border' : ''}
+                        ${isActive
+                          ? 'bg-lingo-teal text-white'
+                          : 'bg-white text-lingo-muted hover:bg-lingo-teal-soft hover:text-lingo-teal'
+                        }`}
+                    >
+                      {chineseLabel && (
+                        <span className="font-chinese text-sm leading-none" aria-hidden="true">{chineseLabel}</span>
+                      )}
+                      {label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
           </div>
 
           {mission.quiz.map((q, qi) => {
-            const isMandarin = q.answerLanguage === 'mandarin' || (q.type === 'fill-blank' && !!q.answers)
-            const override = questionModeOverrides[q.id]
-            const qModes: MandarinMode[] = override ? [override] : activeMandarin
-            const needsModePicker = isMandarin && q.type === 'fill-blank' && qModes.length === 0
-
             const isQCorrect = submitted && isQuestionCorrect(q)
             const isQWrong = submitted && !isQCorrect
 
-            // For MC: determine correct option string
-            const primaryAnswer = Array.isArray(q.answer) ? q.answer[0] : q.answer
+            // For the correct option highlight after submit
+            const correctOpt = q.options?.find((o) => o.id === q.correctOptionId)
 
             return (
               <div key={q.id} className="bg-white border border-lingo-border rounded-2xl p-6 shadow-sm">
                 <div className="flex items-start gap-3 mb-4">
                   <span className="w-7 h-7 bg-lingo-navy text-white text-sm font-bold rounded-lg flex items-center justify-center flex-shrink-0">{qi + 1}</span>
-                  <p className="font-medium text-lingo-navy text-base">{q.question}</p>
+                  <p className="font-medium text-lingo-navy text-base">{getPromptDisplay(q.prompt, reviewRep)}</p>
                 </div>
 
-                {/* Multiple-choice */}
-                {q.type === 'multiple-choice' && q.options && (
+                {/* Multiple-choice options */}
+                {q.options && (
                   <div className="space-y-2 ml-10">
                     {q.options.map((opt) => {
-                      const selected = answers[q.id] === opt
-                      const isCorrectOpt = submitted && opt === primaryAnswer
-                      const isWrongSelected = submitted && selected && opt !== primaryAnswer
+                      const selected = answers[q.id] === opt.id
+                      const isCorrectOpt = submitted && opt.id === q.correctOptionId
+                      const isWrongSelected = submitted && selected && opt.id !== q.correctOptionId
+                      const displayText = isEnglishOnlyOption(opt)
+                        ? (opt.english ?? '')
+                        : getOptionDisplay(opt, reviewRep)
+                      const useChineseFont = !isEnglishOnlyOption(opt) && reviewRep !== 'pinyin'
+                      const usePinyinFont = !isEnglishOnlyOption(opt) && reviewRep === 'pinyin'
                       return (
                         <button
-                          key={opt}
-                          onClick={() => handleAnswer(q.id, opt)}
+                          key={opt.id}
+                          onClick={() => handleAnswer(q.id, opt.id)}
                           className={`w-full text-left px-4 py-3 rounded-xl border-2 text-base font-medium transition-all ${
                             isCorrectOpt
                               ? 'border-lingo-success bg-lingo-success-soft text-lingo-success'
@@ -462,74 +473,12 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                               : 'border-lingo-border text-lingo-body hover:border-lingo-border-hover'
                           }`}
                         >
-                          {opt}
+                          <span className={useChineseFont ? 'font-chinese' : usePinyinFont ? 'font-pinyin' : undefined}>
+                            {displayText}
+                          </span>
                         </button>
                       )
                     })}
-                  </div>
-                )}
-
-                {/* Fill-blank — Mandarin input with dynamic answer modes */}
-                {q.type === 'fill-blank' && (
-                  <div className="ml-10 space-y-3">
-                    {/* English-only edge case: no Mandarin mode active → show mode picker */}
-                    {needsModePicker ? (
-                      <div className="rounded-xl border border-lingo-border bg-lingo-surface p-4">
-                        <p className="text-sm text-lingo-muted mb-3">
-                          Choose how you would like to answer:
-                        </p>
-                        <div className="flex gap-2 flex-wrap">
-                          {(['simplified', 'traditional', 'pinyin'] as MandarinMode[]).map((mode) => {
-                            const label = mode === 'simplified' ? 'Simplified' : mode === 'traditional' ? 'Traditional' : 'Pinyin'
-                            return (
-                              <button
-                                key={mode}
-                                type="button"
-                                onClick={() => setQuestionModeOverrides((prev) => ({ ...prev, [q.id]: mode }))}
-                                className="px-4 py-2 rounded-lg text-sm font-semibold border border-lingo-teal text-lingo-teal hover:bg-lingo-teal-soft transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lingo-teal"
-                              >
-                                {label}
-                              </button>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        {/* Answer mode indicator */}
-                        {isMandarin && qModes.length > 0 && !submitted && (
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs text-lingo-muted">Answer in:</span>
-                            {qModes.map((mode) => {
-                              const label = mode === 'simplified' ? 'Simplified' : mode === 'traditional' ? 'Traditional' : 'Pinyin'
-                              return (
-                                <span
-                                  key={mode}
-                                  className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-lingo-teal-soft border border-lingo-teal text-lingo-teal"
-                                >
-                                  {label}
-                                </span>
-                              )
-                            })}
-                          </div>
-                        )}
-
-                        <input
-                          type="text"
-                          value={answers[q.id] || ''}
-                          onChange={(e) => handleAnswer(q.id, e.target.value)}
-                          placeholder={getPlaceholder(qModes)}
-                          disabled={submitted}
-                          className={`w-full border-2 rounded-xl px-4 py-3 text-base outline-none transition-colors ${
-                            submitted
-                              ? isQCorrect
-                                ? 'border-lingo-success bg-lingo-success-soft'
-                                : 'border-lingo-error bg-red-50'
-                              : 'border-lingo-border focus:border-lingo-navy'
-                          }`}
-                        />
-                      </>
-                    )}
                   </div>
                 )}
 
@@ -540,7 +489,7 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                   }`}>
                     {isQCorrect
                       ? '✓ Correct!'
-                      : `✗ Correct answer: ${q.type === 'fill-blank' ? getReferenceAnswer(q) : primaryAnswer}`
+                      : `✗ Correct answer: ${correctOpt ? getOptionDisplay(correctOpt, reviewRep) : ''}`
                     }
                     {' '}— {q.explanation}
                   </div>

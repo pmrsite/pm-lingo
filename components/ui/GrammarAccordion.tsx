@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import type { GrammarNote } from '@/types'
 import type { LanguagePreferences } from '@/hooks/useLanguagePreferences'
+import ExplanationRenderer from './ExplanationRenderer'
 
 interface Props {
   notes: GrammarNote[]
@@ -125,8 +126,8 @@ export default function GrammarAccordion({ notes, prefs }: Props) {
               aria-labelledby={headingId}
               hidden={!isOpen}
             >
-              <div className="px-5 py-4 bg-white border-t border-[#D9E4E2] text-base text-lingo-body leading-relaxed">
-                {note.explanation}
+              <div className="px-5 py-4 bg-white border-t border-[#D9E4E2]">
+                <ExplanationRenderer segments={note.explanation} prefs={prefs} />
               </div>
             </div>
           </div>

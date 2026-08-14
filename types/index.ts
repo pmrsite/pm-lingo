@@ -55,23 +55,33 @@ export interface DialogueLine {
   english: string
 }
 
-// Structured multi-representation answers for fill-blank Mandarin questions
-export interface QuizAnswers {
-  simplified?: string[]
-  traditional?: string[]
-  pinyin?: string[]
+// Inline term with all three representations for use in grammar note explanations
+export type ExplainPart = string | { s: string; t: string; p: string }
+export type ExplainContent = ExplainPart[]
+
+// Structured quiz option with semantic ID
+export interface QuizOption {
+  id: string
+  simplified?: string
+  traditional?: string
+  pinyin?: string
+  english?: string
+}
+
+// Quiz question prompt with per-representation text
+export interface QuizPrompt {
+  english?: string
+  simplified?: string
+  traditional?: string
+  pinyin?: string
 }
 
 export interface QuizQuestion {
   id: string
-  type: 'multiple-choice' | 'fill-blank' | 'matching' | 'sentence-order'
-  // 'mandarin' = accepts simplified/traditional/pinyin per active prefs
-  // 'english'  = expects English answer regardless of script prefs
-  answerLanguage?: 'mandarin' | 'english'
-  question: string
-  options?: string[]
-  answer: string | string[]    // primary answer (MC correct option; fill-blank simplified fallback)
-  answers?: QuizAnswers        // structured per-representation answers for fill-blank mandarin
+  type: 'multiple-choice' | 'matching' | 'sentence-order'
+  prompt: QuizPrompt
+  options?: QuizOption[]
+  correctOptionId?: string
   explanation: string
 }
 
@@ -80,12 +90,13 @@ export interface GrammarNote {
   traditional: string | null   // null = pending content review
   pinyin: string
   title: string                // short English grammar label shown in accordion header
-  explanation: string          // instructional explanation shown when expanded
+  explanation: ExplainContent  // segments with per-representation Chinese/Pinyin switching
 }
 
 export interface RegionalNote {
   region: 'mainland' | 'taiwan' | 'malaysia' | 'international'
   note: string
+  noteTraditional?: string   // variant for when Traditional script is active
 }
 
 export interface AssessmentCriteria {
