@@ -2,6 +2,8 @@
 import { useState, use } from 'react'
 import { missions } from '@/data/missions'
 import { notFound } from 'next/navigation'
+import { useLanguagePreferences } from '@/hooks/useLanguagePreferences'
+import StudyViewControls from '@/components/ui/StudyViewControls'
 
 type Tab = 'learn' | 'practice' | 'review' | 'assess'
 
@@ -15,6 +17,8 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
   const [activeRegion, setActiveRegion] = useState<string>('mainland')
+
+  const { prefs, toggle, resetAll } = useLanguagePreferences()
 
   const regionLabels: Record<string, string> = {
     mainland: 'Mainland China',
@@ -88,29 +92,56 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
             <p className="text-lingo-body text-lg">{mission.objective}</p>
           </div>
 
+          {/* Vocabulary */}
           <div>
-            <h2 className="font-bold text-lingo-navy text-xl mb-4">Vocabulary</h2>
+            <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+              <h2 className="font-bold text-lingo-navy text-xl">Vocabulary</h2>
+              <StudyViewControls prefs={prefs} onToggle={toggle} onReset={resetAll} />
+            </div>
             <div className="overflow-x-auto rounded-2xl border border-lingo-border">
-              <table className="w-full">
+              <table className="w-full" aria-label="Vocabulary list">
                 <thead className="bg-lingo-surface">
                   <tr>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">Chinese</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">Pinyin</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">English</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">Audio</th>
+                    {prefs.showChinese && (
+                      <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">
+                        Chinese
+                      </th>
+                    )}
+                    {prefs.showPinyin && (
+                      <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">
+                        Pinyin
+                      </th>
+                    )}
+                    {prefs.showEnglish && (
+                      <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider">
+                        English
+                      </th>
+                    )}
+                    <th scope="col" className="px-4 py-3 text-xs font-semibold text-lingo-muted uppercase tracking-wider text-center">
+                      Audio
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-lingo-border">
                   {mission.vocabulary.map((v, i) => (
                     <tr key={i} className="hover:bg-lingo-teal-soft transition-colors">
-                      {/* KaiTi for Chinese learning characters */}
-                      <td className="font-chinese px-4 py-3 text-2xl font-medium">{v.chinese}</td>
-                      {/* Noto Sans for Pinyin — replaces font-mono which lacks tone marks */}
-                      <td className="font-pinyin font-medium px-4 py-3 text-base text-lingo-body">{v.pinyin}</td>
-                      {/* Inter (inherited) for English meaning */}
-                      <td className="px-4 py-3 text-base text-lingo-text">{v.english}</td>
+                      {prefs.showChinese && (
+                        <td className="font-chinese px-4 py-3 text-2xl font-medium">{v.chinese}</td>
+                      )}
+                      {prefs.showPinyin && (
+                        <td className="font-pinyin font-medium px-4 py-3 text-base text-lingo-body">{v.pinyin}</td>
+                      )}
+                      {prefs.showEnglish && (
+                        <td className="px-4 py-3 text-base text-lingo-text">{v.english}</td>
+                      )}
+                      {/* Audio is always visible regardless of text layer preferences */}
                       <td className="px-4 py-3 text-center">
-                        <button className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg" aria-label="Play audio">🔊</button>
+                        <button
+                          className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg"
+                          aria-label={`Play audio for ${v.chinese}`}
+                        >
+                          🔊
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -119,8 +150,12 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
             </div>
           </div>
 
+          {/* Dialogue */}
           <div>
-            <h2 className="font-bold text-lingo-navy text-xl mb-4">Dialogue</h2>
+            <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+              <h2 className="font-bold text-lingo-navy text-xl">Dialogue</h2>
+              <StudyViewControls prefs={prefs} onToggle={toggle} onReset={resetAll} />
+            </div>
             <div className="space-y-3">
               {mission.dialogue.map((line, i) => (
                 <div key={i} className={`flex gap-4 ${i % 2 === 0 ? '' : 'flex-row-reverse'}`}>
@@ -129,12 +164,15 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                   </div>
                   <div className={`bg-white border border-lingo-border rounded-2xl px-5 py-4 max-w-lg shadow-sm ${i % 2 !== 0 ? 'text-right' : ''}`}>
                     <div className="text-xs text-lingo-muted mb-1">{line.speaker}</div>
-                    {/* Chinese learning content: KaiTi */}
-                    <div className="font-chinese text-xl font-medium text-lingo-navy mb-1">{line.chinese}</div>
-                    {/* Pinyin: Noto Sans — replaces font-mono */}
-                    <div className="font-pinyin font-medium text-base text-lingo-body">{line.pinyin}</div>
-                    {/* English: Inter (inherited) */}
-                    <div className="text-base text-lingo-body mt-1">{line.english}</div>
+                    {prefs.showChinese && (
+                      <div className="font-chinese text-xl font-medium text-lingo-navy mb-1">{line.chinese}</div>
+                    )}
+                    {prefs.showPinyin && (
+                      <div className="font-pinyin font-medium text-base text-lingo-body">{line.pinyin}</div>
+                    )}
+                    {prefs.showEnglish && (
+                      <div className="text-base text-lingo-body mt-1">{line.english}</div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -212,16 +250,31 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
           ))}
 
           <div className="bg-white border border-lingo-border rounded-2xl p-6 shadow-sm">
-            <h3 className="font-bold text-lingo-navy text-lg mb-4">Sentence Drills</h3>
+            <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+              <h3 className="font-bold text-lingo-navy text-lg">Sentence Drills</h3>
+              <StudyViewControls prefs={prefs} onToggle={toggle} onReset={resetAll} />
+            </div>
             <div className="space-y-3">
               {mission.vocabulary.slice(0, 5).map((v, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-lingo-surface rounded-xl">
-                  <div>
-                    {/* KaiTi for Chinese character; Noto Sans for Pinyin */}
-                    <span className="font-chinese text-xl font-medium">{v.chinese}</span>
-                    <span className="font-pinyin font-medium text-base text-lingo-muted ml-3">{v.pinyin}</span>
+                <div key={i} className="flex items-center justify-between gap-3 p-3 bg-lingo-surface rounded-xl flex-wrap">
+                  <div className="flex items-baseline gap-2 flex-wrap min-w-0">
+                    {prefs.showChinese && (
+                      <span className="font-chinese text-xl font-medium">{v.chinese}</span>
+                    )}
+                    {prefs.showPinyin && (
+                      <span className="font-pinyin font-medium text-base text-lingo-muted">{v.pinyin}</span>
+                    )}
                   </div>
-                  <span className="text-base text-lingo-body">{v.english}</span>
+                  {prefs.showEnglish && (
+                    <span className="text-base text-lingo-body shrink-0">{v.english}</span>
+                  )}
+                  {/* Audio remains accessible regardless of text layer visibility */}
+                  <button
+                    className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg shrink-0"
+                    aria-label={`Play audio for ${v.chinese}`}
+                  >
+                    🔊
+                  </button>
                 </div>
               ))}
             </div>
