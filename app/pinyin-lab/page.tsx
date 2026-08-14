@@ -11,6 +11,9 @@ const GAP       = 10   // px gap between anchor edge and popup
 const MARGIN    = 12   // minimum distance from viewport edge
 const MOBILE_BP = 640  // px — below this use bottom-sheet
 
+// Shared font-size token for every axis identifier: INITIALS, b/p/m…, FINALS, a/o/e…
+const AXIS_CLS = 'text-sm font-bold'
+
 const INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's']
 
 // Flat ordered list of all finals — no section banners beyond the single FINALS stripe
@@ -22,9 +25,9 @@ const ALL_FINALS = [
 ]
 
 // Table geometry — used for both the table element and the wrapper min-width
-const FINALS_COL_W  = 88   // px  — left sticky finals label column
-const INITIAL_COL_MIN = 48 // px  — minimum width per initial column
-const TABLE_MIN_W   = FINALS_COL_W + INITIALS.length * INITIAL_COL_MIN
+const FINALS_COL_W    = 88   // px  — left sticky finals label column
+const INITIAL_COL_MIN = 48   // px  — minimum width per initial column
+const TABLE_MIN_W     = FINALS_COL_W + INITIALS.length * INITIAL_COL_MIN
 
 const STANDALONE: Record<string, string> = {
   'i': 'yi', 'ia': 'ya', 'iao': 'yao', 'ie': 'ye', 'iu': 'you',
@@ -67,10 +70,12 @@ function getSyllable(initial: string, final: string): string | null {
     const standalone = STANDALONE[final] ?? final
     return VALID.has(standalone) ? standalone : null
   }
-  // j/q/x do not combine with plain 'uan' or 'un' in this chart —
-  // those syllables (juan/quan/xuan, jun/qun/xun) belong pedagogically
-  // to the üan/ün rows where the ü→u spelling convention is explained.
-  if (['j', 'q', 'x'].includes(initial) && (final === 'uan' || final === 'un')) {
+  // j/q/x only combine with i-family and ü-family finals.
+  // Plain 'u', 'uan', and 'un' rows must show empty cells for j/q/x:
+  //   ju/qu/xu   belong to the ü row  (written without umlaut by convention)
+  //   juan/…     belong to the üan row
+  //   jun/…      belong to the ün row
+  if (['j', 'q', 'x'].includes(initial) && (final === 'u' || final === 'uan' || final === 'un')) {
     return null
   }
   let f = final
@@ -353,7 +358,7 @@ export default function PinyinLabPage() {
         */}
         <div className="overflow-x-auto rounded-xl border border-lingo-border shadow-sm">
           <table
-            className="border-collapse text-sm"
+            className="border-collapse"
             style={{
               width: '100%',
               minWidth: `${TABLE_MIN_W}px`,
@@ -364,7 +369,7 @@ export default function PinyinLabPage() {
               <tr>
                 {/* Corner: INITIALS label — explicit width drives the fixed-layout finals column */}
                 <th
-                  className="px-3 py-3 text-center sticky left-0 z-20 text-[11px] font-bold tracking-widest"
+                  className={`${AXIS_CLS} px-3 py-3 text-center sticky left-0 z-20 tracking-widest`}
                   style={{ backgroundColor: TEAL, color: '#ffffff', width: `${FINALS_COL_W}px` }}
                 >
                   INITIALS
@@ -373,7 +378,7 @@ export default function PinyinLabPage() {
                 {INITIALS.map(initial => (
                   <th
                     key={initial || 'zero'}
-                    className="px-2 py-3 text-center font-bold text-sm"
+                    className={`${AXIS_CLS} px-2 py-3 text-center`}
                     style={{ backgroundColor: TEAL, color: '#ffffff' }}
                   >
                     {initial}
@@ -386,7 +391,7 @@ export default function PinyinLabPage() {
               <tr>
                 <td
                   colSpan={INITIALS.length + 1}
-                  className="px-4 py-2 text-center font-bold text-sm tracking-widest"
+                  className={`${AXIS_CLS} px-4 py-2 text-center tracking-widest`}
                   style={{ backgroundColor: ORANGE, color: '#ffffff' }}
                 >
                   FINALS
@@ -397,9 +402,9 @@ export default function PinyinLabPage() {
               {ALL_FINALS.map((final, fi) => (
                 <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
 
-                  {/* Finals label — Orange sticky column */}
+                  {/* Finals label — Orange sticky column, same font size as FINALS stripe */}
                   <td
-                    className="sticky left-0 z-10 px-2 py-1.5 text-center font-bold text-xs"
+                    className={`${AXIS_CLS} sticky left-0 z-10 px-2 py-1.5 text-center`}
                     style={{ backgroundColor: ORANGE, color: '#ffffff' }}
                   >
                     {final}
