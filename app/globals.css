@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,6 +9,19 @@
                     Navy (analytical) · Pink (delight)
 ──────────────────────────────────────────────────────────────────────────── */
 :root {
+  /* ── Typography: semantic font-family stacks ─────────────────────────────
+     --font-inter and --font-noto-sans are injected by next/font via .variable
+     classes applied in app/layout.tsx.
+
+     Use these tokens in inline styles and non-Tailwind contexts:
+       var(--font-ui)      English / product UI
+       var(--font-pinyin)  Pinyin / pronunciation notation
+       var(--font-chinese) Chinese learning characters (KaiTi, system-only)
+  ── */
+  --font-ui:      var(--font-inter), system-ui, sans-serif;
+  --font-pinyin:  var(--font-noto-sans), 'Noto Sans', var(--font-inter), system-ui, sans-serif;
+  --font-chinese: 'KaiTi', 'STKaiti', 'Kaiti SC', '楷体', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', serif;
+
   /* Brand colours */
   --pm-teal:          #0F766E;
   --pm-teal-dark:     #0C4A45;
@@ -51,7 +62,9 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
-  font-family: 'Inter', system-ui, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  /* Inter for all Latin UI text; CJK fallbacks ensure incidental Chinese
+     (e.g. navigation, system messages) renders without explicit font-chinese. */
+  font-family: var(--font-inter), system-ui, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
   font-size: 18px;
   line-height: 1.7;
   color: #596273;   /* matches lingo-body token */

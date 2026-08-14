@@ -86,7 +86,17 @@ const config: Config = {
         'lingo-border-hover':  '#D1CDD8',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        // Base — font-sans; CJK fallbacks ensure incidental Chinese renders
+        // correctly even without an explicit font-chinese class on every element.
+        sans: ['var(--font-inter)', 'system-ui', "'PingFang SC'", "'Microsoft YaHei'", "'Noto Sans SC'", 'sans-serif'],
+
+        // ── Semantic typography tokens ──────────────────────────────────────
+        // font-ui      → English / general UI    (Inter)
+        // font-pinyin  → Pinyin notation          (Noto Sans)
+        // font-chinese → Chinese learning content (KaiTi, system-only)
+        ui:      ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        pinyin:  ['var(--font-noto-sans)', "'Noto Sans'", 'var(--font-inter)', 'system-ui', 'sans-serif'],
+        chinese: ['"KaiTi"', '"STKaiti"', '"Kaiti SC"', '"楷体"', '"PingFang SC"', '"Microsoft YaHei"', '"Noto Sans SC"', 'serif'],
       },
       backgroundImage: {
         'lingo-hero':     'linear-gradient(160deg, #0F766E 0%, #0C4A45 55%, #0A3D38 100%)',
