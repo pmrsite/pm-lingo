@@ -26,8 +26,14 @@ function ChineseBubble({
       className={`absolute rounded-2xl px-4 py-3 shadow-md ${animClass ?? ''}`}
       style={{ background: s.bg, border: s.border ? `1px solid ${s.border}` : 'none', ...style }}
     >
-      <div className="text-xl font-bold" style={{ color: s.text }}>{hanzi}</div>
-      <div className="text-xs mt-0.5" style={{ color: s.sub }}>{pinyin} · {english}</div>
+      {/* KaiTi for Chinese learning characters */}
+      <div className="font-chinese text-xl font-bold" style={{ color: s.text }}>{hanzi}</div>
+      <div className="text-xs mt-0.5" style={{ color: s.sub }}>
+        {/* Noto Sans for Pinyin; Inter (inherited) for English */}
+        <span className="font-pinyin">{pinyin}</span>
+        {' · '}
+        {english}
+      </div>
     </div>
   )
 }
@@ -80,7 +86,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
 
-      {/* ── Hero ────────────────────────────────────────────────────── */}
+      {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="bg-white pt-14 sm:pt-20 pb-12 px-4">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div>
@@ -120,7 +126,8 @@ export default function HomePage() {
           <div className="relative flex items-center justify-center" style={{ minHeight: 380 }}>
             <div className="rounded-full bg-lingo-teal-soft" style={{ width: 260, height: 260 }} />
             <div className="absolute flex flex-col items-center text-center">
-              <span className="font-bold" style={{ fontSize: 72, lineHeight: 1, color: '#0F766E', fontFamily: "'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" }}>普</span>
+              {/* KaiTi for the hero Chinese character — replaces inline fontFamily */}
+              <span className="font-chinese font-bold" style={{ fontSize: 72, lineHeight: 1, color: '#0F766E' }}>普</span>
               <span className="text-xs text-lingo-muted mt-2 font-medium tracking-wider uppercase">Mandarin Chinese</span>
             </div>
             <ChineseBubble hanzi="你好！" pinyin="Nǐ hǎo"    english="Hello"      variant="teal"   animClass="bubble-float-1" style={{ top: 24,   left: 0   }} />
@@ -174,7 +181,7 @@ export default function HomePage() {
       {/* Wave: white → teal */}
       <WaveDivider variant="white-to-teal" shape="arch" />
 
-      {/* ── Placement Quiz Band ──────────────────────────────────────── */}
+      {/* ── Placement Quiz Band ────────────────────────────────────── */}
       <section style={{ background: '#0F766E' }} className="py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.6)' }}>Free Placement Quiz</p>
@@ -188,7 +195,7 @@ export default function HomePage() {
             href="/placement-test"
             className="inline-flex items-center gap-2 bg-lingo-red hover:bg-lingo-red-dark text-white font-semibold px-8 py-3.5 rounded-xl transition-colors min-h-[48px]"
           >
-            Take the Quiz — it’s free
+            Take the Quiz — it&apos;s free
           </Link>
         </div>
       </section>
@@ -229,7 +236,7 @@ export default function HomePage() {
       {/* Wave: white → soft-teal */}
       <WaveDivider variant="white-to-soft-teal" shape="slope" />
 
-      {/* ── AI Teachers ──────────────────────────────────────────────── */}
+      {/* ── AI Teachers ────────────────────────────────────────────── */}
       <section className="py-24 px-4" style={{ background: '#F0FDFA' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
@@ -270,7 +277,7 @@ export default function HomePage() {
       {/* Wave: soft-teal → white */}
       <WaveDivider variant="soft-teal-to-white" shape="valley" />
 
-      {/* ── Upcoming Sessions ─────────────────────────────────────────── */}
+      {/* ── Upcoming Sessions ──────────────────────────────────────────── */}
       <section className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
@@ -346,7 +353,7 @@ export default function HomePage() {
       {/* Wave: white → soft-teal */}
       <WaveDivider variant="white-to-soft-teal" shape="ripple" />
 
-      {/* ── Testimonials ──────────────────────────────────────────────── */}
+      {/* ── Testimonials ───────────────────────────────────────────────── */}
       <section className="py-24 px-4" style={{ background: '#F0FDFA' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
@@ -387,7 +394,7 @@ export default function HomePage() {
       {/* Wave: soft-teal → white */}
       <WaveDivider variant="soft-teal-to-white" shape="arch" flip />
 
-      {/* ── Pricing Teaser ─────────────────────────────────────────────── */}
+      {/* ── Pricing Teaser ──────────────────────────────────────────────── */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">

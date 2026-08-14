@@ -11,8 +11,9 @@ const GAP       = 10   // px gap between anchor edge and popup
 const MARGIN    = 12   // minimum distance from viewport edge
 const MOBILE_BP = 640  // px — below this use bottom-sheet
 
-// Shared font-size token for every axis identifier: INITIALS, b/p/m…, FINALS, a/o/e…
-const AXIS_CLS = 'text-sm font-bold'
+// Shared class for all axis identifier elements: INITIALS corner, b/p/m…,
+// FINALS stripe, a/o/e… — Noto Sans for correct Pinyin glyph rendering.
+const AXIS_CLS = 'font-pinyin text-sm font-bold'
 
 const INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's']
 
@@ -150,7 +151,8 @@ function TonePanel({
     <>
       <div className="flex items-start justify-between mb-3">
         <div>
-          <div className="text-3xl font-bold" style={{ color: TEAL }}>{syllable}</div>
+          {/* Syllable header: Noto Sans for correct tone-mark rendering */}
+          <div className="font-pinyin text-3xl font-bold" style={{ color: TEAL }}>{syllable}</div>
           <div className="text-xs text-gray-400 mt-0.5">Tap a tone to hear it</div>
         </div>
         <button
@@ -179,9 +181,11 @@ function TonePanel({
               ].join(' ')}
             >
               <span className="text-base w-6 text-center shrink-0" aria-hidden="true">{symbol}</span>
-              <span className="text-xl font-bold flex-1 text-left" style={{ color: isPlaying ? undefined : TEAL }}>
+              {/* Tone-marked syllable: Noto Sans for faithful diacritic rendering */}
+              <span className="font-pinyin text-xl font-bold flex-1 text-left" style={{ color: isPlaying ? undefined : TEAL }}>
                 {withTone}
               </span>
+              {/* Tone name + description remain Inter — they are English UI text */}
               <div className="text-right">
                 <div className="text-xs font-semibold text-gray-700">{name}</div>
                 <div className="text-[10px] text-gray-400">{desc}</div>
@@ -359,7 +363,7 @@ export default function PinyinLabPage() {
                 onClick={() => setSelectedTone(tone)}
                 aria-label={name}
                 aria-pressed={selectedTone === tone}
-                className={`w-9 h-9 rounded-full text-sm font-bold transition-all ${
+                className={`font-pinyin w-9 h-9 rounded-full text-sm font-bold transition-all ${
                   selectedTone === tone
                     ? 'text-white shadow-md scale-110'
                     : 'bg-white border border-lingo-border text-lingo-muted hover:border-lingo-teal hover:text-lingo-teal'
@@ -428,7 +432,7 @@ export default function PinyinLabPage() {
               {ALL_FINALS.map((final, fi) => (
                 <tr key={final} className={fi % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
 
-                  {/* Finals label — semantic row header for screen readers */}
+                  {/* Finals label — semantic row header; Noto Sans via AXIS_CLS */}
                   <th
                     scope="row"
                     className={`${AXIS_CLS} sticky left-0 z-10 px-2 py-1.5 text-center`}
@@ -437,7 +441,7 @@ export default function PinyinLabPage() {
                     {final}
                   </th>
 
-                  {/* Syllable cells */}
+                  {/* Syllable cells — font-pinyin ensures correct Noto Sans rendering */}
                   {INITIALS.map(initial => {
                     const syllable = getSyllable(initial, final)
                     const isActive = activeSyl === syllable && syllable !== null
@@ -453,7 +457,7 @@ export default function PinyinLabPage() {
                             aria-label={`${syllable}, click to hear tones`}
                             aria-pressed={isActive}
                             className={
-                              'w-full px-1 py-2 rounded-lg text-xs font-semibold '
+                              'font-pinyin w-full px-1 py-2 rounded-lg text-xs font-semibold '
                               + 'transition-colors duration-150 ease-out '
                               + 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F766E]/40 '
                               + (isActive
@@ -510,7 +514,9 @@ export default function PinyinLabPage() {
                 selectedTone === tone ? light + ' shadow-md scale-105' : 'bg-white border-lingo-border'
               }`}
             >
-              <div className="text-2xl font-bold mb-1 text-lingo-text" aria-hidden="true">{mark}</div>
+              {/* Tone-marked vowel: Noto Sans for correct diacritic rendering */}
+              <div className="font-pinyin text-2xl font-bold mb-1 text-lingo-text" aria-hidden="true">{mark}</div>
+              {/* Name + description: Inter — English UI labels */}
               <div className="text-sm font-semibold text-lingo-text">{name}</div>
               <div className="text-xs mt-0.5 text-lingo-muted">{desc}</div>
             </button>

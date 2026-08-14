@@ -103,8 +103,11 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                 <tbody className="divide-y divide-lingo-border">
                   {mission.vocabulary.map((v, i) => (
                     <tr key={i} className="hover:bg-lingo-teal-soft transition-colors">
-                      <td className="px-4 py-3 text-2xl font-medium">{v.chinese}</td>
-                      <td className="px-4 py-3 text-base text-lingo-body font-mono">{v.pinyin}</td>
+                      {/* KaiTi for Chinese learning characters */}
+                      <td className="font-chinese px-4 py-3 text-2xl font-medium">{v.chinese}</td>
+                      {/* Noto Sans for Pinyin — replaces font-mono which lacks tone marks */}
+                      <td className="font-pinyin font-medium px-4 py-3 text-base text-lingo-body">{v.pinyin}</td>
+                      {/* Inter (inherited) for English meaning */}
                       <td className="px-4 py-3 text-base text-lingo-text">{v.english}</td>
                       <td className="px-4 py-3 text-center">
                         <button className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg" aria-label="Play audio">🔊</button>
@@ -126,8 +129,11 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                   </div>
                   <div className={`bg-white border border-lingo-border rounded-2xl px-5 py-4 max-w-lg shadow-sm ${i % 2 !== 0 ? 'text-right' : ''}`}>
                     <div className="text-xs text-lingo-muted mb-1">{line.speaker}</div>
-                    <div className="text-xl font-medium text-lingo-navy mb-1">{line.chinese}</div>
-                    <div className="text-base text-lingo-body font-mono">{line.pinyin}</div>
+                    {/* Chinese learning content: KaiTi */}
+                    <div className="font-chinese text-xl font-medium text-lingo-navy mb-1">{line.chinese}</div>
+                    {/* Pinyin: Noto Sans — replaces font-mono */}
+                    <div className="font-pinyin font-medium text-base text-lingo-body">{line.pinyin}</div>
+                    {/* English: Inter (inherited) */}
                     <div className="text-base text-lingo-body mt-1">{line.english}</div>
                   </div>
                 </div>
@@ -190,7 +196,7 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
         <div className="space-y-6">
           {[
             { title: 'Repeat After Me', desc: 'Listen to each phrase and repeat it aloud. Focus on tones.', icon: '🎤', status: 'Coming soon' },
-            { title: 'Pronunciation Practice', desc: 'Record yourself and get AI feedback on your pronunciation.', icon: '🎙️', status: 'Coming soon' },
+            { title: 'Pronunciation Practice', desc: 'Record yourself and get AI feedback on your pronunciation.', icon: '🎩', status: 'Coming soon' },
             { title: 'AI Roleplay', desc: 'Practice a real conversation with your AI teacher.', icon: '🤖', status: 'Coming soon' },
           ].map((p) => (
             <div key={p.title} className="bg-white border border-lingo-border rounded-2xl p-6 shadow-sm">
@@ -211,8 +217,9 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
               {mission.vocabulary.slice(0, 5).map((v, i) => (
                 <div key={i} className="flex items-center justify-between p-3 bg-lingo-surface rounded-xl">
                   <div>
-                    <span className="text-xl font-medium">{v.chinese}</span>
-                    <span className="text-base text-lingo-muted ml-3 font-mono">{v.pinyin}</span>
+                    {/* KaiTi for Chinese character; Noto Sans for Pinyin */}
+                    <span className="font-chinese text-xl font-medium">{v.chinese}</span>
+                    <span className="font-pinyin font-medium text-base text-lingo-muted ml-3">{v.pinyin}</span>
                   </div>
                   <span className="text-base text-lingo-body">{v.english}</span>
                 </div>
