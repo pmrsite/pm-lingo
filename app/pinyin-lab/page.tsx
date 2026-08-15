@@ -135,8 +135,75 @@ const TONE_INFO = [
   { tone: 2, mark: 'á', name: '2nd Tone', desc: 'Rising',        symbol: '↗',  light: 'bg-green-50 border-green-300 text-green-700' },
   { tone: 3, mark: 'ǎ', name: '3rd Tone', desc: 'Dip & rise',    symbol: '↘↗', light: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
   { tone: 4, mark: 'à', name: '4th Tone', desc: 'Sharp fall',    symbol: '↘',  light: 'bg-red-50 border-red-300 text-red-700' },
-  { tone: 0, mark: 'a',      name: 'Neutral',  desc: 'Short & light', symbol: '·', light: 'bg-gray-50 border-gray-300 text-gray-600' },
+  { tone: 0, mark: 'a', name: 'Neutral',  desc: 'Short & light', symbol: '·',  light: 'bg-gray-50 border-gray-300 text-gray-600' },
 ]
+
+// ── Tone meaning examples ─────────────────────────────────────────────────────
+// Shows the most common character + English gloss for each tone of a syllable.
+// Only populated for syllables where tones produce clearly distinct, common words.
+// Partial entries are fine — missing tones simply show no character.
+
+type ToneMeaning = { simplified: string; english: string }
+
+const TONE_MEANINGS: Record<string, Partial<Record<number, ToneMeaning>>> = {
+  a:   { 1: { simplified: '啊', english: 'ah!' },          2: { simplified: '啊', english: 'huh?' },        3: { simplified: '啊', english: 'oh!' },         4: { simplified: '啊', english: 'ah (realization)' } },
+  ma:  { 1: { simplified: '妈', english: 'mother' },       2: { simplified: '麻', english: 'hemp / numb' }, 3: { simplified: '马', english: 'horse' },       4: { simplified: '骂', english: 'to scold' },       0: { simplified: '吗', english: 'question particle' } },
+  ba:  { 1: { simplified: '巴', english: 'to cling' },     2: { simplified: '拔', english: 'to pull out' }, 3: { simplified: '把', english: 'to hold' },     4: { simplified: '爸', english: 'father' },         0: { simplified: '吧', english: 'suggestion particle' } },
+  bo:  { 1: { simplified: '波', english: 'wave' },         2: { simplified: '勃', english: 'vigorous' },    3: { simplified: '跛', english: 'lame' },        4: { simplified: '博', english: 'broad / rich' } },
+  pa:  { 1: { simplified: '趴', english: 'to lie face down' }, 2: { simplified: '爬', english: 'to crawl' }, 3: { simplified: '把', english: 'rake' },      4: { simplified: '怕', english: 'to fear' } },
+  mi:  { 1: { simplified: '咪', english: 'meow' },         2: { simplified: '迷', english: 'to be lost' }, 3: { simplified: '米', english: 'rice' },        4: { simplified: '密', english: 'secret / dense' } },
+  mo:  { 1: { simplified: '摸', english: 'to touch' },     2: { simplified: '模', english: 'model' },      3: { simplified: '抹', english: 'to wipe' },     4: { simplified: '墨', english: 'ink' },            0: { simplified: '么', english: 'particle' } },
+  fa:  { 1: { simplified: '发', english: 'to send / hair' }, 2: { simplified: '罚', english: 'to punish' }, 3: { simplified: '法', english: 'law / method' }, 4: { simplified: '发', english: 'to send out' } },
+  da:  { 1: { simplified: '搭', english: 'to build' },     2: { simplified: '达', english: 'to reach' },   3: { simplified: '打', english: 'to hit / play' }, 4: { simplified: '大', english: 'big / large' } },
+  ta:  { 1: { simplified: '他', english: 'he / him' },     2: { simplified: '它', english: 'it' },         3: { simplified: '塔', english: 'tower' },       4: { simplified: '踏', english: 'to step on' } },
+  na:  { 1: { simplified: '拿', english: 'to take' },      2: { simplified: '那', english: 'that' },       3: { simplified: '哪', english: 'which?' },      4: { simplified: '那', english: 'then / that' },    0: { simplified: '呢', english: 'particle' } },
+  la:  { 1: { simplified: '拉', english: 'to pull' },      2: { simplified: '辣', english: 'spicy' },      3: { simplified: '啦', english: 'particle' },    4: { simplified: '辣', english: 'hot / spicy' },    0: { simplified: '啦', english: 'particle' } },
+  ga:  { 1: { simplified: '噶', english: 'ga (sound)' },   2: { simplified: '轧', english: 'to crush' },   3: { simplified: '嘎', english: 'creak' },       4: { simplified: '噶', english: '(sound)' } },
+  ka:  { 1: { simplified: '咖', english: 'coffee' },       2: { simplified: '卡', english: 'card / stuck' }, 3: { simplified: '卡', english: 'card' },      4: { simplified: '卡', english: 'to be stuck' } },
+  ha:  { 1: { simplified: '哈', english: 'ha! (laugh)' },  2: { simplified: '蛤', english: 'clam' },       3: { simplified: '哈', english: 'ha!' },         4: { simplified: '哈', english: 'exhale' } },
+  ge:  { 1: { simplified: '哥', english: 'older brother' }, 2: { simplified: '格', english: 'grid / rule' }, 3: { simplified: '个', english: '(measure word)' }, 4: { simplified: '各', english: 'each / every' }, 0: { simplified: '的', english: 'particle' } },
+  ke:  { 1: { simplified: '科', english: 'science / dept' }, 2: { simplified: '可', english: 'can / may' }, 3: { simplified: '可', english: 'but / however' }, 4: { simplified: '课', english: 'lesson / class' } },
+  he:  { 1: { simplified: '喝', english: 'to drink' },     2: { simplified: '河', english: 'river' },      3: { simplified: '和', english: 'and / with' },  4: { simplified: '喝', english: 'drink!' },         0: { simplified: '和', english: 'and' } },
+  shi: { 1: { simplified: '诗', english: 'poem / poetry' }, 2: { simplified: '时', english: 'time / when' }, 3: { simplified: '使', english: 'to make' },   4: { simplified: '是', english: 'is / am / are' } },
+  zhi: { 1: { simplified: '知', english: 'to know' },      2: { simplified: '直', english: 'straight' },   3: { simplified: '纸', english: 'paper' },       4: { simplified: '志', english: 'ambition / will' } },
+  chi: { 1: { simplified: '吃', english: 'to eat' },       2: { simplified: '迟', english: 'late / slow' }, 3: { simplified: '尺', english: 'ruler / unit' }, 4: { simplified: '赤', english: 'red / bare' } },
+  ri:  { 1: { simplified: '日', english: 'sun / day' },    2: { simplified: '日', english: 'day' } },
+  zi:  { 1: { simplified: '资', english: 'resources' },    2: { simplified: '字', english: 'character / word' }, 3: { simplified: '紫', english: 'purple' }, 4: { simplified: '自', english: 'self / from' },   0: { simplified: '子', english: 'child / son' } },
+  ci:  { 1: { simplified: '词', english: 'word / lyrics' }, 2: { simplified: '瓷', english: 'porcelain' }, 3: { simplified: '此', english: 'this / here' }, 4: { simplified: '次', english: 'next / time' } },
+  si:  { 1: { simplified: '丝', english: 'silk / thread' }, 2: { simplified: '思', english: 'to think' },  3: { simplified: '死', english: 'to die / dead' }, 4: { simplified: '四', english: 'four' } },
+  yi:  { 1: { simplified: '一', english: 'one' },          2: { simplified: '宜', english: 'suitable' },   3: { simplified: '以', english: 'with / by' },   4: { simplified: '意', english: 'meaning / idea' } },
+  wu:  { 1: { simplified: '五', english: 'five' },         2: { simplified: '无', english: 'without / none' }, 3: { simplified: '武', english: 'martial' },  4: { simplified: '物', english: 'thing / object' } },
+  yu:  { 1: { simplified: '鱼', english: 'fish' },         2: { simplified: '于', english: 'at / in' },    3: { simplified: '雨', english: 'rain' },        4: { simplified: '玉', english: 'jade' } },
+  li:  { 1: { simplified: '梨', english: 'pear' },         2: { simplified: '离', english: 'to leave' },   3: { simplified: '里', english: 'inside / li (unit)' }, 4: { simplified: '力', english: 'strength / power' } },
+  ni:  { 2: { simplified: '你', english: 'you (informal)' }, 3: { simplified: '你', english: 'you' },      4: { simplified: '腻', english: 'greasy / bored' } },
+  wo:  { 3: { simplified: '我', english: 'I / me' } },
+  de:  { 0: { simplified: '的', english: 'possessive particle' } },
+  men: { 0: { simplified: '们', english: 'plural suffix' } },
+  zai: { 4: { simplified: '再', english: 'again' },        1: { simplified: '灾', english: 'disaster' } },
+  qu:  { 1: { simplified: '区', english: 'area / district' }, 2: { simplified: '曲', english: 'song / curved' }, 3: { simplified: '取', english: 'to take' }, 4: { simplified: '去', english: 'to go' } },
+  lai: { 2: { simplified: '来', english: 'to come' } },
+  hao: { 1: { simplified: '蒿', english: 'wormwood' },     2: { simplified: '豪', english: 'hero / grand' }, 3: { simplified: '好', english: 'good / well' }, 4: { simplified: '好', english: 'to love / fond of' } },
+  dui: { 4: { simplified: '对', english: 'correct / towards' } },
+  bu:  { 2: { simplified: '不', english: 'not / no' },     4: { simplified: '不', english: 'not / no' },   3: { simplified: '补', english: 'to mend / supplement' }, 1: { simplified: '布', english: 'cloth / to spread' } },
+}
+
+// ── SVG play / pause icons ────────────────────────────────────────────────────
+function PlayIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+      <polygon points="3,1 13,7 3,13" />
+    </svg>
+  )
+}
+
+function PauseIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+      <rect x="2" y="1" width="4" height="12" rx="1" />
+      <rect x="8" y="1" width="4" height="12" rx="1" />
+    </svg>
+  )
+}
 
 // ── Tone panel shared between desktop popover and mobile bottom sheet ────────
 function TonePanel({
@@ -167,30 +234,48 @@ function TonePanel({
         {TONE_INFO.map(({ tone, name, desc, symbol, light }) => {
           const withTone  = addTone(syllable, tone)
           const isPlaying = playingTone === tone
+          const meaning   = TONE_MEANINGS[syllable]?.[tone]
           return (
             <button
               key={tone}
               onClick={() => onTone(tone)}
-              aria-label={`Play ${withTone} — ${TONE_LABELS[tone]}`}
+              aria-label={`Play ${withTone} — ${TONE_LABELS[tone]}${meaning ? `, ${meaning.english}` : ''}`}
               aria-pressed={isPlaying}
               className={[
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 transition-all',
+                'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 transition-all',
                 isPlaying
                   ? light + ' shadow-sm'
                   : 'border-gray-200 bg-gray-50 hover:border-[#0F766E]/40 hover:bg-[#F0FDFA]',
               ].join(' ')}
             >
+              {/* Contour symbol */}
               <span className="text-base w-6 text-center shrink-0" aria-hidden="true">{symbol}</span>
-              {/* Tone-marked syllable: Noto Sans for faithful diacritic rendering */}
-              <span className="font-pinyin text-xl font-bold flex-1 text-left" style={{ color: isPlaying ? undefined : TEAL }}>
+
+              {/* Tone-marked pinyin */}
+              <span className="font-pinyin text-xl font-bold w-10 text-left shrink-0" style={{ color: isPlaying ? undefined : TEAL }}>
                 {withTone}
               </span>
-              {/* Tone name + description remain Inter — they are English UI text */}
-              <div className="text-right">
+
+              {/* Character + meaning — shown when data exists for this syllable/tone */}
+              {meaning ? (
+                <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                  <span className="font-chinese text-xl font-bold text-lingo-text shrink-0">{meaning.simplified}</span>
+                  <span className="text-xs text-gray-500 truncate">{meaning.english}</span>
+                </div>
+              ) : (
+                <div className="flex-1" />
+              )}
+
+              {/* Tone name + description */}
+              <div className="text-right shrink-0">
                 <div className="text-xs font-semibold text-gray-700">{name}</div>
                 <div className="text-[10px] text-gray-400">{desc}</div>
               </div>
-              <span className="text-base" aria-hidden="true">{isPlaying ? '🔊' : '▶️'}</span>
+
+              {/* Play / pause icon */}
+              <span className="shrink-0 text-gray-500">
+                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+              </span>
             </button>
           )
         })}

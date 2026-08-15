@@ -1,5 +1,5 @@
 'use client'
-import { useState, use } from 'react'
+import { useState, use, useRef, useCallback } from 'react'
 import { missions } from '@/data/missions'
 import { notFound } from 'next/navigation'
 import type { QuizQuestion, QuizOption, QuizPrompt } from '@/types'
@@ -7,6 +7,35 @@ import { useLanguagePreferences } from '@/hooks/useLanguagePreferences'
 import StudyViewControls from '@/components/ui/StudyViewControls'
 import GrammarAccordion from '@/components/ui/GrammarAccordion'
 import ExplanationRenderer from '@/components/ui/ExplanationRenderer'
+
+// ── Shared SVG audio icons ────────────────────────────────────────────────────
+function PlayIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+      <polygon points="3,1 13,7 3,13" />
+    </svg>
+  )
+}
+function PauseIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+      <rect x="2" y="1" width="4" height="12" rx="1" />
+      <rect x="8" y="1" width="4" height="12" rx="1" />
+    </svg>
+  )
+}
+
+// ── Managed TTS playback ──────────────────────────────────────────────────────
+// Vocabulary and dialogue audio uses full Chinese words/sentences via zh-CN TTS.
+// When human recordings are available (audioPlaceholder → real URL), swap here.
+function speakChinese(text: string) {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return
+  window.speechSynthesis.cancel()
+  const utter = new SpeechSynthesisUtterance(text)
+  utter.lang = 'zh-CN'
+  utter.rate = 0.8
+  window.speechSynthesis.speak(utter)
+}
 
 type Tab = 'learn' | 'practice' | 'review' | 'assess'
 type ReviewRep = 'simplified' | 'traditional' | 'pinyin'
@@ -54,6 +83,24 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
   const [activeRegion, setActiveRegion] = useState<string>('mainland')
   // null = follow Study View; non-null = manually chosen, ignore prefs changes
   const [reviewRepOverride, setReviewRepOverride] = useState<ReviewRep | null>(null)
+  // tracks which audio item is currently playing: 'vocab-{i}' or 'dialogue-{i}'
+  const [playingId, setPlayingId] = useState<string | null>(null)
+  const ttsEndRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleAudio = useCallback((id: string, text: string) => {
+    if (ttsEndRef.current) clearTimeout(ttsEndRef.current)
+    if (playingId === id) {
+      // clicking the same item stops it
+      window.speechSynthesis?.cancel()
+      setPlayingId(null)
+      return
+    }
+    setPlayingId(id)
+    speakChinese(text)
+    // TTS has no reliable end event across browsers — reset after estimated duration
+    const ms = Math.max(1200, text.length * 400)
+    ttsEndRef.current = setTimeout(() => setPlayingId(null), ms)
+  }, [playingId])
 
   const { prefs, toggle, resetAll } = useLanguagePreferences()
 
@@ -218,10 +265,16 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                       )}
                       <td className="px-4 py-3 text-center">
                         <button
-                          className="text-lingo-muted hover:text-lingo-navy transition-colors text-lg"
-                          aria-label={`Play audio for ${v.simplified}`}
+                          onClick={() => handleAudio(`vocab-${i}`, v.simplified)}
+                          aria-label={`${playingId === `vocab-${i}` ? 'Pause' : 'Play'} audio for ${v.simplified}`}
+                          aria-pressed={playingId === `vocab-${i}`}
+                          className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto transition-colors ${
+                            playingId === `vocab-${i}`
+                              ? 'bg-lingo-teal text-white'
+                              : 'text-lingo-muted hover:text-lingo-teal hover:bg-lingo-teal-soft'
+                          }`}
                         >
-                          🔊
+                          {playingId === `vocab-${i}` ? <PauseIcon /> : <PlayIcon />}
                         </button>
                       </td>
                     </tr>
@@ -244,7 +297,21 @@ export default function MissionPage({ params }: { params: Promise<{ slug: string
                     {line.speaker[0]}
                   </div>
                   <div className={`bg-white border border-lingo-border rounded-2xl px-5 py-4 max-w-lg shadow-sm ${i % 2 !== 0 ? 'text-right' : ''}`}>
-                    <div className="text-xs text-lingo-muted mb-1">{line.speaker}</div>
+                    <div className={`flex items-center gap-2 mb-1 ${i % 2 !== 0 ? 'justify-end' : ''}`}>
+                      <span className="text-xs text-lingo-muted">{line.speaker}</span>
+                      <button
+                        onClick={() => handleAudio(`dialogue-${i}`, line.simplified)}
+                        aria-label={`${playingId === `dialogue-${i}` ? 'Pause' : 'Play'} audio for ${line.speaker}`}
+                        aria-pressed={playingId === `dialogue-${i}`}
+                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors flex-shrink-0 ${
+                          playingId === `dialogue-${i}`
+                            ? 'bg-lingo-teal text-white'
+                            : 'text-lingo-muted hover:text-lingo-teal hover:bg-lingo-teal-soft'
+                        }`}
+                      >
+                        {playingId === `dialogue-${i}` ? <PauseIcon /> : <PlayIcon />}
+                      </button>
+                    </div>
                     {prefs.showSimplified && prefs.showTraditional ? (
                       <div className="mb-1 space-y-0.5">
                         <div className="flex items-baseline gap-1.5">
